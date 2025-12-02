@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Adverbs — Interactive Quiz — Keynote Grammar (Final)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#041028; --bg2:#0b3355;
+  --accent:#ffd24d; --muted:#bfe9ff;
+  --card: rgba(255,255,255,0.035);
+  --glass: rgba(255,255,255,0.06);
+  --ok:#2ecc71; --bad:#e74c3c;
+  --radius:14px;
+  --shadow: 0 18px 50px rgba(0,0,0,0.55);
+  --focus: 0 0 0 4px rgba(255,210,77,0.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+
+body{
+  font-family:"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(135deg,var(--bg1),var(--bg2));
+  color: #fff;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px;
+}
+
+/* Background */
+.bg-wrap{
+  position:fixed;inset:0;z-index:-5;pointer-events:none;overflow:hidden;
+}
+.blob{
+  position:absolute;border-radius:40%;filter:blur(68px);opacity:0.42;
+  mix-blend-mode:screen;
+  animation:blobFloat 18s ease-in-out infinite;
+}
+.blob.b1{width:520px;height:520px;left:-120px;top:-60px;background:#ff8a65;animation-duration:20s}
+.blob.b2{width:420px;height:420px;right:-100px;top:30px;background:#6fc3ff;animation-duration:22s;animation-delay:2s}
+.blob.b3{width:320px;height:320px;left:12%;bottom:-120px;background:#caa7ff;animation-duration:24s;animation-delay:4s}
+@keyframes blobFloat{0%{transform:translateY(0)}50%{transform:translateY(-36px)}100%{transform:translateY(0)}}
+
+.particles{
+  position:absolute;inset:0;z-index:-4;pointer-events:none;opacity:0.14;
+}
+.particles span{
+  position:absolute;background:rgba(255,255,255,0.9);
+  border-radius:50%;width:3px;height:3px;box-shadow:0 0 8px rgba(255,255,255,0.45)
+}
+
+/* Container */
+.container{
+  width:100%;max-width:1050px;margin:0 auto;
+}
+
+/* Card */
+.card{
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding:20px;
+  border-radius:var(--radius);
+  backdrop-filter:blur(10px);
+  box-shadow:var(--shadow);
+}
+
+/* Header */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.nav a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:700;
+  background:rgba(255,255,255,0.04);
+  padding:6px 12px;
+  border-radius:10px;
+}
+
+.title{text-align:center;flex:1;font-size:1.3rem;font-weight:700;color:var(--accent)}
+
+.meta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;gap:12px;flex-wrap:wrap
+}
+
+.score{
+  background:rgba(255,255,255,0.1);
+  padding:6px 12px;
+  border-radius:999px;
+  color:var(--accent);
+  font-weight:800;
+}
+
+/* Question Box */
+.qbox{
+  background:rgba(255,255,255,0.03);
+  padding:20px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.05);
+  margin-bottom:14px
+}
+
+.qtext{
+  font-size:1.05rem;
+  margin-bottom:14px;
+  color:#eaf6ff;
+}
+
+/* Story section */
+.story-wrap{
+  display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;
+}
+
+.story{
+  flex:1 1 60%;min-width:260px;
+  background:rgba(255,255,255,0.02);
+  line-height:1.9;
+  font-size:1.03rem;
+  padding:16px;
+  border-radius:10px;
+  text-align:justify;
+  text-justify:inter-word;
+}
+
+.story .w{
+  display:inline-block;
+  margin-right:6px;
+  margin-bottom:6px;
+  padding:4px 6px;
+  border-radius:6px;
+  cursor:pointer;
+  user-select:none;
+  transition:0.12s;
+}
+
+.story .w.correct{background:rgba(46,204,113,0.2);outline:2px solid rgba(46,204,113,0.3)}
+.story .w.wrong{background:rgba(231,76,60,0.12);outline:2px solid rgba(231,76,60,0.25)}
+
+.story-image {
+  width: 250px;          /* control horizontal size */
+  height: 350px;         /* control vertical size */
+  overflow: hidden;      /* prevent overflow */
+  border-radius: 10px;   /* optional */
+}
+
+.story-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* crops nicely */
+  object-position: center; /* adjust later */
+}
+
+
+/* Buttons */
+.btn{
+  padding:10px 16px;
+  background:rgba(255,255,255,0.1);
+  border:none;color:#fff;
+  font-weight:700;cursor:pointer;
+  border-radius:999px;
+}
+.btn.primary{
+  background:var(--accent);
+  color:#071225;
+}
+
+/* MCQ */
+.options{display:grid;gap:12px;margin-top:10px}
+.opt{
+  background:var(--accent);
+  color:#071225;
+  padding:12px;border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+  border:none;
+}
+.opt.correct{background:var(--ok);color:#001c0f}
+.opt.wrong{background:var(--bad);color:#fff}
+.opt.disabled{opacity:.6;pointer-events:none}
+
+/* Matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+.match-col{
+  flex:1;min-width:220px;
+  background:rgba(255,255,255,0.03);
+  padding:12px;border-radius:10px
+}
+.match-item{
+  padding:10px;border-radius:8px;
+  background:rgba(255,255,255,0.05);
+  margin-bottom:8px;
+  cursor:pointer;font-weight:700;
+}
+.match-item.selected{outline:3px solid rgba(255,210,77,0.2)}
+.match-item.matched{opacity:.6;border-left:4px solid var(--accent)}
+
+/* Sentence Builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.word{
+  background:rgba(255,255,255,0.08);
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+}
+.word.used{opacity:.45;pointer-events:none}
+
+.built{
+  min-height:48px;
+  background:rgba(255,255,255,0.02);
+  padding:10px;border-radius:8px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+
+
+/* Feedback */
+.feedback{
+  height:28px;
+  margin-top:10px;
+  font-weight:800;
+}
+
+/* Final */
+.final-score{
+  font-size:2.6rem;
+  font-weight:900;
+  color:var(--accent);
+  text-align:center;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-wrap">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<!-- Sounds -->
+<audio id="rightSound" src="rightclick.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="fwAudio" src="fireworks.mp3" preload="auto"></audio>
+
+<div class="container">
+  <div class="card">
+
+    <div class="header">
+      <div class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </div>
+      <div class="title">Adverbs — Interactive Quiz</div>
+      <button id="skipBtn" class="btn">Skip</button>
+    </div>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1 — Find Adverbs (0/10)</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <main id="quizArea"></main>
+
+    <div class="actions" style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <button id="retryBtn" class="btn">Retry</button>
+      <button id="backToLesson" class="btn">Back to Lesson</button>
+    </div>
+
+  </div>
+</div>
+
+<canvas id="fw" style="display:none;position:fixed;inset:0;pointer-events:none;z-index:9999"></canvas>
+<script>
+/* ---------------- Data (final) ---------------- */
+const story = `Maria walked slowly into the garden, where the birds were singing happily. She had recently moved to the village and was still exploring new places. Sometimes she visited the nearby lake, but today she wanted to stay. The wind blew gently, and she could clearly hear water flowing quietly. She felt completely relaxed.`;
+
+const correctAdverbs = new Set([
+  'slowly','happily','recently','still','sometimes',
+  'today','gently','clearly','quietly','completely'
+]);
+
+const mcq = [
+  { q:"She finished the homework ___ because it was easy.", opts:["loudly","quickly","maybe"], a:"quickly" },
+  { q:"They will arrive ___, so be ready.", opts:["soon","loudly","rarely"], a:"soon" },
+  { q:"He ___ forgets his keys.", opts:["always","here","abroad"], a:"always" },
+  { q:"I could ___ hear her; she was whispering.", opts:["hardly","everywhere","completely"], a:"hardly" },
+  { q:"The room was ___ silent after the announcement.", opts:["usually","completely","twice"], a:"completely" }
+];
+
+const matchLeft = [
+  "She answered the question",
+  "The children will return",
+  "He travels",
+  "I will call you",
+  "They moved the furniture"
+];
+const matchRight = [
+  "quickly because she knew the answer.",
+  "later.",
+  "abroad every year.",
+  "soon after lunch.",
+  "together to clean the room."
+];
+const matchMap = {
+  0: "quickly because she knew the answer.",
+  1: "soon after lunch.",
+  2: "abroad every year.",
+  3: "later.",
+  4: "together to clean the room."
+};
+
+const builders = [
+  { chunks:["he","finish","the","work","quickly"], target:"he finish the work quickly" },
+  { chunks:["the","dog","bark","loudly","last","night"], target:"the dog bark loudly last night" },
+  { chunks:["I","will","call","you","again"], target:"I will call you again" },
+  { chunks:["she","clearly","explained","the","rules"], target:"she clearly explained the rules", targetAlt:"she explained the rules clearly" },
+  { chunks:["the","train","arrived","late","today"], target:"the train arrived late today" }
+];
+
+/* ---------------- State ---------------- */
+let state = { roundKeys:['find','mcq','match','build'], rIndex:0, qIndex:0, score:0, perRound:[0,0,0,0] };
+let foundCount = 0;
+
+const quizArea = document.getElementById('quizArea');
+const roundLabel = document.getElementById('roundLabel');
+const scoreLabel = document.getElementById('scoreLabel');
+const skipBtn = document.getElementById('skipBtn');
+const retryBtn = document.getElementById('retryBtn');
+const backToLesson = document.getElementById('backToLesson');
+const fwCanvas = document.getElementById('fw');
+const rightSound = document.getElementById('rightSound');
+const wrongSound = document.getElementById('wrongSound');
+const fwAudio = document.getElementById('fwAudio');
+
+/* ---------------- Helpers ---------------- */
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+function normalizeWord(w){ return String(w||'').toLowerCase().replace(/^[^\w]+|[^\w]+$/g,''); }
+function normalizeAnswer(s){ return String(s||'').trim().replace(/[.?!,;:]+$/,'').replace(/\s+/g,' ').toLowerCase(); }
+
+function playRight(){
+  try{ rightSound.currentTime = 0; rightSound.play().catch(()=>{}); }catch(e){}
+}
+function playWrong(){
+  try{ wrongSound.currentTime = 0; wrongSound.play().catch(()=>{}); }catch(e){}
+}
+
+/* ---------------- Meta UI ---------------- */
+function setMeta(){
+  const key = state.roundKeys[state.rIndex];
+  let total = (key==='find')?10: (key==='match')?1:5;
+  let progress = (key==='find')? `${foundCount}/${total}` : `${state.qIndex+1}/${total}`;
+  const names = {find:"Round 1 — Find Adverbs", mcq:"Round 2 — MCQ", match:"Round 3 — Matching", build:"Round 4 — Sentence Builder"};
+  roundLabel.textContent = `${names[key]} (${progress})`;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* ---------------- Scoring (total 100) ----------------
+ - Find: 10 × 3 = 30
+ - MCQ: 5 × 4 = 20
+ - Match: 20
+ - Build: 5 × 6 = 30
+*/
+function addScore(points){
+  state.score += points;
+  if(state.score > 100) state.score = 100;
+  state.perRound[state.rIndex] = (state.perRound[state.rIndex] || 0) + points;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* ---------------- Navigation ---------------- */
+function nextQ(delay=700){
+  setTimeout(()=>{
+    const key = state.roundKeys[state.rIndex];
+    const limits = { find:1, mcq:5, match:1, build:5 };
+    state.qIndex++;
+    if(state.qIndex >= limits[key]){
+      state.rIndex++;
+      state.qIndex = 0;
+      if(state.rIndex >= state.roundKeys.length){
+        showFinal();
+        return;
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* ---------------- Render controller ---------------- */
+function render(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const key = state.roundKeys[state.rIndex];
+  if(key==='find') renderFind();
+  else if(key==='mcq') renderMCQ();
+  else if(key==='match') renderMatch();
+  else if(key==='build') renderBuild();
+}
+
+/* ------------- ROUND 1: FIND ADVERBS (NOW WITH SUBMIT BUTTON) ------------- */
+function renderFind() {
+  // Reset only if we are entering this round for the first time
+  if (state.rIndex === 0 && state.qIndex === 0) {
+    foundCount = 0;
+    state.perRound[0] = 0;
+  }
+
+  const box = document.createElement('section');
+  box.className = 'qbox';
+
+  box.innerHTML = `
+    <div class="qtext">Find <strong>10</strong> adverbs in the story. Click the words that are adverbs.</div>
+
+    <div class="story-wrap">
+      <div class="story" id="storyBlock"
+        style="text-align: justify; text-justify: inter-word; padding: 14px; line-height: 1.85; font-size: 1.05rem;">
+      </div>
+<div class="story-image">
+  <a href="adverbs_story_image.jpg" target="_blank">
+    <img src="Maria.png" 
+         alt="Story Image" 
+         style="width:100%; height:400px; object-fit:cover; object-position:left top;">
+  </a>
+</div>
+
+
+
+    </div>
+
+    <div class="count" id="countBlock">Found: ${foundCount}/10</div>
+
+    <button class="btn primary" id="submitAdverbs" style="margin-top:15px">Submit</button>
+
+    <div class="feedback" aria-live="polite"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  const storyBlock = document.getElementById('storyBlock');
+  const tokens = story.split(/\s+/);
+
+  tokens.forEach((tok,i)=>{
+    const span = document.createElement('span');
+    span.className = 'w';
+    span.dataset.idx = i;
+    span.style.marginRight = '6px';
+    span.textContent = tok;
+    span.addEventListener('click', ()=> handleStoryClick(span, tok));
+    storyBlock.appendChild(span);
+  });
+
+  document.getElementById('countBlock').textContent = `Found: ${foundCount}/10`;
+
+  // SUBMIT BUTTON
+  document.getElementById('submitAdverbs').addEventListener('click', ()=>{
+
+    if(foundCount < 10){
+      playWrong();
+      showFeedback(`You have found only ${foundCount}/10 adverbs. Keep searching.`, false);
+      return;
+    }
+
+    // All 10 found = proceed
+    playRight();
+    showFeedback("Excellent! Moving to the next quiz...", true);
+
+    setTimeout(()=> nextQ(200), 500);
+  });
+}
+
+
+function handleStoryClick(span, originalToken){
+  if(span.classList.contains('correct') || span.classList.contains('wrong')) return;
+
+  const w = normalizeWord(originalToken);
+
+  if(correctAdverbs.has(w)){
+    span.classList.add('correct');
+    foundCount++;
+    addScore(3);
+    playRight();
+    showFeedback('Correct', true);
+  } else {
+    span.classList.add('wrong');
+    playWrong();
+    showFeedback('Not an adverb', false);
+  }
+  
+  span.style.pointerEvents = 'none';
+  document.getElementById('countBlock').textContent = `Found: ${foundCount}/10`;
+  setMeta();
+}
+
+
+/* ---------------- Round 2: MCQ ---------------- */
+function renderMCQ(){
+  const q = mcq[state.qIndex];
+  const box = document.createElement('section'); box.className='qbox';
+  const opts = shuffle(q.opts);
+  box.innerHTML = `
+    <div class="qtext">${q.q}</div>
+    <div class="options" role="list">${opts.map(o=>`<button class="opt" role="listitem" data-val="${o}">${o}</button>`).join('')}</div>
+    <div class="feedback" aria-live="polite"></div>
+  `;
+  quizArea.appendChild(box);
+
+  box.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const chosen = btn.dataset.val;
+      box.querySelectorAll('.opt').forEach(x=>x.classList.add('disabled'));
+      if(normalizeAnswer(chosen) === normalizeAnswer(q.a)){
+        btn.classList.add('correct');
+        addScore(4); // 4 pts per MCQ
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        btn.classList.add('wrong');
+        const correctBtn = [...box.querySelectorAll('.opt')].find(x=>normalizeAnswer(x.dataset.val) === normalizeAnswer(q.a));
+        if(correctBtn) correctBtn.classList.add('correct');
+        playWrong();
+        showFeedback('Wrong — ' + q.a, false);
+      }
+      nextQ();
+    }, {once:true});
+  });
+}
+
+/* ---------------- Round 3: Matching (single UI, all pairs) ---------------- */
+function renderMatch(){
+  // ensure perRound[2] reset on first render of match round
+  if(state.rIndex === 2 && state.qIndex === 0) state.perRound[2] = 0;
+
+  const shuffledRight = shuffle(matchRight.slice());
+  const box = document.createElement('section'); box.className='qbox';
+  box.innerHTML = `
+    <div class="qtext">Match each left sentence with the correct ending. Click left item, then click the right ending.</div>
+    <div class="match-wrap" role="group" aria-label="Matching area">
+      <div class="match-col" id="leftCol">${matchLeft.map((l,i)=>`<div class="match-item left-item" data-index="${i}" tabindex="0">${l}</div>`).join('')}</div>
+      <div class="match-col" id="rightCol">${shuffledRight.map((r,i)=>`<div class="match-item right-item" data-val="${encodeURIComponent(r)}" tabindex="0">${r}</div>`).join('')}</div>
+    </div>
+    <div class="feedback" aria-live="polite"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const leftItems = [...box.querySelectorAll('.left-item')];
+  const rightItems = [...box.querySelectorAll('.right-item')];
+  let selectedLeft = null, matchedCount = 0;
+
+  leftItems.forEach(li=>{
+    li.addEventListener('click', ()=> selectLeft(li));
+    li.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') selectLeft(li); });
+  });
+  rightItems.forEach(ri=>{
+    ri.addEventListener('click', ()=> selectRight(ri));
+    ri.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') selectRight(ri); });
+  });
+
+  function selectLeft(li){
+    if(li.classList.contains('matched')) return;
+    leftItems.forEach(x=>x.classList.remove('selected'));
+    li.classList.add('selected');
+    selectedLeft = Number(li.dataset.index);
+    showFeedback('Select the matching right-side ending.', true);
+  }
+
+  function selectRight(ri){
+    if(ri.classList.contains('matched')) return;
+    if(selectedLeft === null){
+      showFeedback('Select a left item first.', false);
+      playWrong();
+      return;
+    }
+    const chosen = decodeURIComponent(ri.dataset.val);
+    const correct = matchMap[selectedLeft];
+    if(normalizeAnswer(chosen) === normalizeAnswer(correct)){
+      const leftEl = leftItems.find(x=>Number(x.dataset.index) === selectedLeft);
+      leftEl.classList.add('matched');
+      ri.classList.add('matched');
+      matchedCount++;
+      addScore(4); // add smaller increments so total adds to 20 across 5 pairs: 5 pairs × 4 = 20
+      playRight();
+      showFeedback('Correct pair!', true);
+    } else {
+      ri.classList.add('wrong');
+      playWrong();
+      showFeedback('Wrong pairing — try again.', false);
+      setTimeout(()=> ri.classList.remove('wrong'), 700);
+    }
+    selectedLeft = null;
+    leftItems.forEach(x=>x.classList.remove('selected'));
+    if(matchedCount >= matchLeft.length) {
+      // ensure total for match round is exactly 20 (it will be: 5*4)
+      nextQ(900);
+    }
+  }
+}
+
+/* ---------------- Round 4: Sentence Builder ---------------- */
+function renderBuild(){
+  const q = builders[state.qIndex];
+  // reset perRound slot first time entering build round
+  if(state.rIndex === 3 && state.qIndex === 0) state.perRound[3] = 0;
+
+  const chunks = shuffle(q.chunks.slice());
+  const box = document.createElement('section'); box.className='qbox';
+  box.innerHTML = `
+    <div class="qtext">Build a correct sentence using the words below. Click words in the correct order.</div>
+    <div class="word-bank" role="list">${chunks.map(c=>`<div class="word" data-c="${c}" tabindex="0">${c}</div>`).join('')}</div>
+    <div class="built" id="builtArea" aria-live="polite"></div>
+    <div style="margin-top:10px"><button id="undo" class="btn">Undo</button> <button id="clear" class="btn">Clear</button></div>
+    <div class="feedback" aria-live="polite"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const built = [];
+  const bankEls = [...box.querySelectorAll('.word')];
+  const builtArea = document.getElementById('builtArea');
+
+  function refresh(){
+    // render built words with visible spacing
+    builtArea.innerHTML = built.map(x=>`<div class="word used">${x}</div>`).join(' ');
+    if(built.length === q.chunks.length){
+      const attempt = built.join(' ');
+      const ok = [ normalizeAnswer(q.target) ];
+      if(q.targetAlt) ok.push(normalizeAnswer(q.targetAlt));
+      if(ok.includes(normalizeAnswer(attempt))){
+        addScore(6); // 6 points per builder = 5*6 = 30
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        playWrong();
+        showFeedback('Wrong — expected: ' + (q.targetAlt? `${q.target} OR ${q.targetAlt}` : q.target), false);
+      }
+      bankEls.forEach(b=>b.classList.add('used'));
+      nextQ();
+    }
+  }
+
+  bankEls.forEach(el=>{
+    el.addEventListener('click', ()=> selectWord(el));
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') selectWord(el); });
+  });
+
+  document.getElementById('undo').addEventListener('click', ()=>{
+    const last = built.pop();
+    if(last){
+      const btn = bankEls.find(b=>b.dataset.c === last && b.classList.contains('used'));
+      if(btn) btn.classList.remove('used');
+      refresh();
+    }
+  });
+
+  document.getElementById('clear').addEventListener('click', ()=>{
+    built.length = 0;
+    bankEls.forEach(b=>b.classList.remove('used'));
+    refresh();
+  });
+
+  function selectWord(el){
+    if(el.classList.contains('used')) return;
+    built.push(el.dataset.c);
+    el.classList.add('used');
+    playRight();
+    refresh();
+  }
+}
+
+/* ---------------- Final screen ---------------- */
+function showFinal(){
+  quizArea.innerHTML = '';
+  const box = document.createElement('section'); box.className='qbox';
+  box.innerHTML = `
+    <div class="final-score">${state.score}/100</div>
+    <div style="text-align:center;color:#cfe9ff;margin-bottom:12px">Score breakdown</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Find: ${state.perRound[0]||0} / 30</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">MCQ: ${state.perRound[1]||0} / 20</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Match: ${state.perRound[2]||0} / 20</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Build: ${state.perRound[3]||0} / 30</div>
+    </div>
+    <div class="actions" style="margin-top:14px" id="finalActions">
+      <button class="btn primary" id="retry">Try Again</button>
+      <a class="btn" href="index.html">Back to Home</a>
+          </div>
+  `;
+  quizArea.appendChild(box);
+
+  document.getElementById('retry').addEventListener('click', ()=>{
+    resetAll(); render();
+  });
+
+  if(state.score >= 75){
+    try{ fwAudio.currentTime = 0; fwAudio.play().catch(()=>{}); }catch(e){}
+    runFireworks();
+    setTimeout(()=> {
+      const next = document.createElement('a');
+      next.textContent = 'Next Topic';
+      next.href = 'next_topic.html';
+      next.className = 'btn primary';
+      document.getElementById('finalActions').appendChild(next);
+    }, 900);
+  }
+}
+
+/* ---------------- Fireworks ---------------- */
+function runFireworks(){
+  const c = fwCanvas; c.style.display='block'; c.width = innerWidth; c.height = innerHeight;
+  const ctx = c.getContext('2d'); const parts = [];
+  function burst(x,y){
+    const cols = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    for(let i=0;i<60;i++) parts.push({x,y,vx:(Math.random()-0.5)*8,vy:(Math.random()-1.5)*8,life:60+Math.random()*40,c:cols[i%cols.length],s:2+Math.random()*3});
+  }
+  for(let i=0;i<6;i++) burst(Math.random()*innerWidth, Math.random()*innerHeight*0.6);
+  (function step(){
+    ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.fillRect(0,0,c.width,c.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life--;
+      ctx.globalAlpha = Math.max(0,p.life/100); ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+    if(parts.length) requestAnimationFrame(step); else setTimeout(()=>{ c.style.display='none'; ctx.clearRect(0,0,c.width,c.height); },400);
+  })();
+}
+
+/* ---------------- Utilities & Controls ---------------- */
+function showFeedback(msg, ok){
+  const fb = document.querySelector('.feedback');
+  if(!fb) return;
+  fb.textContent = msg;
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+}
+function resetAll(){
+  state = { roundKeys:['find','mcq','match','build'], rIndex:0, qIndex:0, score:0, perRound:[0,0,0,0] };
+  foundCount = 0;
+  scoreLabel.textContent = 'Score: 0';
+  roundLabel.textContent = 'Round 1 — Find Adverbs (0/10)';
+  showFeedback('', true);
+}
+
+/* ---------------- Skip / Retry / Back ---------------- */
+skipBtn.addEventListener('click', ()=> { playRight(); nextQ(120); });
+retryBtn.addEventListener('click', ()=> { resetAll(); render(); playRight(); });
+backToLesson.addEventListener('click', ()=> { window.location.href = 'lesson_adverbs.html'; });
+
+/* ---------------- Particles decor ---------------- */
+(function initParticles(){
+  const pWrap = document.getElementById('particles'); const count = 36;
+  for(let i=0;i<count;i++){ const s=document.createElement('span'); s.style.left = Math.random()*100 + '%'; s.style.top = Math.random()*100 + '%'; const size = 2 + Math.random()*3; s.style.width=size+'px'; s.style.height=size+'px'; s.style.opacity = 0.3*Math.random(); pWrap.appendChild(s); }
+})();
+
+/* ---------------- Init ---------------- */
+resetAll();
+render();
+</script>
+</body>
+</html>

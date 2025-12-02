@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Action Verbs Quiz — Keynote Grammar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1:#061028;
+      --glass: rgba(255,255,255,0.06);
+      --accent:#ffd24d;
+      --muted:#cde7ff;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#07122a,#0b2750);color:#eef9ff}
+    #animated-bg{position:fixed;inset:0;background:linear-gradient(-45deg,#07122a,#0b2750,#103a7a,#2b6cf6);background-size:400% 400%;animation:shift 18s linear infinite;z-index:-2}
+    @keyframes shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .glass{backdrop-filter:blur(14px) saturate(140%);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:28px;box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+    h1{font-weight:800;font-size:2rem;margin-bottom:8px;color:var(--accent)}
+    .muted{color:var(--muted)}
+    .question-area{min-height:220px}
+    .btn{cursor:pointer;border-radius:12px;padding:12px 18px;border:none;font-weight:700}
+    .btn-primary{background:#ffd24d;color:#001f2e}
+    .btn-ghost{background:rgba(255,255,255,0.06);color:#eaf6ff}
+    .mcq-btn{display:block;width:100%;text-align:left;padding:12px;border-radius:12px;margin-bottom:10px;background:#ffffff10;border:1px solid rgba(255,255,255,0.04);font-weight:700}
+    .mcq-btn:hover{transform:translateY(-3px)}
+    .correct{background:linear-gradient(90deg,#7df9a6,#4be08f)!important;color:#002218!important}
+    .wrong{background:linear-gradient(90deg,#ff7f7f,#ff5b5b)!important;color:#fff!important}
+    .drop-target{display:inline-block;padding:8px 16px;border:2px dashed rgba(255,255,255,0.14);border-radius:10px;min-width:120px;background:rgba(255,255,255,0.02)}
+    .drag-option{display:inline-block;margin:6px;padding:8px 12px;border-radius:10px;background:#2563eb;color:#fff;cursor:grab}
+    .token{display:inline-block;margin:6px;padding:8px 12px;border-radius:999px;background:var(--accent);color:#000;font-weight:800;cursor:pointer}
+
+    /* Yellow glow and black text when typing */
+.type-active {
+  background: #ffeb3b !important;      /* bright yellow */
+  color: #000 !important;               /* black text */
+  border: 2px solid #ffe100 !important; /* bold yellow border */
+  box-shadow: 0 0 10px #ffeb3b;         /* glow effect */
+}
+
+    /* fireworks canvas */
+    canvas#fw{position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999}
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:60}
+    .modal .glass{max-width:420px;text-align:center}
+    input[type=text]{width:100%;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:#001f2e;font-weight:700}
+  </style>
+</head>
+<body>
+  <!-- Reference to uploaded PDF for your records (developer instruction) -->
+  <!-- Source PDF path: /mnt/data/Keynote Grammar - final.pdf -->
+
+  <div id="animated-bg" aria-hidden="true"></div>
+  <canvas id="fw"></canvas>
+
+  <main class="max-w-4xl mx-auto mt-12 glass">
+    <header class="flex items-center justify-between mb-4">
+      <div>
+        <h1>Action Verbs Challenge</h1>
+        <div class="muted">Identify and practise action verbs — sounds & fireworks enabled</div>
+      </div>
+      <div style="text-align:right">
+        <div id="progressText" class="muted">Q 1 / 15</div>
+        <div id="scoreText" style="font-weight:900;color:var(--accent)">Score: 0 / 100</div>
+      </div>
+    </header>
+
+    <section id="quiz" class="question-area">
+      <div id="question-area" class="mb-6"></div>
+      <div id="controls" class="flex gap-3">
+        <button id="startBtn" class="btn btn-primary">Start Quiz</button>
+        <button id="nextBtn" class="btn btn-ghost hidden">Check & Next</button>
+        <button id="retryBtn" class="btn btn-ghost hidden">Try Again</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- simple modal for messages -->
+  <div id="modal" class="modal" style="display:none">
+    <div class="glass">
+      <p id="modalText" style="color:#002218;font-weight:700;font-size:1.05rem;margin-bottom:12px"></p>
+      <button id="modalOk" class="btn btn-primary">OK</button>
+    </div>
+  </div>
+
+<script>
+/* ========= Audio assets (files must be in same folder as this HTML) ========= */
+const ASSETS = {
+  click: 'bubble.mp3',
+  correct: 'rightclick.mp3',
+  wrong: 'wrongclick.mp3',
+  fire: 'fireworks.mp3'
+};
+
+// create audio objects
+const AUDIO = {
+  click: new Audio(ASSETS.click),
+  correct: new Audio(ASSETS.correct),
+  wrong: new Audio(ASSETS.wrong),
+  fire: new Audio(ASSETS.fire)
+};
+
+// safe play wrapper (browsers often require user gesture)
+function safePlay(audio){
+  try{ audio.currentTime = 0; audio.play().catch(()=>{}); } catch(e){}
+}
+
+/* play click on every click-able control automatically */
+function attachClickSound(element){
+  element.addEventListener('click', ()=> safePlay(AUDIO.click));
+}
+
+/* ========= Questions dataset =========
+   Total 15 items in this file (you can expand to 20 later).
+   Points: MCQ 5pt each, Type items are 6pt each to total 50+30+20 = 100.
+*/
+const QUESTIONS = [
+  // 10 MCQ (50 points)
+  {type:'mcq', text:"Which is an action verb?", options:["Run","Happy","Blue","Quickly"], answer:"Run", points:5},
+  {type:'mcq', text:"Identify the action verb: The dog barked loudly.", options:["dog","barked","loudly","The"], answer:"barked", points:5},
+  {type:'mcq', text:"Which shows mental action?", options:["Think","Tall","Book","Green"], answer:"Think", points:5},
+  {type:'mcq', text:"Find the action verb: She danced gracefully.", options:["She","danced","gracefully","None"], answer:"danced", points:5},
+  {type:'mcq', text:"Which word is an action verb?", options:["Sleep","Quick","Smart","Tall"], answer:"Sleep", points:5},
+  {type:'mcq', text:"Choose the correct verb: The boy ____ the ball.", options:["kicked","happy","blue","slow"], answer:"kicked", points:5},
+  {type:'mcq', text:"Which verb shows a physical action?", options:["Eat","Soft","Bright","Joy"], answer:"Eat", points:5},
+  {type:'mcq', text:"Identify the verb: They swim in the pool.", options:["They","swim","pool","in"], answer:"swim", points:5},
+  {type:'mcq', text:"Which is not an action verb?", options:["Run","Jump","Walk","Is"], answer:"Is", points:5},
+  {type:'mcq', text:"Choose the correct: The birds ____ in the sky.", options:["fly","soft","blue","tall"], answer:"fly", points:5},
+
+  // 5 Type items (30 points total; 6pt each)
+{type:'type', text:"The children played in the garden.", answer:"played", alt:["play"], points:6},
+{type:'type', text:"He painted a beautiful picture.", answer:"painted", alt:["paint"], points:6},
+{type:'type', text:"We built a sandcastle.", answer:"built", alt:["build"], points:6},
+{type:'type', text:"She wrote a letter to her friend.", answer:"wrote", alt:["write"], points:6},
+{type:'type', text:"They cleaned the classroom.", answer:"cleaned", alt:["clean"], points:6},
+
+  // 5 Drag gap-fill (20 points total; 4pt each) - here, we implement interactive drag & drop
+  {type:'drag', text:"The teacher [BLANK] the students a story.", choices:["told","prepared","sprinted","drew","soared"], answer:"told", points:4},
+  {type:'drag', text:"The cook [BLANK] a tasty meal.", choices:["prepared","told","drew","sprinted","soared"], answer:"prepared", points:4},
+  {type:'drag', text:"The runner [BLANK] across the field.", choices:["sprinted","prepared","told","drew","soared"], answer:"sprinted", points:4},
+  {type:'drag', text:"The artist [BLANK] a lovely portrait.", choices:["drew","prepared","told","sprinted","soared"], answer:"drew", points:4},
+  {type:'drag', text:"The bird [BLANK] high above the trees.", choices:["soared","sprinted","drew","prepared","told"], answer:"soared", points:4}
+];
+
+let qIndex = 0;
+let score = 0;
+
+/* DOM refs */
+const questionArea = document.getElementById('question-area');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const startBtn = document.getElementById('startBtn');
+const nextBtn = document.getElementById('nextBtn');
+const retryBtn = document.getElementById('retryBtn');
+const modal = document.getElementById('modal');
+const modalText = document.getElementById('modalText');
+const modalOk = document.getElementById('modalOk');
+const fwCanvas = document.getElementById('fw');
+
+/* attach click sound to top-level controls */
+attachClickSound(startBtn);
+attachClickSound(nextBtn);
+attachClickSound(retryBtn);
+attachClickSound(modalOk);
+
+/* update UI status */
+function updateUI(){
+  progressText.textContent = `Q ${Math.min(qIndex+1, QUESTIONS.length)} / ${QUESTIONS.length}`;
+  scoreText.textContent = `Score: ${score} / 100`;
+}
+
+/* show modal */
+function showModal(msg){
+  modalText.textContent = msg;
+  modal.style.display = 'flex';
+}
+/* hide modal */
+function hideModal(){ modal.style.display = 'none'; }
+
+/* Start quiz */
+startBtn.addEventListener('click', ()=> {
+  safePlay(AUDIO.click);
+  qIndex = 0; score = 0; updateUI();
+  startBtn.style.display = 'none';
+  retryBtn.style.display = 'none';
+  renderQuestion();
+});
+
+/* retry action */
+retryBtn.addEventListener('click', ()=> {
+  safePlay(AUDIO.click);
+  qIndex = 0; score = 0; updateUI();
+  retryBtn.style.display = 'none';
+  startBtn.style.display = 'none';
+  renderQuestion();
+});
+
+/* modal OK */
+modalOk.addEventListener('click', ()=> { safePlay(AUDIO.click); hideModal(); });
+
+/* render the current question */
+function renderQuestion(){
+  updateUI();
+  questionArea.innerHTML = '';
+  nextBtn.classList.add('hidden');
+
+  if(qIndex >= QUESTIONS.length){
+    return showResult();
+  }
+
+  const q = QUESTIONS[qIndex];
+  safePlay(AUDIO.click);
+
+  if(q.type === 'mcq'){
+    renderMCQ(q);
+  } else if(q.type === 'type'){
+    renderType(q);
+  } else if(q.type === 'drag'){
+    renderDrag(q);
+  }
+}
+
+/* MCQ renderer */
+function renderMCQ(q){
+  const container = document.createElement('div');
+  const title = document.createElement('h2');
+  title.style.fontSize = '1.25rem';
+  title.style.marginBottom = '14px';
+  title.textContent = q.text;
+  container.appendChild(title);
+
+  // shuffle options
+  const opts = q.options.slice().sort(()=>Math.random()-0.5);
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mcq-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', ()=>{
+      // one-click only
+      Array.from(container.querySelectorAll('button')).forEach(b => b.disabled = true);
+      safePlay(AUDIO.click); // click on selection
+      if(normalize(opt) === normalize(q.answer)){
+        btn.classList.add('correct');
+        safePlay(AUDIO.correct);
+        score += q.points;
+        showTransientMessage(`✅ Correct +${q.points}`, true);
+      } else {
+        btn.classList.add('wrong');
+        safePlay(AUDIO.wrong);
+        // reveal correct
+        Array.from(container.querySelectorAll('button')).find(b => normalize(b.textContent) === normalize(q.answer))?.classList.add('correct');
+        showTransientMessage(`❌ Wrong — correct: ${q.answer}`, false);
+      }
+      updateUI();
+      setTimeout(()=>{ qIndex++; renderQuestion(); }, 900);
+    }, {once:true});
+    attachClickSound(btn); // click sound when pressing choices too
+    container.appendChild(btn);
+  });
+
+  questionArea.appendChild(container);
+}
+
+/* Type renderer (Enter to submit) */
+function renderType(q){
+  const title = document.createElement('h2');
+  title.style.fontSize = '1.1rem';
+  title.style.marginBottom = '12px';
+  title.textContent = 'Find the action verb in the sentence and type it below.';
+  const sentence = document.createElement('p');
+  sentence.textContent = `"${q.text}"`;
+  sentence.style.marginBottom = '12px';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Type the action verb and press Enter';
+  input.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      safePlay(AUDIO.click);
+      const val = input.value.trim();
+      if(!val){
+        showModal('Please type an answer before pressing Enter.');
+        return;
+      }
+      // evaluate
+    if (
+  normalize(val) === normalize(q.answer) ||
+  (q.alt && q.alt.some(a => normalize(val) === normalize(a)))
+)
+
+{
+        safePlay(AUDIO.correct);
+        score += q.points;
+        showTransientMessage(`✅ Correct +${q.points}`, true);
+      } else {
+        safePlay(AUDIO.wrong);
+        showTransientMessage(`❌ Wrong — correct: ${q.answer}`, false);
+      }
+      updateUI();
+      input.disabled = true;
+      setTimeout(()=>{ qIndex++; renderQuestion(); }, 900);
+    }
+  });
+  attachClickSound(input);
+
+  questionArea.appendChild(title);
+  questionArea.appendChild(sentence);
+  questionArea.appendChild(input);
+  input.focus();
+}
+
+/* Drag renderer */
+function renderDrag(q){
+  const title = document.createElement('h2');
+  title.style.fontSize = '1.1rem';
+  title.style.marginBottom = '10px';
+  title.textContent = 'Drag or click the correct verb into the blank.';
+  const p = document.createElement('p');
+  const parts = q.text.split('[BLANK]');
+  p.innerHTML = `${escapeHtml(parts[0])}<span id="dropArea" class="drop-target">Drop here</span>${escapeHtml(parts[1] || '')}`;
+  p.style.marginBottom = '14px';
+
+  const bankWrap = document.createElement('div');
+  bankWrap.style.marginTop = '8px';
+  bankWrap.style.display = 'flex';
+  bankWrap.style.flexWrap = 'wrap';
+  bankWrap.style.gap = '10px';
+
+  // shuffle choices
+  const choices = q.choices.slice().sort(()=>Math.random()-0.5);
+  choices.forEach(ch => {
+    const chip = document.createElement('div');
+    chip.className = 'drag-option';
+    chip.textContent = ch;
+    chip.draggable = true;
+    chip.id = 'opt-' + Math.random().toString(36).slice(2,9);
+
+    // click to choose (for non-drag users)
+    chip.addEventListener('click', ()=>{
+      safePlay(AUDIO.click);
+      evaluateDragChoice(chip.textContent);
+    });
+
+    chip.addEventListener('dragstart', (e)=>{
+      safePlay(AUDIO.click);
+      e.dataTransfer.setData('text/plain', chip.id);
+    });
+
+    bankWrap.appendChild(chip);
+  });
+
+  questionArea.appendChild(title);
+  questionArea.appendChild(p);
+  questionArea.appendChild(bankWrap);
+
+  // drag events
+  const dropArea = document.getElementById('dropArea');
+  dropArea.addEventListener('dragover', (e)=>{ e.preventDefault(); dropArea.classList.add('hover'); });
+  dropArea.addEventListener('dragleave', ()=> dropArea.classList.remove('hover'));
+  dropArea.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    dropArea.classList.remove('hover');
+    const id = e.dataTransfer.getData('text/plain');
+    const el = document.getElementById(id);
+    if(!el) return;
+    dropArea.textContent = el.textContent;
+    dropArea.dataset.choice = el.textContent;
+    // auto evaluate on drop
+    evaluateDragChoice(el.textContent);
+  });
+}
+
+/* evaluate drag or click choice */
+function evaluateDragChoice(choice){
+  const q = QUESTIONS[qIndex];
+  if(normalize(choice) === normalize(q.answer)){
+    safePlay(AUDIO.correct);
+    score += q.points;
+    showTransientMessage(`✅ Correct +${q.points}`, true);
+  } else {
+    safePlay(AUDIO.wrong);
+    showTransientMessage(`❌ Wrong — correct: ${q.answer}`, false);
+  }
+  updateUI();
+  setTimeout(()=>{ qIndex++; renderQuestion(); }, 900);
+}
+
+/* transient feedback message (replaces modal for quick feedback) */
+function showTransientMessage(msg, ok){
+  // small temporary overlay in the center of question area
+  const el = document.createElement('div');
+  el.style.position = 'fixed';
+  el.style.left = '50%';
+  el.style.top = '50%';
+  el.style.transform = 'translate(-50%,-50%)';
+  el.style.padding = '14px 18px';
+  el.style.borderRadius = '12px';
+  el.style.zIndex = 80;
+  el.style.fontWeight = 800;
+  el.style.background = ok ? 'linear-gradient(90deg,#7DF9A6,#4be08f)' : 'linear-gradient(90deg,#ff7f7f,#ff5b5b)';
+  el.style.color = ok ? '#002218' : '#fff';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 900);
+}
+
+/* final result screen with fireworks on pass >= 75 */
+function showResult(){
+  questionArea.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.textAlign = 'center';
+  wrap.style.padding = '18px';
+  wrap.innerHTML = `<h2 style="font-size:1.6rem;font-weight:800;margin-bottom:8px">${score >= 75 ? '🎆 Well done!' : 'Quiz complete'}</h2>
+                    <p style="font-size:1.25rem;font-weight:700;margin-bottom:10px">Your score: ${score} / 100</p>
+                    <p class="muted" style="margin-bottom:14px">${score >= 75 ? 'You passed — great work!' : 'Review and try again to reach 75+'}</p>`;
+  const actions = document.createElement('div');
+  actions.style.display = 'flex';
+  actions.style.justifyContent = 'center';
+  actions.style.gap = '10px';
+
+  const tryBtn = document.createElement('button');
+  tryBtn.className = 'btn btn-primary';
+  tryBtn.textContent = 'Try Again';
+  tryBtn.addEventListener('click', ()=> {
+    safePlay(AUDIO.click);
+    qIndex = 0; score = 0; updateUI(); renderQuestion();
+  });
+  attachClickSound(tryBtn);
+
+  const nextBtnLocal = document.createElement('button');
+  nextBtnLocal.className = 'btn btn-ghost';
+  nextBtnLocal.textContent = 'Next Topic';
+  nextBtnLocal.addEventListener('click', ()=> {
+    safePlay(AUDIO.click);
+    // replace with real next link
+    window.location.href = 'lesson8_video.html';
+  });
+  attachClickSound(nextBtnLocal);
+
+  actions.appendChild(tryBtn);
+  actions.appendChild(nextBtnLocal);
+  wrap.appendChild(actions);
+  questionArea.appendChild(wrap);
+
+  if(score >= 75){
+    safePlay(AUDIO.fire);
+    runFireworks();
+  } else {
+    // show retry button visible as well
+    retryBtn.style.display = 'inline-block';
+  }
+}
+
+/* fireworks canvas (particle burst) */
+function runFireworks(){
+  const c = fwCanvas;
+  c.style.display = 'block';
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  const ctx = c.getContext('2d');
+  const particles = [];
+
+  function burst(x,y){
+    const hue = Math.floor(Math.random()*360);
+    for(let i=0;i<80;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*(6 + Math.random()*6),
+        vy:(Math.random()-0.7)*(6 + Math.random()*6),
+        life:60 + Math.random()*60,
+        color:`hsl(${hue + Math.floor(Math.random()*30)-15},90%,${50 + Math.random()*20}%)`,
+        size:1 + Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<6;i++){
+    burst(Math.random()*c.width, Math.random()*c.height*0.6);
+  }
+
+  function frame(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,c.width,c.height);
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life / 100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    if(particles.length>0) requestAnimationFrame(frame);
+    else setTimeout(()=>{ c.style.display='none'; ctx.clearRect(0,0,c.width,c.height); }, 500);
+  }
+  frame();
+}
+
+/* utility functions */
+function normalize(s){ return String(s||'').trim().toLowerCase().replace(/[.,!?]+$/,''); }
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* expose click sound globally for programmatic clicks */
+function clickAndPlay(elem){
+  safePlay(AUDIO.click);
+  elem.click();
+}
+
+/* initial UI */
+updateUI();
+questionArea.innerHTML = `<div style="padding:18px"><p style="font-weight:700">Press Start to begin — sounds enabled for every click.</p></div>`;
+
+/* keyboard support: Enter should submit when a text input is focused (handled in renderType), otherwise nothing */
+window.addEventListener('keydown', (e)=>{
+  // space/enter on focused button triggers its click (native); keep consistent
+});
+
+/* expose for debugging */
+window.Q = { QUESTIONS };
+
+</script>
+</body>
+</html>

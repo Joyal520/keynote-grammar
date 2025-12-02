@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Simple Past Tense – Interactive Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#081029; --bg2:#0b2b4a;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --glass: rgba(255,255,255,0.06);
+  --card: rgba(255,255,255,0.03);
+  --ok:#2ecc71; --bad:#e74c3c;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+  min-height:100vh;
+  padding:26px;
+  display:flex;
+  justify-content:center;
+}
+
+/* BLOBS */
+.blob{
+  position:fixed;
+  width:380px;height:380px;
+  border-radius:40%;
+  filter:blur(90px);
+  opacity:.33;
+  animation:blobMove 12s infinite alternate ease-in-out;
+}
+.blob:nth-child(1){background:#ff9f43;left:-8%;top:10%;}
+.blob:nth-child(2){background:#6bcff6;left:70%;top:20%;animation-duration:16s;}
+.blob:nth-child(3){background:#a29bfe;left:30%;top:70%;animation-duration:20s;}
+
+@keyframes blobMove{
+  0%{transform:translate(0,0);}
+  100%{transform:translate(40px,-60px);}
+}
+
+.container{
+  width:100%;max-width:980px;z-index:2;
+}
+.card{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:22px;
+  backdrop-filter:blur(10px);
+}
+
+/* header */
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;
+}
+.nav{
+  background:var(--glass);
+  padding:8px 12px;
+  border-radius:10px;
+}
+.nav a{
+  color:var(--accent);
+  font-weight:600;
+  margin-right:10px;
+  text-decoration:none;
+}
+
+/* text */
+h1{text-align:center;color:var(--accent);margin-bottom:6px}
+.lead{text-align:center;color:var(--muted);margin-bottom:14px}
+
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.score{background:rgba(255,255,255,0.1);padding:6px 10px;border-radius:20px;font-weight:700;color:var(--accent)}
+
+.question-box{
+  background:rgba(255,255,255,0.02);
+  padding:16px;border-radius:14px;margin-bottom:12px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.qtext{margin-bottom:12px;font-size:1.1rem}
+
+.options{display:grid;gap:10px}
+.opt{
+  padding:12px;border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  cursor:pointer;font-weight:700;
+  transition:.2s;
+}
+.opt:hover{transform:translateY(-3px);}
+.opt.correct{background:var(--ok) !important;color:#001f3f}
+.opt.wrong{background:var(--bad) !important;color:#fff}
+.opt.disabled{pointer-events:none;opacity:.6}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{
+  flex:1;min-width:240px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:10px;padding:12px;
+}
+.match-item{
+  background:rgba(255,255,255,0.06);
+  padding:10px;border-radius:10px;
+  margin-bottom:8px;cursor:pointer;font-weight:700;
+}
+.match-item.selected{
+  outline:3px solid rgba(255,210,77,0.35);
+}
+.match-item.matched{
+  opacity:.6;pointer-events:none;
+  border-left:5px solid var(--accent);
+}
+
+/* drag blanks */
+.blank{
+  min-width:70px;
+  display:inline-block;
+  border-bottom:2px solid #fff;
+  text-align:center;
+  padding:4px;
+  margin:0 4px;
+}
+.drag-choices{
+  display:flex;flex-wrap:wrap;gap:10px;
+  background:rgba(255,255,255,0.04);
+  padding:12px;border-radius:10px;margin:12px 0;
+}
+.choice{
+  padding:8px 14px;
+  background:rgba(255,255,255,0.1);
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.word{
+  padding:8px 12px;
+  background:rgba(255,255,255,0.08);
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+}
+.word.used{opacity:.5;pointer-events:none}
+.built{min-height:44px;background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;display:flex;gap:8px;flex-wrap:wrap}
+
+.feedback{height:24px;margin-top:8px;font-weight:700}
+.feedback.correct{color:var(--ok)}
+.feedback.wrong{color:var(--bad)}
+
+.final-score{text-align:center;font-size:2.5rem;color:var(--accent);font-weight:800;margin-bottom:12px}
+.actions{text-align:center;margin-top:20px}
+.btn{
+  padding:12px 20px;border-radius:30px;
+  background:rgba(255,255,255,0.15);
+  font-weight:700;border:none;color:white;
+  cursor:pointer;margin:6px 8px;
+}
+.btn.primary{background:var(--accent);color:#001933}
+
+canvas#fwCanvas{
+  position:fixed;left:0;top:0;pointer-events:none;z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+
+<canvas id="fwCanvas" style="display:none"></canvas>
+<audio id="correctSound" src="rightclick.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="fwSound" src="fireworks.mp3" preload="auto"></audio>
+
+<div class="container">
+<div class="card">
+
+<div class="header">
+  <nav class="nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="topics.html">📘 Topics</a>
+  </nav>
+</div>
+
+<h1>Simple Past – Interactive Quiz</h1>
+<p class="lead">4 rounds • Auto-advance • Score out of 100 • Fireworks if ≥ 75</p>
+
+<div class="meta">
+  <div id="roundLabel">Round 1</div>
+  <div class="score" id="scoreLabel">Score: 0</div>
+</div>
+
+<div id="quizArea"></div>
+
+<div class="note" style="text-align:center;margin-top:12px;color:var(--muted)">
+Click answers or drag words. The quiz will move forward automatically.
+</div>
+
+</div>
+</div>
+
+<!-- ⭐⭐ PASTE THE QUIZ ENGINE RIGHT HERE ⭐⭐ -->
+<script>
+/* =========================
+   QUIZ DATA
+   ========================= */
+
+const quizData = {
+  /* ROUND 1 — MCQ (5) -> total 25 (5 each) */
+  mcq: [
+    { q:"Did she ___ her homework yesterday?", opts:["finished","finish","finishing"], a:"finish" },
+    { q:"They ___ to the park last Sunday.", opts:["go","goes","went"], a:"went" },
+    { q:"He did not ___ the movie.", opts:["like","liked","liking"], a:"like" },
+    { q:"Did you ___ the news?", opts:["hear","heard","hearing"], a:"hear" },
+    { q:"We ___ dinner early last night.", opts:["eat","ate","eaten"], a:"ate" }
+  ],
+
+  /* ROUND 2 — REGULAR OR IRREGULAR (10) -> total 20 (2 points each) */
+  regularity: [
+    
+    { word:"speak", a:"irregular" },
+    { word:"carry", a:"regular" },
+    { word:"jump", a:"regular" },
+    { word:"buy", a:"irregular" },
+    
+    { word:"teach", a:"irregular" },
+    { word:"enjoy", a:"regular" },
+    { word:"clean", a:"regular" },
+    { word:"cut", a:"irregular" },
+    { word:"open", a:"regular" },
+    { word:"clean", a:"regular" }
+  ],
+
+  /* ROUND 3 — NEGATIVE SENTENCES (5) -> total 25 (5 each) */
+  negative: [
+    { q:"Did she finish the project?", a:"She did not finish the project." },
+    { q:"Did they buy the new phone?", a:"They did not buy the new phone." },
+    { q:"Did he call you yesterday?", a:"He did not call me yesterday." },
+    { q:"Did the students understand the lesson?", a:"The students did not understand the lesson." },
+    { q:"Did you clean your room today?", a:"I did not clean my room today." }
+  ],
+
+  /* ROUND 4 — BUILDER (5) -> total 30 (6 each) */
+  builder: [
+    { chunks:["forgot","password","he","his"], a:"he forgot his password" },
+    { chunks:["went","they","beach","the","to"], a:"they went to the beach" },
+    { chunks:["yesterday","she","baked","cake","a"], a:"she baked a cake yesterday" },
+    { chunks:["saw","I","zoo","the","elephant","an","at"], a:"I saw an elephant at the zoo" },
+    { chunks:["did","not","homework","he","his","finish"], a:"he did not finish his homework" }
+  ]
+};
+
+/* =========================
+   AUDIO & FIREWORKS HELPERS
+   ========================= */
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const fwSound = document.getElementById('fwSound');
+const fwCanvas = document.getElementById('fwCanvas');
+
+function playCorrect(){ correctSound.currentTime = 0; correctSound.play().catch(()=>{}); }
+function playWrong(){ wrongSound.currentTime = 0; wrongSound.play().catch(()=>{}); }
+
+/* Fireworks (simple) */
+function runFireworks(){
+  const canvas = fwCanvas;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+
+  try{ fwSound.currentTime = 0; fwSound.play().catch(()=>{}); }catch(e){}
+
+  const particles = [];
+
+  function burst(x,y){
+    const cols = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    const count = 40 + Math.floor(Math.random()*30);
+    for(let i=0;i<count;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-0.7)*8,
+        life:60 + Math.random()*40,
+        color:cols[Math.floor(Math.random()*cols.length)],
+        size:2 + Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<5;i++){
+    burst(window.innerWidth*(0.2 + Math.random()*0.6), window.innerHeight*(0.2 + Math.random()*0.6));
+  }
+
+  function tick(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+
+    if(particles.length>0) requestAnimationFrame(tick);
+    else setTimeout(()=>{ canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); }, 400);
+  }
+  tick();
+}
+
+/* =========================
+   STATE & META
+   ========================= */
+let score = 0;
+let roundIndex = 0;
+let questionIndex = 0;
+
+const rounds = ["mcq","regularity","negative","builder"];
+const quizArea = document.getElementById('quizArea');
+
+function updateMeta(){
+  const roundName = rounds[roundIndex];
+  const totals = {
+    mcq: quizData.mcq.length,
+    regularity: quizData.regularity.length,
+    negative: quizData.negative.length,
+    builder: quizData.builder.length
+  };
+  let progressText = '';
+  if(roundName === 'regularity'){
+    progressText = `${questionIndex+1}/${totals[roundName]}`;
+  } else {
+    progressText = `${questionIndex+1}/${totals[roundName]}`;
+  }
+  document.getElementById('scoreLabel').textContent = 'Score: ' + score;
+  document.getElementById('roundLabel').textContent = `Round ${roundIndex+1} – ${roundName} (${progressText})`;
+}
+
+/* Safe next with delay to let sound/feedback show */
+function nextAfterDelay(delay = 700){
+  setTimeout(()=>{
+    // move to next question or round
+    const type = rounds[roundIndex];
+    const limit = quizData[type].length;
+    questionIndex++;
+    if(questionIndex >= limit){
+      roundIndex++;
+      questionIndex = 0;
+      if(roundIndex >= rounds.length){
+        showFinal();
+        return;
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* =========================
+   FINAL SCREEN
+   ========================= */
+function showFinal(){
+  quizArea.innerHTML = `
+    <div class="question-box final">
+      <div class="final-score">${score} / 100</div>
+      <div style="text-align:center;margin-top:10px;color:var(--muted)">
+        Quiz complete.
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+        <button class="btn primary" onclick="location.reload()">Try Again</button>
+        <a class="btn" href="topics.html">Back to Topics</a>
+      </div>
+    </div>
+  `;
+  if(score >= 75) runFireworks();
+}
+
+/* =========================
+   RENDER SWITCH
+   ========================= */
+function render(){
+  updateMeta();
+  const type = rounds[roundIndex];
+  const q = quizData[type][questionIndex];
+
+  if(type === 'mcq') renderMCQ(q);
+  else if(type === 'regularity') renderRegularity(q);
+  else if(type === 'negative') renderNegative(q);
+  else if(type === 'builder') renderBuilder(q);
+}
+
+/* =========================
+   TYPE 1 — MCQ
+   5 questions, 5 points each => total 25
+   ========================= */
+function renderMCQ(q){
+  const opts = shuffle(q.opts);
+  quizArea.innerHTML = `
+    <div class="question-box">
+      <div class="qtext">${escapeHtml(q.q)}</div>
+      <div class="options">
+        ${opts.map(o => `<div class="opt" data-val="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('')}
+      </div>
+      <div class="feedback"></div>
+    </div>
+  `;
+  document.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.opt').forEach(b=>b.classList.add('disabled'));
+      const val = btn.dataset.val;
+      if(normalize(val) === normalize(q.a)){
+        btn.classList.add('correct');
+        playCorrect();
+        score += 5;
+      } else {
+        btn.classList.add('wrong');
+        playWrong();
+        // reveal correct
+        const correctBtn = [...document.querySelectorAll('.opt')].find(x => normalize(x.dataset.val) === normalize(q.a));
+        if(correctBtn) correctBtn.classList.add('correct');
+      }
+      nextAfterDelay(700);
+    }, {once:true});
+  });
+}
+
+/* =========================
+   TYPE 2 — Regular vs Irregular
+   10 items, 2 points each => total 20
+   ========================= */
+function renderRegularity(q){
+  quizArea.innerHTML = `
+    <div class="question-box">
+      <div class="qtext">Is this verb <strong>REGULAR</strong> or <strong>IRREGULAR</strong>?<br><br><strong style="font-size:1.12rem">${escapeHtml(q.word)}</strong></div>
+      <div class="options">
+        <div class="opt" data-val="regular">Regular</div>
+        <div class="opt" data-val="irregular">Irregular</div>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  `;
+  document.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.opt').forEach(b=>b.classList.add('disabled'));
+      const val = btn.dataset.val;
+      if(val === q.a){
+        btn.classList.add('correct');
+        playCorrect();
+        score += 2;
+      } else {
+        btn.classList.add('wrong');
+        playWrong();
+        const correctBtn = [...document.querySelectorAll('.opt')].find(x => x.dataset.val === q.a);
+        if(correctBtn) correctBtn.classList.add('correct');
+      }
+      nextAfterDelay(500);
+    }, {once:true});
+  });
+}
+
+/* =========================
+   TYPE 3 — Negative sentence (input)
+   5 questions, 5 points each => total 25
+   ========================= */
+function renderNegative(q){
+  quizArea.innerHTML = `
+    <div class="question-box">
+      <div class="qtext">${escapeHtml(q.q)}</div>
+      <input id="negInput" placeholder="Type the full negative sentence" style="width:100%;padding:10px;border-radius:10px;border:none;margin-top:10px">
+      <div style="margin-top:10px">
+        <button class="btn primary" id="submitNeg">Submit</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  `;
+  const input = document.getElementById('negInput');
+  input.focus();
+  document.getElementById('submitNeg').addEventListener('click', ()=>{
+    const val = input.value.trim().toLowerCase();
+    if(!val) return;
+    if(normalize(val) === normalize(q.a)){
+      playCorrect();
+      score += 5;
+    } else {
+      playWrong();
+    }
+    nextAfterDelay(700);
+  }, {once:true});
+
+  // allow Enter
+  input.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      document.getElementById('submitNeg').click();
+    }
+  });
+}
+
+/* =========================
+   TYPE 4 — Sentence Builder
+   5 items, 6 points each => total 30
+   ========================= */
+function renderBuilder(q){
+  // shuffle chunks for display
+  const shuffled = shuffle(q.chunks.slice());
+  quizArea.innerHTML = `
+    <div class="question-box">
+      <div class="qtext">Arrange the words to form a correct sentence. Click words in order.</div>
+      <div class="word-bank">
+        ${shuffled.map(w=>`<div class="word" data-w="${escapeHtml(w)}">${escapeHtml(w)}</div>`).join('')}
+      </div>
+      <div class="built" id="built"></div>
+      <div style="margin-top:10px">
+        <button class="btn" id="undoBtn">Undo</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  `;
+  const built = [];
+  function refreshBuilt(){
+    // show built with clear spacing (blocks)
+    document.getElementById('built').innerHTML = built.map(b=>`<div class="word used">${escapeHtml(b)}</div>`).join(' ');
+  }
+
+  document.querySelectorAll('.word').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.classList.contains('used')) return;
+      btn.classList.add('used');
+      built.push(btn.dataset.w);
+      refreshBuilt();
+      if(built.length === q.chunks.length){
+        const attempt = built.join(' ').toLowerCase();
+        const expected = q.a.toLowerCase();
+        if(normalize(attempt) === normalize(expected)){
+          playCorrect();
+          score += 6;
+        } else {
+          playWrong();
+        }
+        nextAfterDelay(800);
+      }
+    });
+  });
+
+  document.getElementById('undoBtn').addEventListener('click', ()=>{
+    const last = built.pop();
+    if(last){
+      const btn = [...document.querySelectorAll('.word')].find(x => x.dataset.w === last);
+      if(btn) btn.classList.remove('used');
+    }
+    refreshBuilt();
+  });
+}
+
+/* =========================
+   UTILITIES
+   ========================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function normalize(s){
+  return String(s||'')
+    .trim()
+    .toLowerCase()
+    .replace(/[.,!?;:]+$/,'')        // remove ending punctuation
+    .replace(/\s+/g,' ')             // fix double spacing
+    .replace(/didn't/g,"did not")    // convert contractions
+    .replace(/can't/g,"cannot")
+    .replace(/won't/g,"will not")
+    .replace(/isn't/g,"is not")
+    .replace(/aren't/g,"are not")
+    .replace(/wasn't/g,"was not")
+    .replace(/weren't/g,"were not");
+}
+
+/* =========================
+   START
+   ========================= */
+render();
+
+</script>
+<!-- ⭐⭐ END OF QUIZ ENGINE ⭐⭐ -->
+
+</body>
+</html>

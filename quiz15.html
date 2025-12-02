@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Past Continuous — Interactive Quiz | Keynote Grammar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#001a33;       /* updated dark navy blue */
+  --bg2:#003d80;       /* updated deep blue */
+  --accent:#ffcc33;
+  --glass:rgba(255,255,255,0.08);
+  --text:#ffffff;
+}
+
+/* Background */
+body{
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  min-height:100vh;
+  padding:30px 15px;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* Blob animations */
+.blob{
+  position:absolute;
+  width:200px;
+  height:200px;
+  background:#ffcc33;
+  filter:blur(80px);
+  opacity:0.35;
+  border-radius:50%;
+  animation:move 12s infinite ease-in-out;
+  z-index:0;
+}
+.blob:nth-child(2){left:70%;top:10%;background:#ff66cc;animation-delay:2s;}
+.blob:nth-child(3){left:20%;top:60%;background:#66ffcc;animation-delay:4s;}
+
+@keyframes move{
+  0%{transform:translate(0,0);}
+  50%{transform:translate(40px,-60px);}
+  100%{transform:translate(0,0);}
+}
+
+/* Card */
+.card{
+  max-width:900px;
+  margin:auto;
+  background:var(--glass);
+  padding:25px;
+  border-radius:15px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  position:relative;
+  z-index:1;
+}
+
+/* Buttons */
+.option, .word, .btn{
+  padding:12px;
+  border-radius:10px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  transition:0.15s;
+}
+
+.option{
+  background:var(--accent);
+  color:#230046;
+  margin:8px 0;
+  display:block;
+  width:100%;
+  text-align:left;
+}
+.option:hover{transform:translateY(-3px);}
+
+.correct{background:#2ecc71 !important;color:#002400 !important;}
+.wrong{background:#e74c3c !important;color:white !important;}
+.disabled{opacity:0.6;pointer-events:none;}
+
+.word{
+  background:rgba(255,255,255,0.12);
+  display:inline-block;
+  margin:5px;
+  padding:8px 10px;
+  cursor:pointer;
+  border-radius:8px;
+}
+.word.used{opacity:0.5;pointer-events:none;}
+
+.built{
+  padding:10px;
+  min-height:40px;
+  background:rgba(255,255,255,0.06);
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.match-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.04);cursor:pointer;font-weight:600;border:1px solid transparent;}
+.match-item.selected{outline:3px solid rgba(255,204,51,0.18);background:rgba(255,204,51,0.06);}
+.match-item.matched{opacity:.5;pointer-events:none;background:rgba(0,0,0,0.15);border-left:4px solid var(--accent);}
+
+.feedback{
+  margin-top:8px;
+  font-weight:700;
+  min-height:24px;
+}
+
+.final-score{
+  font-size:5 rem;
+  font-weight:800;
+  color:var(--accent);
+  text-align:center;
+}
+.pill{
+  background:rgba(255,255,255,0.1);
+  padding:8px 15px;
+  border-radius:8px;
+  margin:5px;
+}
+.option{
+  background:var(--accent);
+  color:#230046;
+  margin:8px 0;
+  display:block;
+  width:100%;
+  text-align:left;
+}
+.word{
+  background:rgba(255,255,255,0.12);
+  display:inline-block;
+  margin:5px;
+  padding:8px 10px;
+  cursor:pointer;
+  border-radius:8px;
+  font-size:1.2rem;      /* <-- Add this */
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- blobs -->
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+
+<div class="card">
+  <h1 style="text-align:center;color:var(--accent);">Past Continuous — Interactive Quiz</h1>
+  <p style="text-align:center;color:#dbefff">4 Sections • Auto-advance • Instant Feedback</p>
+  <div id="quiz"></div>
+</div>
+
+<!-- Audio files (place these mp3 files beside this HTML) -->
+<audio id="snd-right" src="rightclick.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="snd-click" src="bubble.mp3" preload="auto"></audio>
+<audio id="snd-fire" src="fireworks.mp3" preload="auto"></audio>
+
+<script>
+/* ---------------- SOUND ENGINE ---------------- */
+function sRight(){
+  try{ const a = document.getElementById('snd-right'); a.currentTime=0; a.play().catch(()=>{}); }catch(e){}
+}
+function sWrong(){
+  try{ const a = document.getElementById('snd-wrong'); a.currentTime=0; a.play().catch(()=>{}); }catch(e){}
+}
+function sClick(){
+  try{ const a = document.getElementById('snd-click'); a.currentTime=0; a.play().catch(()=>{}); }catch(e){}
+}
+function sFire(){
+  try{ const a = document.getElementById('snd-fire'); a.currentTime=0; a.play().catch(()=>{}); }catch(e){}
+}
+
+/* Global click sound for UI elements */
+document.addEventListener('click', function(e){
+  const el = e.target.closest('button, a, .option, .word, .btn');
+  if(!el) return;
+  // play click sound; don't block other handlers
+  sClick();
+}, {capture:false, passive:true});
+</script>
+
+<script>
+/* ---------------- DATA ---------------- */
+const data = {
+  mcq:[
+    {q:"When I called her, she ___ TV.", opts:["watched","was watching","is watching"], a:"was watching"},
+    {q:"They ___ football when it started to rain.", opts:["were playing","played","are playing"], a:"were playing"},
+    {q:"I ___ dinner at 7 p.m.", opts:["cooked","was cooking","am cooking"], a:"was cooking"},
+    {q:"The students ___ when the principal came in.", opts:["chatted","are chatting","were chatting"], a:"were chatting"},
+    {q:"He ___ his homework while listening to music.", opts:["did","was doing","were doing"], a:"was doing"},
+  ],
+  fill:[
+    {q:"She __________ (read) a story.", a:"was reading"},
+    {q:"They __________ (listen) during the lesson.", a:"were listening"},
+    {q:"I __________ (walk) to school at 7:30.", a:"was walking"},
+    {q:"The children __________ (play) outside when it got dark.", a:"were playing"},
+    {q:"We __________ (study) for the test all evening.", a:"were studying"},
+  ],
+  reorder:[
+    {scrambled:["was","I","reading","a book","at 9 pm"], target:"I was reading a book at 9 pm"},
+    {scrambled:["It","was","raining","heavily"], target:"It was raining heavily"},
+    {scrambled:["They","were","studying","together","last night"], target:"They were studying together last night"},
+    {scrambled:["She","was","cooking","dinner","when I arrived"], target:"She was cooking dinner when I arrived"},
+    {scrambled:["The children","were","playing","with","the dog"], target:"The children were playing with the dog"},
+  ],
+  error:[
+    {wrong:"She were cooking dinner yesterday.", right:"She was cooking dinner yesterday."},
+    {wrong:"They were play cards in the evening.", right:"They were playing cards in the evening."},
+    {wrong:"I were watching a movie last night.", right:"I was watching a movie last night."},
+    {wrong:"The boys was run in the park.", right:"The boys were running in the park."},
+    {wrong:"He were fixing his bike.", right:"He was fixing his bike."},
+  ]
+};
+
+/* ---------------- STATE ---------------- */
+let section = 0;
+let index = 0;
+let score = 0;
+
+window.built = [];
+window.correctSentence = "";
+
+const quiz = document.getElementById("quiz");
+
+/* ---------------- HELPERS ---------------- */
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showFeedback(msg, ok){
+  const fb = document.querySelector(".feedback");
+  if(fb) fb.innerHTML = ok ? `<span style="color:#2ecc71">${msg}</span>` : `<span style="color:#e74c3c">${msg}</span>`;
+}
+
+/* ---------------- NAVIGATION ---------------- */
+function next(){
+  index++;
+  render();
+}
+
+function advanceSectionIfNeeded(){
+  if(section===0 && index>=data.mcq.length){ section=1; index=0; }
+  if(section===1 && index>=data.fill.length){ section=2; index=0; }
+  if(section===2 && index>=data.reorder.length){ section=3; index=0; }
+  if(section===3 && index>=data.error.length){ showFinal(); return true; }
+  return false;
+}
+
+/* ---------------- RENDER CONTROLLER ---------------- */
+function render(){
+  if(advanceSectionIfNeeded()) return;
+
+  quiz.innerHTML = "";
+
+  if(section===0) renderMCQ();
+  if(section===1) renderFill();
+  if(section===2) renderReorder();
+  if(section===3) renderError();
+}
+
+/* ------------ SECTION 1: MCQ ------------ */
+function renderMCQ(){
+  const q = data.mcq[index];
+  quiz.innerHTML = `
+    <h2 style="margin-bottom:6px;">Fill in the blanks by choosing <em>was</em> or <em>were</em> + the verb in its <em>-ing</em> form.</h2>
+<p style="margin-bottom:12px;font-size:1.1rem;color:#dbefff">${q.q}</p>
+
+    <div id="opts"></div>
+    <div class="feedback"></div>
+  `;
+  const opts = document.getElementById("opts");
+
+  q.opts.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = opt;
+
+    btn.onclick = ()=>{
+      document.querySelectorAll(".option").forEach(o=>o.classList.add("disabled"));
+      if(opt === q.a){
+        score+=5;
+        sRight();
+        showFeedback("Correct", true);
+        setTimeout(()=>{ next(); },700);
+      } else {
+        sWrong();
+        document.querySelectorAll(".option").forEach(o=>{
+          if(o.textContent===q.a) o.classList.add("correct");
+        });
+        showFeedback("Wrong — "+q.a, false);
+        setTimeout(()=>{ next(); },900);
+      }
+    };
+
+    opts.appendChild(btn);
+  });
+}
+
+function renderFill(){
+  const q = data.fill[index];
+  quiz.innerHTML = `
+    <h2 style="margin-bottom:6px;">Fill in the blanks by typing <em>was</em> or <em>were</em> + the verb in its <em>-ing</em> form.</h2>
+    <p style="margin-bottom:12px;font-size:1.15rem;color:#dbefff;">${q.q}</p>
+
+    <input id="fillInput" placeholder="Type your answer and press Enter" 
+           style="padding:12px;border-radius:8px;width:100%;font-size:1.15rem;
+           border:0;outline:none;background:rgba(255,255,255,0.08);color:#fff;">
+
+    <div class="feedback"></div>
+  `;
+
+  const input = document.getElementById("fillInput");
+  input.focus();
+
+  input.onkeydown = (e)=>{
+    if(e.key==="Enter"){
+      const val=input.value.trim().toLowerCase();
+      if(val===q.a.toLowerCase()){
+        score+=5;
+        showFeedback("Correct",true);
+        setTimeout(()=>{ next(); },700);
+      } else {
+        showFeedback("Wrong — "+q.a,false);
+        setTimeout(()=>{ next(); },900);
+      }
+    }
+  };
+}
+
+
+/* ------------ SECTION 3: SENTENCE BUILDER ------------ */
+function renderReorder(){
+  const q=data.reorder[index];
+  window.built=[];
+  window.correctSentence=q.target;
+
+  const words=shuffle([...q.scrambled]);
+
+  quiz.innerHTML=`
+    <h2>Rearrange the words:</h2>
+    <div id="wordBank"></div>
+    <div class="built" id="builtArea"></div>
+    <button class="btn" id="clearBtn" style="margin-top:10px;background:#ffffff22;color:white;">Clear</button>
+    <div class="feedback"></div>
+  `;
+
+  const bank=document.getElementById("wordBank");
+
+  words.forEach(w=>{
+    const el=document.createElement("span");
+    el.className="word";
+    el.textContent=w;
+    el.dataset.w=w;
+    el.onclick=()=>addWord(el,q);
+    bank.appendChild(el);
+  });
+
+  document.getElementById("clearBtn").onclick = clearBuilt;
+  updateBuiltDisplay();
+}
+
+function addWord(el,q){
+  window.built.push(el.dataset.w);
+  el.classList.add("used");
+  updateBuiltDisplay();
+
+  if(window.built.length === q.scrambled.length){
+    const sentence = window.built.join(" ");
+    if(sentence === q.target){
+      score+=5;
+      sRight();
+      showFeedback("Correct!",true);
+      setTimeout(()=>{ next(); },800);
+    } else {
+      sWrong();
+      showFeedback("Wrong — "+q.target,false);
+      setTimeout(()=>{ next(); },900);
+    }
+  }
+}
+
+function updateBuiltDisplay(){
+  const builtArea=document.getElementById("builtArea");
+  if(builtArea) builtArea.innerHTML=window.built.join(" ");
+}
+
+function clearBuilt(){
+  window.built=[];
+  document.querySelectorAll(".word").forEach(w=>w.classList.remove("used"));
+  updateBuiltDisplay();
+}
+
+/* ------------ SECTION 4: ERROR CORRECTION ------------ */
+function renderError(){
+  const q=data.error[index];
+  quiz.innerHTML=`
+    <h2>Correct this sentence:</h2>
+    <p style="color:#ff9090;font-size:1.2rem;">${q.wrong}</p>
+    <input id="fixInput" placeholder="Type correction & press Enter"
+           style="padding:10px;border-radius:8px;width:100%;border:0;outline:none;background:rgba(255,255,255,0.07);color:#fff;">
+    <div class="feedback"></div>
+  `;
+
+  const input=document.getElementById("fixInput");
+  input.focus();
+
+  input.onkeydown=(e)=>{
+    if(e.key==="Enter"){
+      const val=input.value.trim().toLowerCase();
+      if(val===q.right.toLowerCase()){
+        score+=5;
+        sRight();
+        showFeedback("Correct",true);
+        setTimeout(()=>{ next(); },700);
+      } else {
+        sWrong();
+        showFeedback("Wrong — "+q.right,false);
+        setTimeout(()=>{ next(); },900);
+      }
+    }
+  };
+}
+
+/* ------------ FINAL SCREEN ------------ */
+function showFinal(){
+  const passed = score >= 75;
+  quiz.innerHTML = `
+    <h1 class="final-score">${score}/100</h1>
+    <p style="text-align:center">${passed?"Excellent work!":"Keep practising!"}</p>
+
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn" onclick="restart()" style="background:var(--accent);color:#230046;margin:5px;">Try Again</button>
+
+      <a href="index.html" class="btn" style="background:#ffffff22;color:white;margin:5px;">Back to Home</a>
+
+      ${passed ? `<a href="lesson16.html" class="btn" style="background:#2ecc71;color:#002400;margin:5px;">Next Topic</a>` : ""}
+    </div>
+  `;
+
+  if(passed){
+    sFire();
+    fireworks();
+  }
+}
+
+function restart(){
+  section=0;
+  index=0;
+  score=0;
+  render();
+}
+
+/* ------------ FIREWORKS ------------ */
+function fireworks(){
+  const f=document.createElement("div");
+  f.style.position="fixed";
+  f.style.inset="0";
+  f.style.pointerEvents="none";
+  f.style.zIndex="99999";
+  f.innerHTML=`<canvas id="fwCanvas"></canvas>`;
+  document.body.appendChild(f);
+
+  const canvas=document.getElementById("fwCanvas");
+  const ctx=canvas.getContext("2d");
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+
+  let parts=[];
+
+  function burst(){
+    for(let i=0;i<50;i++){
+      parts.push({
+        x:canvas.width/2,
+        y:canvas.height/2,
+        vx:Math.cos(Math.random()*Math.PI*2)*Math.random()*6,
+        vy:Math.sin(Math.random()*Math.PI*2)*Math.random()*6,
+        life:80,
+        color:["#ffcc33","#ff66cc","#66ffcc","#70a1ff"][Math.floor(Math.random()*4)]
+      });
+    }
+  }
+
+  burst();
+
+  function animate(){
+    ctx.fillStyle="rgba(0,0,0,0.15)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    parts.forEach((p,i)=>{
+      p.x+=p.vx;
+      p.y+=p.vy;
+      p.life--;
+      ctx.globalAlpha=p.life/80;
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  setTimeout(()=>f.remove(),1500);
+}
+
+/* ---------------- INIT ---------------- */
+render();
+</script>
+
+</body>
+</html>

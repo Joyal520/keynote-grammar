@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Present — Interactive Quiz | Keynote Grammar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#001f3f; --bg2:#004d99; --glass:rgba(255,255,255,0.06); --accent:#ffcc33; --muted:#dfe9f7;
+      --correct:#2ecc71; --wrong:#ff6b6b;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:#fff;
+      min-height:100vh;
+      padding:28px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    /* floating shapes */
+    .bg{position:fixed;inset:0;z-index:-2;overflow:hidden}
+    .bg .blob{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);animation:float 12s infinite ease-in-out}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-40px)}100%{transform:translateY(0)}}
+
+    .wrap{width:100%;max-width:1100px;margin:8px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+    .nav{background:var(--glass);padding:8px 12px;border-radius:12px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08)}
+    .nav a{color:var(--accent);text-decoration:none;font-weight:600;margin-right:10px}
+    .card{
+      background:var(--glass);border-radius:14px;padding:20px;backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.12);box-shadow:0 12px 36px rgba(0,0,0,0.45)
+    }
+
+    h1{color:var(--accent);text-align:center;margin-bottom:4px}
+    .lead{color:var(--muted);text-align:center;margin-bottom:12px}
+
+    /* meta */
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .meta .stage{font-weight:700;color:#e8f6ff}
+    .meta .score{background:rgba(0,0,0,0.12);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:800}
+
+    .question-box{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);margin-bottom:10px}
+    .qtext{font-size:1.05rem;color:#e9f2ff;margin-bottom:12px}
+
+    /* MCQ */
+    .options{display:grid;gap:10px}
+    .opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;color:#eaf6ff;font-weight:600;transition:all .12s}
+    .opt:hover{transform:translateY(-3px)}
+    .opt.disabled{pointer-events:none;opacity:.85}
+    .opt.correct{background:var(--correct);color:#001f3f;border-color:var(--correct)}
+    .opt.wrong{background:var(--wrong);color:#fff;border-color:var(--wrong)}
+
+    /* fill-in */
+    .fill-row{display:flex;gap:8px;align-items:center}
+    .fill-row input{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.05);color:#fff;outline:none;font-size:1rem}
+    .hint{color:var(--muted);font-size:0.95rem}
+
+    /* true/false */
+    .tf-row{display:flex;gap:10px}
+    .tf-btn{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);cursor:pointer;font-weight:700}
+
+    /* question formation (input) */
+    .qa-input{display:flex;gap:8px}
+    .qa-input input{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.05);color:#fff}
+
+    /* reorder */
+    .word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+    .word{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700}
+    .word.used{opacity:.45;pointer-events:none}
+    .built{min-height:44px;background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+    /* feedback */
+    .feedback{height:28px;margin-top:10px;font-weight:800;letter-spacing:.2px}
+    .feedback.correct{color:var(--correct)}
+    .feedback.wrong{color:var(--wrong)}
+
+    /* final */
+    .final{padding:18px;text-align:center}
+    .final-score{font-size:2.6rem;color:var(--accent);font-weight:900;margin-bottom:8px}
+    .breakdown{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+    .pill{background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);color:#eaf6ff;font-weight:700}
+
+    .actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+    .btn{padding:10px 16px;border-radius:999px;border:none;background:rgba(255,255,255,0.08);color:#fff;font-weight:700;cursor:pointer}
+    .btn.primary{background:var(--accent);color:#001f3f}
+    .note{font-size:.95rem;color:var(--muted);text-align:center;margin-top:8px}
+
+    /* confetti container */
+    .confetti{position:fixed;inset:0;pointer-events:none;z-index:9999}
+
+    @media(max-width:900px){
+      .qtext{font-size:1rem}
+      .fill-row input,.qa-input input{font-size:0.95rem}
+    }
+
+    /* canvas for fireworks */
+    canvas#fwCanvas{
+      position:fixed;left:0;top:0;pointer-events:none;z-index:99999;display:none;
+    }
+    .tf-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: var(--accent); /* Yellow */
+  color: #001f3f;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob" style="width:140px;height:140px;left:5%;top:8%;animation-delay:0s"></div>
+    <div class="blob" style="width:200px;height:200px;left:70%;top:6%;animation-delay:2s"></div>
+    <div class="blob" style="width:100px;height:100px;left:42%;top:22%;animation-delay:1s"></div>
+  </div>
+
+  <!-- Audio files: user confirmed they are in same folder as this HTML -->
+  <!-- rightclick.mp3, wrongclick.mp3, bubble.mp3, fireworks.mp3 -->
+  <audio id="correctSound" src="rightclick.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="wrongclick.mp3" preload="auto"></audio>
+  <audio id="bubbleSound" src="bubble.mp3" preload="auto"></audio>
+  <audio id="fwSound" src="fireworks.mp3" preload="auto"></audio>
+
+  <div class="wrap">
+    <header>
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+      <div style="flex:1"></div>
+    </header>
+
+    <main class="card" role="main" aria-live="polite">
+      <h1>Simple Present — Interactive Quiz</h1>
+      <p class="lead">5 quiz sets · 25 questions total · each correct = 4 points · total = 100</p>
+
+      <div class="meta">
+        <div class="stage" id="stageLabel">Quiz 1: MCQ — Q 1 / 5</div>
+        <div class="score" id="scoreLabel">Score: 0</div>
+      </div>
+
+      <div id="quizArea"></div>
+
+      <div class="note">Answers auto-advance. Press Enter where applicable. Correct → green / Wrong → red.</div>
+    </main>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+  <canvas id="fwCanvas"></canvas>
+
+<script>
+/* ========= CONFIG / DATA ========= */
+const POINTS = 4;
+
+const quizData = [
+  {type:'mcq', title:'MCQ', qs:[
+    {q:"She ___ to school every day.", opts:["go","goes","going","gone"], a:"goes"},
+    {q:"We ___ breakfast at 7 a.m.", opts:["eats","ate","eating","eat"], a:"eat"},
+    {q:"He ___ badminton on Sundays.", opts:["play","plays","playing","played"], a:"plays"},
+    {q:"They ___ in the park every evening.", opts:["walks","walking","walk","walked"], a:"walk"},
+    {q:"I ___ English every day.", opts:["studied","study","studying","studies"], a:"study"}
+  ]},
+  {type:'fill', title:'Fill in the Blank by typing the verbs in brackets in base or -s form', qs:[
+    {q:"She ___ (do) exercise every day.", a:"does"},
+    {q:"They ___ (play) football on Sundays.", a:"play"},
+    {q:"I ___ (read) a book every night.", a:"read"},
+    {q:"He ___ (drink) milk in the morning.", a:"drinks"},
+    {q:"We ___ (eat) lunch at 12 p.m.", a:"eat"}
+  ]},
+  {type:'tf', title:'Right or Wrong', qs:[
+    {q:"The sun rise in the east.", a:false},
+    {q:"She watches TV at night.", a:true},
+    {q:"He write letters to his friend.", a:false},
+    {q:"We walk to school every day.", a:true},
+    {q:"The cat sleeps on the sofa.", a:true}
+  ]},
+  {type:'form', title:'Question Formation', qs:[
+    {q:"She goes to school every day.", a:"Does she go to school every day?"},
+    {q:"My dog runs very fast.", a:"Does my dog run very fast?"},
+    {q:"They listen to music every day.", a:"Do they listen to music every day?"},
+    {q:"Jane sings very well.", a:"Does Jane sing very well?"},
+    {q:"The cat catches mice.", a:"Does the cat catch mice?"}
+  ]},
+  {type:'order', title:'Put in Order', qs:[
+    {q:"Make correct:", words:["She","doesn't","talk","much"], a:["She","doesn't","talk","much"]},
+    {q:"Make correct:", words:["Do","you","like","spicy","food?"], a:["Do","you","like","spicy","food?"]},
+    {q:"Make correct:", words:["He","doesn't","eat","junk","food."], a:["He","doesn't","eat","junk","food."]},
+    {q:"Make correct:", words:["Do","they","live","near","your","school?"], a:["Do","they","live","near","your","school?"]},
+    {q:"Make correct:", words:["We","don't","work","on","Sundays."], a:["We","don't","work","on","Sundays."]}
+  ]}
+];
+
+/* ========= STATE ========= */
+let stageIndex = 0;
+let qIndex = 0;
+let totalScore = 0;
+let perSetScore = [0,0,0,0,0];
+
+const quizArea = document.getElementById('quizArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const stageLabel = document.getElementById('stageLabel');
+const confetti = document.getElementById('confetti');
+
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const bubbleSound = document.getElementById('bubbleSound');
+const fwSound = document.getElementById('fwSound');
+const fwCanvas = document.getElementById('fwCanvas');
+
+function playCorrect(){ try{ correctSound.currentTime=0; correctSound.play().catch(()=>{}); }catch(e){} }
+function playWrong(){ try{ wrongSound.currentTime=0; wrongSound.play().catch(()=>{}); }catch(e){} }
+function playBubble(){ try{ bubbleSound.currentTime=0; bubbleSound.play().catch(()=>{}); }catch(e){} }
+function playFW(){ try{ fwSound.currentTime=0; fwSound.play().catch(()=>{}); }catch(e){} }
+
+/* Helpers */
+function setMeta(){
+  const set = quizData[stageIndex];
+  stageLabel.textContent = `Quiz ${stageIndex+1}: ${set.title} — Q ${qIndex+1} / ${set.qs.length}`;
+  scoreLabel.textContent = `Score: ${totalScore}`;
+}
+function normalize(s){ return String(s||'').replace(/\s+/g,' ').trim().toLowerCase(); }
+
+function advance(delay = 900){
+  setTimeout(()=>{
+    qIndex++;
+    if(qIndex >= quizData[stageIndex].qs.length){
+      stageIndex++;
+      qIndex = 0;
+      if(stageIndex >= quizData.length){
+        showFinal();
+        return;
+      }
+    }
+    renderCurrent();
+  }, delay);
+}
+
+/* feedback helper */
+function showFeedback(msg, ok){
+  const fb = document.querySelector('.feedback');
+  if(!fb) return;
+  fb.textContent = msg;
+  fb.classList.remove('correct','wrong');
+  fb.classList.add(ok ? 'correct' : 'wrong');
+}
+
+/* Render current question */
+function renderCurrent(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const set = quizData[stageIndex];
+  const item = set.qs[qIndex];
+
+  const box = document.createElement('div'); box.className='question-box';
+  box.innerHTML = `<div class="qtext">${escapeHtml(item.q)}</div><div id="controlArea"></div><div class="feedback" aria-live="polite"></div>`;
+  quizArea.appendChild(box);
+  const control = document.getElementById('controlArea');
+
+  // MCQ
+  if(set.type === 'mcq'){
+    const optsWrap = document.createElement('div'); optsWrap.className='options';
+    for(const opt of item.opts){
+      const b = document.createElement('button');
+      b.className='opt';
+      b.textContent = opt;
+      b.dataset.val = opt;
+      b.addEventListener('click', ()=>{
+        if(b.classList.contains('disabled')) return;
+        // small click sound
+        playBubble();
+        optsWrap.querySelectorAll('.opt').forEach(x=>x.classList.add('disabled'));
+        const correct = normalize(opt) === normalize(item.a);
+        if(correct){
+          b.classList.add('correct');
+          playCorrect();
+          totalScore += POINTS; perSetScore[stageIndex]+=POINTS;
+          showFeedback('Correct', true);
+        } else {
+          b.classList.add('wrong');
+          playWrong();
+          optsWrap.querySelectorAll('.opt').forEach(x=>{
+            if(normalize(x.dataset.val) === normalize(item.a)) x.classList.add('correct');
+          });
+          showFeedback(`Wrong — answer: ${item.a}`, false);
+        }
+        scoreLabel.textContent = `Score: ${totalScore}`;
+        advance(1000);
+      }, {once:true});
+      optsWrap.appendChild(b);
+    }
+    control.appendChild(optsWrap);
+  }
+
+  // Fill
+  else if(set.type === 'fill'){
+    const row = document.createElement('div'); row.className='fill-row';
+    const input = document.createElement('input');
+    input.autocomplete = 'off';
+    input.placeholder = 'Type the correct form (then press Enter)';
+    row.appendChild(input);
+    row.insertAdjacentHTML('beforeend','<div class="hint">Press Enter</div>');
+    control.appendChild(row);
+    input.focus();
+
+    // Ensure Enter triggers and advances — fixed bug: ensure handler attached once and disabled after use
+    input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    const val = normalize(input.value);
+    if(val === '') return;
+
+    playBubble();
+
+    const correctAnswer = normalize(item.a);
+    if(val === correctAnswer){
+      playCorrect();
+      totalScore += POINTS; 
+      perSetScore[stageIndex] += POINTS;
+      showFeedback('Correct', true);
+    } else {
+      playWrong();
+      showFeedback(`Wrong — answer: ${item.a}`, false);
+    }
+
+    scoreLabel.textContent = `Score: ${totalScore}`;
+    input.setAttribute("disabled", "true");
+
+    advance(900);
+  }
+});
+
+  }
+
+  // True/False
+  else if(set.type === 'tf'){
+    const row = document.createElement('div'); row.className='tf-row';
+    const btnT = document.createElement('button'); btnT.className='tf-btn'; btnT.textContent='Right';
+    const btnF = document.createElement('button'); btnF.className='tf-btn'; btnF.textContent='Wrong';
+    btnT.addEventListener('click', ()=>{ playBubble(); checkTF(true, btnT, btnF, item); }, {once:true});
+    btnF.addEventListener('click', ()=>{ playBubble(); checkTF(false, btnF, btnT, item); }, {once:true});
+    row.appendChild(btnT); row.appendChild(btnF);
+    control.appendChild(row);
+  }
+
+  // Question formation (input)
+  else if(set.type === 'form'){
+    const row = document.createElement('div'); row.className='qa-input';
+    const input = document.createElement('input'); input.autocomplete='off'; input.placeholder='Type the question form exactly and press Enter';
+    row.appendChild(input);
+    control.appendChild(row);
+    input.focus();
+    input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    const val = normalize(input.value);
+    const target = normalize(item.a);
+
+    playBubble();
+
+    if(val === target){
+      playCorrect();
+      totalScore += POINTS; 
+      perSetScore[stageIndex] += POINTS;
+      showFeedback('Correct', true);
+    } else {
+      playWrong();
+      showFeedback(`Wrong — answer: ${item.a}`, false);
+    }
+
+    scoreLabel.textContent = `Score: ${totalScore}`;
+    input.setAttribute("disabled", "true");
+
+    advance(900);
+  }
+});
+
+  }
+
+  // Order / Reorder
+  else if(set.type === 'order'){
+    const bank = shuffleArray(item.words.slice());
+    const bankDiv = document.createElement('div'); bankDiv.className='word-bank';
+    const builtDiv = document.createElement('div'); builtDiv.className='built';
+    const undoBtn = document.createElement('button'); undoBtn.className='btn'; undoBtn.textContent='Undo';
+    const clearBtn = document.createElement('button'); clearBtn.className='btn'; clearBtn.textContent='Clear';
+    control.appendChild(bankDiv);
+    control.appendChild(builtDiv);
+    control.appendChild(undoBtn);
+    control.appendChild(clearBtn);
+
+    const used = [];
+    bank.forEach(w=>{
+      const el = document.createElement('div'); el.className='word'; el.textContent = w;
+      el.dataset.word = w;
+      el.addEventListener('click', ()=>{
+        if(el.classList.contains('used')) return;
+        playBubble();
+        used.push(w);
+        el.classList.add('used');
+        renderBuilt();
+        if(used.length === item.words.length){
+          const candidate = used.join(' ').trim();
+          const target = item.a.join(' ').trim();
+          if(candidate === target){
+            totalScore += POINTS; perSetScore[stageIndex]+=POINTS;
+            playCorrect();
+            showFeedback('Correct', true);
+          } else {
+            playWrong();
+            showFeedback(`Wrong — correct: ${item.a.join(' ')}`, false);
+          }
+          scoreLabel.textContent = `Score: ${totalScore}`;
+          bankDiv.querySelectorAll('.word').forEach(x=>x.classList.add('used'));
+          advance(1200);
+        }
+      });
+      bankDiv.appendChild(el);
+    });
+
+    function renderBuilt(){
+      builtDiv.innerHTML = used.map(w=>`<div class="word used" style="background:rgba(255,255,255,0.12)">${escapeHtml(w)}</div>`).join('');
+    }
+
+    undoBtn.addEventListener('click', ()=>{
+      const w = used.pop();
+      if(w){
+        const el = bankDiv.querySelector(`.word[data-word="${CSS.escape(w)}"]`);
+        if(el) el.classList.remove('used');
+      }
+      renderBuilt();
+    });
+    clearBtn.addEventListener('click', ()=>{
+      used.length = 0;
+      bankDiv.querySelectorAll('.word').forEach(x=>x.classList.remove('used'));
+      renderBuilt();
+    });
+  }
+}
+
+/* TF check */
+function checkTF(choice, btn, otherBtn, item){
+  btn.disabled = true; otherBtn.disabled = true;
+  const correct = !!item.a;
+  if(choice === correct){
+    btn.style.background = 'var(--correct)'; btn.style.color = '#001f3f';
+    totalScore += POINTS; perSetScore[stageIndex]+=POINTS;
+    playCorrect();
+    showFeedback('Correct', true);
+  } else {
+    btn.style.background = 'var(--wrong)'; btn.style.color = '#fff';
+    playWrong();
+    showFeedback(item.explain ? item.explain : 'Wrong', false);
+  }
+  scoreLabel.textContent = `Score: ${totalScore}`;
+  advance(900);
+}
+
+/* Final screen */
+function showFinal(){
+  quizArea.innerHTML = '';
+  stageLabel.textContent = 'Quiz complete';
+  const finalBox = document.createElement('div'); finalBox.className='question-box final';
+  finalBox.innerHTML = `<div class="final">
+    <div class="final-score">${totalScore} / 100</div>
+    <div>Great work — here is your breakdown:</div>
+    <div class="breakdown">
+      ${quizData.map((s,i)=>`<div class="pill">Quiz ${i+1}: ${perSetScore[i]} / ${s.qs.length*POINTS}</div>`).join('')}
+    </div>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn primary" id="retry">Try Again</button>
+      <a class="btn" href="topics.html">Back to Topics</a>
+      <a class="btn" href="lesson13.video.html">Next Lesson</a>
+    </div>
+  </div>`;
+  quizArea.appendChild(finalBox);
+
+  document.getElementById('retry').addEventListener('click', ()=>{
+    stageIndex = 0; qIndex = 0; totalScore = 0; perSetScore = [0,0,0,0,0];
+    setMeta(); renderCurrent();
+  });
+
+  // celebration if >= 75
+  if(totalScore >= 75){
+    // confetti visual
+    playConfetti();
+    // fireworks canvas + sound
+    runFireworks();
+  }
+}
+
+/* ===== utils ===== */
+function escapeHtml(t){ return String(t||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* Confetti (simple) */
+function playConfetti(){
+  const C = 90;
+  const cont = confetti;
+  cont.innerHTML = '';
+  for(let i=0;i<C;i++){
+    const el = document.createElement('div');
+    const size = 6 + Math.random()*12;
+    el.style.width = el.style.height = size+'px';
+    el.style.background = `hsl(${Math.floor(Math.random()*60)+30},90%,55%)`;
+    el.style.position='absolute';
+    el.style.left = Math.random()*100 + '%';
+    el.style.top = '0%';
+    el.style.opacity = Math.random()*0.9 + 0.6;
+    el.style.borderRadius = (Math.random()>0.5? '2px' : '50%');
+    el.style.transform = `translateY(-10px) rotate(${Math.random()*360}deg)`;
+    el.style.pointerEvents='none';
+    el.style.transition = `transform 1200ms cubic-bezier(.2,.8,.3,1), top 1200ms linear, opacity 1200ms linear`;
+    cont.appendChild(el);
+    setTimeout(()=> {
+      const dx = (Math.random()-0.5)*100;
+      el.style.top = 60 + Math.random()*30 + '%';
+      el.style.transform = `translate(${dx}px, 0px) rotate(${Math.random()*720}deg)`;
+      el.style.opacity = 0.95;
+    }, 20 + Math.random()*200);
+    setTimeout(()=> el.style.opacity = 0, 1600 + Math.random()*800);
+  }
+  setTimeout(()=> { confetti.innerHTML=''; }, 3000);
+}
+
+/* Fireworks (canvas) + sound */
+function runFireworks(){
+  const canvas = fwCanvas;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+
+  playFW();
+
+  const parts = [];
+  function burst(x,y){
+    const cols = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    const count = 40 + Math.floor(Math.random()*40);
+    for(let i=0;i<count;i++){
+      parts.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-0.7)*8,
+        life:60 + Math.random()*50,
+        color:cols[Math.floor(Math.random()*cols.length)],
+        size:2 + Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<6;i++){
+    burst(window.innerWidth*(0.15 + Math.random()*0.7), window.innerHeight*(0.15 + Math.random()*0.45));
+  }
+
+  let frame = 0;
+  function tick(){
+    frame++;
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04;
+      p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+
+    if(frame%18 === 0) burst(Math.random()*canvas.width, Math.random()*canvas.height/2);
+    if(frame < 320 && parts.length > 0) requestAnimationFrame(tick);
+    else {
+      setTimeout(()=>{ canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); }, 500);
+    }
+  }
+  tick();
+}
+
+/* INIT */
+setMeta();
+renderCurrent();
+
+</script>
+</body>
+</html>

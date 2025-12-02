@@ -1,0 +1,506 @@
+<!-- Source PDF (uploaded by user): /mnt/data/Keynote Grammar - final.pdf -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Be Verbs — 20-question Quiz (am / is / are / was / were / will be)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#00172b; --bg2:#013a63; --yellow:#ffd24d;
+  --muted:#cfe9ff; --ok:#2ecc71; --bad:#ff6b6b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#eaf6ff;
+  display:flex;align-items:center;justify-content:center;padding:22px;
+}
+.container{width:100%;max-width:980px}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 14px 40px rgba(0,0,0,0.6);
+}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.title{color:var(--yellow);font-weight:800;font-size:1.4rem}
+.meta{color:var(--muted);font-weight:600}
+.progress-wrap{display:flex;gap:12px;align-items:center}
+.progress{width:260px;height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd24d,#ffcc33);transition:width .35s}
+.score{font-weight:800;color:var(--yellow)}
+.question{margin-top:14px;padding:18px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
+.qtext{font-size:1.2rem;min-height:3.2rem;margin-bottom:12px}
+.answers{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.choice{
+  background:var(--yellow); color:#001; padding:14px 18px; border-radius:12px;
+  border:2px solid rgba(0,0,0,0.06); cursor:pointer; font-weight:800;
+  font-size:1.18rem; text-align:left; transition:transform .12s, box-shadow .12s;
+}
+.choice:hover{transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,0.25)}
+.choice.disabled{pointer-events:none;opacity:0.7}
+.choice.correct{background:var(--ok); color:#001f00}
+.choice.wrong{background:var(--bad); color:#fff}
+
+/* Correct/Wrong variant buttons (bigger and horizontal) */
+.cw-wrap{display:flex;gap:12px}
+.cw-btn{
+  background:var(--yellow); color:#001; padding:12px 18px; border-radius:12px; font-weight:800;
+  font-size:1.18rem; cursor:pointer; border:2px solid rgba(0,0,0,0.06); min-width:140px;
+}
+.cw-instr{color:var(--muted); margin-bottom:8px; font-weight:600}
+
+/* Sentence builder tokens: round yellow & black text */
+.tokens{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.token{
+  background:var(--yellow); color:#000; padding:8px 14px; border-radius:999px; cursor:pointer; font-weight:800;
+  box-shadow:0 6px 14px rgba(0,0,0,0.12);
+}
+.token.used{opacity:0.45; pointer-events:none}
+.built{min-height:56px;padding:10px;border-radius:10px;border:1px dashed rgba(255,255,255,0.06);display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;background:rgba(255,255,255,0.02)}
+.sb-ctrls{margin-top:10px;display:flex;gap:10px}
+.small-btn{padding:8px 12px;border-radius:999px;border:none;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer;font-weight:700}
+
+/* Fill input (if used in future) */
+.fill-input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#001;font-weight:700}
+
+.built {
+  min-height: 56px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px dashed #ffe066;
+  background: #ffd24d;      /* bright yellow */
+  color: #000;              /* black text */
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Matching layout */
+.match-wrap{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.match-col{flex:1;min-width:180px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.match-item{padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:8px;cursor:pointer;font-weight:700;color:var(--muted);text-align:center}
+.match-item.selected{outline:3px solid rgba(255,255,255,0.04);background:var(--yellow);color:#001}
+.match-item.matched{background:var(--ok);color:#002218;pointer-events:none;opacity:0.95}
+
+/* Feedback */
+.feedback{height:28px;margin-top:10px;font-weight:700;color:var(--muted)}
+
+/* final */
+.final{padding:16px;text-align:center}
+.final-score{font-size:2.6rem;color:var(--yellow);font-weight:900}
+.final-actions{display:flex;gap:12px;justify-content:center;margin-top:12px}
+.final-actions .btn{padding:10px 16px;border-radius:999px;border:none;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+
+/* fireworks canvas */
+canvas#fw{position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999}
+@media(max-width:700px){.progress{width:160px}.choice{font-size:1rem}.qtext{font-size:1.05rem}}
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <div>
+        <div class="title">Be Verbs — 20-question Quiz</div>
+        <div class="meta">am • is • are • was • were • will be — Auto-advance • Sounds • Fireworks at ≥ 75</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress" aria-hidden><i id="progFill"></i></div>
+        <div class="score" id="scoreLabel">0 / 100</div>
+      </div>
+    </div>
+
+    <div class="question" id="questionCard">
+      <div class="qtext" id="qtext">Press Start (click any choice to begin)</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <div id="qcount">Q 0 / 20</div>
+        <div>
+          <button id="startBtn" class="small-btn" style="background:var(--yellow);color:#001;font-weight:900">Start</button>
+          <button id="skipBtn" class="small-btn">Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="finalScreen" style="display:none;margin-top:14px" class="question">
+      <div class="final">
+        <div class="final-score" id="finalScore">0 / 100</div>
+        <div id="finalMsg" style="color:var(--muted)"></div>
+        <div class="final-actions" id="finalActions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- Sounds (expect these files in same folder) ---
+const S = {
+  correct: new Audio('rightclick.mp3'),
+  wrong:   new Audio('wrongclick.mp3'),
+  click:   new Audio('bubble.mp3'),
+  fire:    new Audio('fireworks.mp3')
+};
+function safePlay(a){ try{ a.currentTime=0; a.play().catch(()=>{});}catch(e){} }
+function clickSound(){ safePlay(S.click); }
+
+// --- QUESTIONS (20 total) ---
+// Layout: MCQ 5, Correct/Wrong 5, Sentence Builder 5, MATCH (1 matching card with 5 pairs -> 5 sub-questions)
+const QUESTIONS = [
+  // MCQ (1-5)
+  {type:'mcq', q:'I ___ a student.', opts:['am','is','are'], a:'am'},
+  {type:'mcq', q:'They ___ at the park yesterday.', opts:['was','were','are'], a:'were'},
+  {type:'mcq', q:'She ___ my sister.', opts:['is','am','are'], a:'is'},
+  {type:'mcq', q:'We ___ happy tomorrow.', opts:['are','will be','was'], a:'will be'},
+  {type:'mcq', q:'He ___ late yesterday.', opts:['was','is','were'], a:'was'},
+
+  // Correct / Wrong (6-10)
+  {type:'cw', q:'The dogs was very noisy.', a:false},
+  {type:'cw', q:'He will be better tomorrow.', a:true},
+  {type:'cw', q:'You was at home yesterday.', a:false},
+  {type:'cw', q:'They are good friends.', a:true},
+  {type:'cw', q:'I am ten years old.', a:true},
+
+  // Sentence builder [
+  {
+    "type": "sb",
+    "q": "Build: I am happy today.",
+    "words": ["I","am","happy","today"],
+    "a": "I am happy today."
+  },
+  {
+    "type": "sb",
+    "q": "Build: They are my friends.",
+    "words": ["They","are","my","friends"],
+    "a": "They are my friends."
+  },
+  {
+    "type": "sb",
+    "q": "Build: He will be busy tomorrow.",
+    "words": ["He","will","be","busy","tomorrow"],
+    "a": "He will be busy tomorrow."
+  },
+  {
+    "type": "sb",
+    "q": "Build: We were late to the meeting.",
+    "words": ["We","were","late","to","the","meeting"],
+    "a": "We were late to the meeting."
+  },
+  {
+    "type": "sb",
+    "q": "Build: He was at the park yesterday.",
+    "words": ["He","was","at","the","park","yesterday"],
+    "a": "He was at the park yesterday."
+  },
+
+  // Matching (single card containing 5 pairs). This acts as five sub-questions (each pair = 5 points).
+  {type:'match', q:'Match each subject to the correct be-form (5 pairs)', pairs:[
+    ['I','am'], ['He','is'], ['They','are'], ['We (past)','were'], ['It (future)','will be']
+  ]}
+];
+
+// --- State ---
+const TOTAL = 20;
+let idx = 0, score = 0;
+const points = 5; // each correct = 5 points
+
+// --- DOM refs ---
+const qtext = document.getElementById('qtext');
+const answers = document.getElementById('answers');
+const feedback = document.getElementById('feedback');
+const progFill = document.getElementById('progFill');
+const scoreLabel = document.getElementById('scoreLabel');
+const qcount = document.getElementById('qcount');
+const startBtn = document.getElementById('startBtn');
+const skipBtn = document.getElementById('skipBtn');
+const finalScreen = document.getElementById('finalScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const finalActions = document.getElementById('finalActions');
+const fwCanvas = document.getElementById('fw');
+
+// Attach start/skip sounds
+startBtn.addEventListener('click', ()=>{ clickSound(); idx = 0; score = 0; render(); startBtn.style.display='none'; });
+skipBtn.addEventListener('click', ()=>{ clickSound(); idx++; if(idx>=QUESTIONS.length) finish(); else render(); });
+
+// Update meta
+function updateMeta(){
+  progFill.style.width = `${Math.round((idx/TOTAL)*100)}%`;
+  scoreLabel.textContent = `${score} / 100`;
+  qcount.textContent = `Q ${Math.min(idx+1,TOTAL)} / ${TOTAL}`;
+}
+
+// Render controller
+function render(){
+  updateMeta();
+  feedback.textContent = '';
+  answers.innerHTML = '';
+  if(idx >= QUESTIONS.length){ finish(); return; }
+  const it = QUESTIONS[idx];
+  qtext.textContent = it.q;
+  if(it.type === 'mcq') renderMCQ(it);
+  else if(it.type === 'cw') renderCW(it);
+  else if(it.type === 'sb') renderSB(it);
+  else if(it.type === 'match') renderMATCH(it);
+}
+
+// Utility
+function normalize(s){ return String(s||'').trim().toLowerCase().replace(/[.,!?]+$/,''); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+function disableAll(parent){ Array.from(parent.querySelectorAll('button, .token, .match-item')).forEach(x=>x.classList.add('disabled')); }
+
+// --- MCQ renderer ---
+function renderMCQ(it){
+  safePlay(S.click);
+  const opts = shuffle(it.opts.slice());
+  opts.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = ()=>{
+      // lock choices
+      Array.from(answers.querySelectorAll('.choice')).forEach(x=>x.classList.add('disabled'));
+      if(normalize(opt) === normalize(it.a)){
+        b.classList.add('correct'); safePlay(S.correct); score += points; feedback.textContent = 'Correct';
+      } else {
+        b.classList.add('wrong'); safePlay(S.wrong); feedback.textContent = 'Wrong — ' + it.a;
+        Array.from(answers.querySelectorAll('.choice')).find(x=>normalize(x.textContent)===normalize(it.a))?.classList.add('correct');
+      }
+      updateMeta();
+      setTimeout(()=>{ idx++; render(); }, 800);
+    };
+    answers.appendChild(b);
+  });
+}
+
+// --- Correct / Wrong renderer ---
+function renderCW(it){
+  safePlay(S.click);
+  const instr = document.createElement('div'); instr.className='cw-instr'; instr.textContent='Instruction: Is this sentence correct? Choose Correct or Wrong.';
+  const wrap = document.createElement('div'); wrap.className='cw-wrap';
+  const correctBtn = document.createElement('button'); correctBtn.className='cw-btn'; correctBtn.textContent='Correct';
+  const wrongBtn = document.createElement('button'); wrongBtn.className='cw-btn'; wrongBtn.textContent='Wrong';
+  correctBtn.onclick = ()=>{
+    disableAll(wrap);
+    const isCorrect = (it.a === true);
+    if(isCorrect){ correctBtn.classList.add('correct'); safePlay(S.correct); score += points; feedback.textContent='Correct'; }
+    else { correctBtn.classList.add('wrong'); safePlay(S.wrong); feedback.textContent='Wrong'; wrongBtn.classList.add('correct'); }
+    updateMeta(); setTimeout(()=>{ idx++; render(); }, 800);
+  };
+  wrongBtn.onclick = ()=>{
+    disableAll(wrap);
+    const isCorrect = (it.a === false);
+    if(isCorrect){ wrongBtn.classList.add('correct'); safePlay(S.correct); score += points; feedback.textContent='Correct'; }
+    else { wrongBtn.classList.add('wrong'); safePlay(S.wrong); feedback.textContent='Wrong'; correctBtn.classList.add('correct'); }
+    updateMeta(); setTimeout(()=>{ idx++; render(); }, 800);
+  };
+  answers.appendChild(instr);
+  wrap.appendChild(correctBtn); wrap.appendChild(wrongBtn);
+  answers.appendChild(wrap);
+}
+
+// --- Sentence Builder renderer ---
+function renderSB(it){
+  safePlay(S.click);
+  const tokens = shuffle(it.words.slice());
+  const built = [];
+  const builtDiv = document.createElement('div'); builtDiv.className='built'; answers.appendChild(builtDiv);
+  const tokensWrap = document.createElement('div'); tokensWrap.className='tokens';
+  tokens.forEach(w=>{
+    const t = document.createElement('div'); t.className='token'; t.textContent = w;
+    t.tabIndex = 0;
+    t.addEventListener('click', ()=>{
+      if(t.classList.contains('used')) return;
+      t.classList.add('used');
+      built.push(w); renderBuilt();
+      if(built.length === tokens.length) evaluateSB();
+    });
+    tokensWrap.appendChild(t);
+  });
+  answers.appendChild(tokensWrap);
+
+  const ctrl = document.createElement('div'); ctrl.className='sb-ctrls';
+  const undo = document.createElement('button'); undo.className='small-btn'; undo.textContent='Undo';
+  const clear = document.createElement('button'); clear.className='small-btn'; clear.textContent='Clear';
+  ctrl.appendChild(undo); ctrl.appendChild(clear);
+  answers.appendChild(ctrl);
+
+  function renderBuilt(){
+    builtDiv.innerHTML = built.map(x => 
+  `<div class="token" style="background:#fff;color:#000;padding:8px 12px;border-radius:999px;font-weight:800">${x}</div>`
+).join('');
+
+  }
+
+  function evaluateSB(){
+    const candidate = built.join(' ').replace(/\s+([.,!?])/g,'$1');
+    if(normalize(candidate) === normalize(it.a)){
+      safePlay(S.correct); score += points; feedback.textContent='Correct';
+    } else {
+      safePlay(S.wrong); feedback.textContent = 'Wrong — ' + it.a;
+    }
+    // disable remaining tokens
+    Array.from(tokensWrap.children).forEach(t => t.classList.add('used'));
+    updateMeta();
+    setTimeout(()=>{ idx++; render(); }, 900);
+  }
+
+  undo.onclick = ()=>{
+    const last = built.pop();
+    if(!last) return;
+    // unmark corresponding token (last occurrence)
+    const toks = Array.from(tokensWrap.children);
+    for(let i=toks.length-1;i>=0;i--){
+      if(toks[i].textContent === last && toks[i].classList.contains('used')){
+        toks[i].classList.remove('used'); break;
+      }
+    }
+    renderBuilt();
+  };
+  clear.onclick = ()=>{
+    built.length = 0;
+    Array.from(tokensWrap.children).forEach(t=>t.classList.remove('used'));
+    renderBuilt();
+  };
+
+  // Enter key submits if at least one token chosen
+  function onEnter(e){
+    if(e.key === 'Enter'){
+      if(built.length === 0) return;
+      evaluateSB();
+      window.removeEventListener('keydown', onEnter);
+    }
+  }
+  window.addEventListener('keydown', onEnter);
+}
+
+// --- MATCH renderer (5 pairs inside one card; each correct pair = 5 points) ---
+function renderMATCH(it){
+  safePlay(S.click);
+  const lefts = it.pairs.map(p=>p[0]);
+  const rights = shuffle(it.pairs.map(p=>p[1]));
+  const wrap = document.createElement('div'); wrap.className = 'match-wrap';
+  const leftCol = document.createElement('div'); leftCol.className='match-col';
+  const rightCol = document.createElement('div'); rightCol.className='match-col';
+  leftCol.innerHTML = lefts.map(l=>`<div class="match-item left" data-val="${l}">${l}</div>`).join('');
+  rightCol.innerHTML = rights.map(r=>`<div class="match-item right" data-val="${r}">${r}</div>`).join('');
+  wrap.appendChild(leftCol); wrap.appendChild(rightCol);
+  answers.appendChild(wrap);
+
+  let selectedLeft = null;
+  let matchedCount = 0;
+
+  leftCol.querySelectorAll('.left').forEach(li=>{
+    li.addEventListener('click', ()=>{
+      if(li.classList.contains('matched')) return;
+      leftCol.querySelectorAll('.left').forEach(x=>x.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedLeft = li.dataset.val;
+      feedback.textContent = 'Now choose the matching form on the right.';
+    });
+  });
+
+  rightCol.querySelectorAll('.right').forEach(ri=>{
+    ri.addEventListener('click', ()=>{
+      if(ri.classList.contains('matched')) return;
+      if(!selectedLeft){ feedback.textContent = 'Select a subject on the left first.'; setTimeout(()=>feedback.textContent='','700'); return; }
+      const correct = it.pairs.some(p=>p[0] === selectedLeft && p[1] === ri.dataset.val);
+      if(correct){
+        // mark matched visually
+        ri.classList.add('matched');
+        const leftEl = Array.from(leftCol.querySelectorAll('.left')).find(x=>x.dataset.val === selectedLeft);
+        if(leftEl) leftEl.classList.add('matched');
+        matchedCount++;
+        safePlay(S.correct);
+        score += points;
+        feedback.textContent = 'Correct';
+      } else {
+        ri.classList.add('wrong');
+        safePlay(S.wrong);
+        feedback.textContent = 'Wrong — try again';
+        setTimeout(()=>ri.classList.remove('wrong'),700);
+      }
+      selectedLeft = null;
+      leftCol.querySelectorAll('.left').forEach(x=>x.classList.remove('selected'));
+      updateMeta();
+      if(matchedCount >= it.pairs.length){
+        setTimeout(()=>{ idx++; render(); }, 900);
+      }
+    });
+  });
+}
+
+// --- Finish / fireworks ---
+function finish(){
+  updateMeta();
+  document.getElementById('questionCard').style.display = 'none';
+  finalScreen.style.display = 'block';
+  finalScore.textContent = `${score} / 100`;
+  finalMsg.textContent = score >= 75 ? 'Excellent — well done!' : 'Keep practising — you can improve!';
+  finalActions.innerHTML = '';
+
+  if(score >= 75){
+    safePlay(S.fire);
+    runFireworks();
+    const next = document.createElement('button'); next.className='btn'; next.textContent='Next Topic'; next.onclick = ()=>{ window.location.href = 'lesson11_video.html'; };
+    finalActions.appendChild(next);
+  }
+  const retry = document.createElement('button'); retry.className='btn'; retry.textContent='Try Again'; retry.onclick = ()=>{ location.reload(); };
+  finalActions.appendChild(retry);
+  const home = document.createElement('button'); home.className='btn'; home.textContent='Home'; home.onclick = ()=>{ window.location.href = 'index.html'; };
+  finalActions.appendChild(home);
+}
+
+// --- Fireworks canvas ---
+function runFireworks(){
+  const c = fwCanvas; c.style.display='block'; c.width = innerWidth; c.height = innerHeight;
+  const ctx = c.getContext('2d'); const particles = [];
+  function burst(x,y){
+    const colors = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    const count = 40 + Math.floor(Math.random()*60);
+    for(let i=0;i<count;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*(3+Math.random()*6),
+        vy:(Math.random()-0.8)*(4+Math.random()*6),
+        life:60 + Math.random()*80,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        size:2 + Math.random()*3
+      });
+    }
+  }
+  for(let i=0;i<6;i++) burst(Math.random()*c.width, Math.random()*c.height*0.6);
+  function tick(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.fillRect(0,0,c.width,c.height);
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life--;
+      ctx.globalAlpha = Math.max(0,p.life/120);
+      ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    if(particles.length>0) requestAnimationFrame(tick);
+    else setTimeout(()=>{ c.style.display='none'; ctx.clearRect(0,0,c.width,c.height); }, 500);
+  }
+  tick();
+}
+
+// --- Init ---
+updateMeta();
+qtext.textContent = 'Press Start to begin the quiz (click Start).';
+answers.innerHTML = '';
+// automatically start if user clicks any choice or presses Start; Start button provided
+// Expose debug
+window.Q = { QUESTIONS };
+
+// end of script
+</script>
+</body>
+</html>

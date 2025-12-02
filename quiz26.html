@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Capital Letters — Interactive Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#04102a; --bg2:#06335a;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --glass: rgba(255,255,255,0.04);
+  --card: rgba(255,255,255,0.03);
+  --ok:#2ecc71; --bad:#e74c3c;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff; display:flex; align-items:flex-start; justify-content:center;
+  padding:28px;
+}
+
+/* animated blobs */
+.bg-wrap{position:fixed;inset:0;z-index:-4;pointer-events:none}
+.blob{position:absolute;border-radius:40%;filter:blur(64px);opacity:0.42;mix-blend-mode:screen;animation:float 18s ease-in-out infinite}
+.blob.b1{width:520px;height:520px;left:-80px;top:-60px;background:#ff8a65}
+.blob.b2{width:420px;height:420px;right:-80px;top:20px;background:#6fc3ff;animation-duration:20s}
+.blob.b3{width:320px;height:320px;left:20%;bottom:-100px;background:#caa7ff;animation-duration:22s}
+@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-36px)}100%{transform:translateY(0)}}
+
+/* particles */
+.particles{position:absolute;inset:0;pointer-events:none;opacity:0.12}
+.particles span{position:absolute;background:rgba(255,255,255,0.9);border-radius:50%;width:3px;height:3px;box-shadow:0 0 8px rgba(255,255,255,0.4)}
+
+/* container */
+.container{width:100%;max-width:980px;margin:0 auto;z-index:2}
+.card{
+  background:var(--card); border-radius:var(--radius); padding:20px;
+  border:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(8px);
+  box-shadow:0 18px 40px rgba(0,0,0,0.5);
+}
+
+/* header */
+.header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.nav{display:flex;gap:8px}
+.nav a{color:var(--accent);text-decoration:none;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;font-weight:700}
+.title{flex:1;text-align:center;font-weight:800;color:var(--accent);font-size:1.2rem}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin:12px 0;gap:8px;flex-wrap:wrap}
+.round{font-weight:700;color:#eaf6ff}
+.score{background:rgba(0,0,0,0.14);padding:6px 12px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* question area */
+#quizArea{margin-top:6px}
+.qbox{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.qtext{font-size:1.02rem;color:#eef6ff;margin-bottom:12px}
+
+/* options */
+.options{display:grid;gap:10px}
+.opt{background:var(--accent);color:#071225;padding:12px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+.opt:hover{transform:translateY(-2px)}
+.opt.correct{background:var(--ok);color:#06220f}
+.opt.wrong{background:var(--bad);color:#fff}
+.opt.disabled{opacity:.6;pointer-events:none}
+
+/* correction input */
+.correction{display:flex;gap:10px;align-items:center}
+.correction input{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.05);color:#fff;outline:none;font-size:1rem}
+
+/* true/false */
+.tf{display:flex;gap:12px}
+.tf button{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);font-weight:800;cursor:pointer}
+
+/* identify incorrect word */
+.identify{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+.identify .word{display:inline-block;padding:6px 8px;margin:4px;border-radius:6px;background:rgba(255,255,255,0.04);cursor:pointer}
+.identify .word.correct{outline:3px solid rgba(46,204,113,0.12);background:rgba(46,204,113,0.12)}
+.identify .word.wrong{outline:3px solid rgba(231,76,60,0.08);background:rgba(231,76,60,0.08)}
+
+/* feedback / final */
+.feedback{height:28px;margin-top:10px;font-weight:800}
+.final{ text-align:center;padding:12px }
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:900;margin-bottom:6px}
+
+/* footer actions */
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;border:none;background:rgba(255,255,255,0.06);color:#fff;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--accent);color:#071225}
+
+/* responsive */
+@media(max-width:760px){
+  .header{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="bg-wrap">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<!-- Sounds (place files in same folder) -->
+<audio id="rightSound" src="rightclick.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="fwAudio" src="fireworks.mp3" preload="auto"></audio>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <nav class="nav">
+      </nav>
+      <div class="title">Capital Letters — Interactive Quiz</div>
+      <div style="min-width:90px;text-align:right">
+        <button id="retryBtn" class="btn">Retry</button>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1 — Multiple Choice (0/5)</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <main id="quizArea" aria-live="polite"></main>
+
+    <div class="actions" style="margin-top:14px">
+    </div>
+  </div>
+</div>
+
+<canvas id="fw" style="display:none;position:fixed;inset:0;pointer-events:none;z-index:9999"></canvas>
+
+<script>
+/* ---------------- DATA ---------------- */
+/* 4 types x 5 questions */
+
+const mcq = [
+  { q: "Which word needs a capital letter?", opts:["cat","monday","apple","blue"], a:"monday" },
+  { q: "Which sentence is correct?", opts:["i like India.","I like india.","I like India.","i Like india."], a:"I like India." },
+  { q: "Which word should be capitalised because it is a name?", opts:["teacher","boy","sara","dog"], a:"sara" },
+  { q: "Which month needs a capital letter?", opts:["march","june","april","All"], a:"All" },
+  { q: "Which pronoun is always capitalised?", opts:["he","she","i","we"], a:"i" }
+];
+
+const correction = [
+  { q:"paris is a beautiful city.", a:"Paris is a beautiful city." },
+  { q:"my friend john lives in colombo.", a:"My friend John lives in Colombo." },
+  { q:"we will travel to kandy on monday.", a:"We will travel to Kandy on Monday." },
+  { q:"she bought a toy from abc store.", a:"She bought a toy from ABC store." },
+  { q:"the olympics will happen next year.", a:"The Olympics will happen next year." }
+];
+
+const truefalse = [
+  { q:"Days of the week always begin with capital letters.", a:"True" },
+  { q:"The pronoun 'I' should always be capitalised.", a:"True" },
+  { q:"Country names do not need capital letters.", a:"False" },
+  { q:"The first word of every sentence starts with a capital letter.", a:"True" },
+  { q:"Names of people must start with capital letters.", a:"True" }
+];
+
+const identify = [
+  { q:"We visited london last summer.", wrong:"london", hint:"Should be London" },
+  { q:"My Brother lives in Dubai.", wrong:"Brother", hint:"Should be brother" },
+  { q:"They are going to Sri lanka next week.", wrong:"lanka", hint:"Should be Lanka" },
+  { q:"The river nile flows through Egypt.", wrong:"nile", hint:"Should be Nile" },
+  { q:"Our teacher mr. Fernando gave homework.", wrong:"mr.", hint:"Should be Mr." }
+];
+
+/* ---------------- SCORING RULES (total 100) ---------------
+MCQ: 5 questions × 5 = 25
+Correction: 5 × 5 = 25
+True/False: 5 × 4 = 20
+Identify: 5 × 6 = 30
+Total = 100
+--------------------------------------------------------- */
+let state = {
+  roundKeys: ['mcq','correction','truefalse','identify'],
+  rIndex: 0,
+  qIndex: 0,
+  score: 0,
+  perRound: [0,0,0,0]
+};
+
+const quizArea = document.getElementById('quizArea');
+const roundLabel = document.getElementById('roundLabel');
+const scoreLabel = document.getElementById('scoreLabel');
+const rightSound = document.getElementById('rightSound');
+const wrongSound = document.getElementById('wrongSound');
+const fwCanvas = document.getElementById('fw');
+const fwAudio = document.getElementById('fwAudio');
+const retryBtn = document.getElementById('retryBtn');
+
+function playRight(){ try{ rightSound.currentTime = 0; rightSound.play().catch(()=>{}); }catch(e){} }
+function playWrong(){ try{ wrongSound.currentTime = 0; wrongSound.play().catch(()=>{}); }catch(e){} }
+
+function shuffle(a){ const s=a.slice(); for(let i=s.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [s[i],s[j]]=[s[j],s[i]] } return s; }
+function normalize(s){ return String(s||'').trim().replace(/[.?!,;:]+$/,'').replace(/\s+/g,' ').toLowerCase(); }
+
+function setMeta(){
+  const names = { mcq:"Round 1 — Multiple Choice", correction:"Round 2 — Sentence Correction", truefalse:"Round 3 — True / False", identify:"Round 4 — Identify Incorrect Word" };
+  const key = state.roundKeys[state.rIndex];
+  const total = 5;
+  roundLabel.textContent = `${names[key]} (${state.qIndex+1}/${total})`;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* advance */
+function nextQ(delay=700){
+  setTimeout(()=>{
+    state.qIndex++;
+    if(state.qIndex >= 5){
+      state.rIndex++;
+      state.qIndex = 0;
+      if(state.rIndex >= state.roundKeys.length){
+        showFinal();
+        return;
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* add score with cap and perRound */
+function addScore(points){
+  state.score += points;
+  if(state.score > 100) state.score = 100;
+  state.perRound[state.rIndex] = (state.perRound[state.rIndex] || 0) + points;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* render controller */
+function render(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const key = state.roundKeys[state.rIndex];
+  if(key === 'mcq') renderMCQ();
+  else if(key === 'correction') renderCorrection();
+  else if(key === 'truefalse') renderTF();
+  else if(key === 'identify') renderIdentify();
+}
+
+/* ---------------- MCQ (5) ---------------- */
+function renderMCQ(){
+  const q = mcq[state.qIndex];
+  const box = document.createElement('div'); box.className='qbox';
+  const opts = shuffle(q.opts);
+  box.innerHTML = `<div class="qtext">${q.q}</div><div class="options">${opts.map(o=>`<button class="opt" data-val="${o}">${o}</button>`).join('')}</div><div class="feedback"></div>`;
+  quizArea.appendChild(box);
+  const btns = box.querySelectorAll('.opt');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(x=>x.classList.add('disabled'));
+      const chosen = btn.dataset.val;
+      if(normalize(chosen) === normalize(q.a)){
+        btn.classList.add('correct');
+        addScore(5);
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        btn.classList.add('wrong');
+        const correctBtn = Array.from(btns).find(x=>normalize(x.dataset.val)===normalize(q.a));
+        if(correctBtn) correctBtn.classList.add('correct');
+        playWrong();
+        showFeedback('Wrong — ' + q.a, false);
+      }
+      nextQ();
+    }, {once:true});
+    btn.addEventListener('keydown', e=>{ if(e.key==='Enter') btn.click(); });
+  });
+}
+
+/* ---------------- Sentence Correction (type answer) ----------------
+User types corrected sentence then presses Enter — input accepted.
+-------------------- */
+function renderCorrection(){
+  const q = correction[state.qIndex];
+  const box = document.createElement('div'); box.className='qbox';
+  box.innerHTML = `<div class="qtext">Correct the capitals: <strong>${escapeHtml(q.q)}</strong></div>
+    <div class="correction"><input id="corrInput" placeholder="Type the corrected sentence and press Enter" autocomplete="off"></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+  const input = document.getElementById('corrInput'); input.focus();
+  input.addEventListener('keydown', function handler(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      const val = input.value.trim();
+      input.disabled = true;
+      if(normalize(val) === normalize(q.a)){
+        addScore(5);
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        playWrong();
+        showFeedback('Wrong — ' + q.a, false);
+      }
+      nextQ();
+      input.removeEventListener('keydown', handler);
+    }
+  });
+}
+
+/* ---------------- True / False ---------------- */
+function renderTF(){
+  const q = truefalse[state.qIndex];
+  const box = document.createElement('div'); box.className='qbox';
+  box.innerHTML = `<div class="qtext">${q.q}</div>
+    <div class="tf"><button class="btn" data-val="True">True</button><button class="btn" data-val="False">False</button></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+  const [tBtn,fBtn] = box.querySelectorAll('.tf .btn');
+  [tBtn,fBtn].forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tBtn.disabled = fBtn.disabled = true;
+      const chosen = btn.dataset.val;
+      if(chosen === q.a){
+        btn.style.background = 'var(--accent)';
+        btn.style.color = '#071225';
+        addScore(4);
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        btn.style.background = 'rgba(231,76,60,0.95)'; btn.style.color = '#fff';
+        playWrong();
+        showFeedback('Wrong', false);
+      }
+      nextQ();
+    }, {once:true});
+    btn.addEventListener('keydown', e=>{ if(e.key==='Enter') btn.click(); });
+  });
+}
+
+/* ---------------- Identify Incorrect Word ---------------- */
+function renderIdentify(){
+  const q = identify[state.qIndex];
+  const box = document.createElement('div'); box.className='qbox';
+  // render sentence as words with the wrong word clickable
+  const words = q.q.split(/\s+/);
+  const wordsHtml = words.map(w=>{
+    const clean = w.replace(/[,\.]+$/,'');
+    return `<span class="word" data-word="${escapeHtml(clean)}">${escapeHtml(w)}</span>`;
+  }).join(' ');
+  box.innerHTML = `<div class="qtext">Click the incorrectly capitalised word in the sentence:</div>
+    <div class="identify">${wordsHtml}</div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+  const wordEls = box.querySelectorAll('.word');
+  wordEls.forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if(el.classList.contains('used')) return;
+      const chosen = el.dataset.word;
+      if(normalize(chosen) === normalize(q.wrong)){
+        el.classList.add('correct','used');
+        addScore(6);
+        playRight();
+        showFeedback('Correct', true);
+      } else {
+        el.classList.add('wrong','used');
+        playWrong();
+        showFeedback('Wrong — ' + q.hint, false);
+      }
+      // mark all words used to prevent multiple clicks
+      wordEls.forEach(w=>w.classList.add('used'));
+      nextQ();
+    }, {once:true});
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') el.click(); });
+  });
+}
+
+/* ---------------- Final screen ---------------- */
+function showFinal(){
+  quizArea.innerHTML = '';
+  const box = document.createElement('div'); box.className='qbox final';
+  box.innerHTML = `<div class="final">
+    <div class="final-score">${state.score}/100</div>
+    <div style="text-align:center;color:var(--muted);margin-bottom:10px">Results breakdown</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">MCQ: ${state.perRound[0]||0} / 25</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Correction: ${state.perRound[1]||0} / 25</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">T/F: ${state.perRound[2]||0} / 20</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Identify: ${state.perRound[3]||0} / 30</div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button id="tryAgain" class="btn primary">Try Again</button>
+      <a class="btn" href="topics.html">Back to Topics</a>
+      <a class="btn" href="index.html">Home</a>
+    </div>
+  </div>`;
+  quizArea.appendChild(box);
+  document.getElementById('tryAgain').addEventListener('click', ()=>{
+    resetAll(); render();
+  });
+
+  if(state.score >= 75){
+    try{ fwAudio.currentTime = 0; fwAudio.play().catch(()=>{}); }catch(e){}
+    runFireworks();
+  }
+}
+
+/* ---------------- Fireworks (simple) ---------------- */
+function runFireworks(){
+  const canvas = fwCanvas; canvas.style.display='block'; canvas.width = innerWidth; canvas.height = innerHeight;
+  const ctx = canvas.getContext('2d'); const parts=[];
+  function burst(x,y){
+    const cols=['#ffd24d','#6fe7ff','#a58bff','#ff7fa3'];
+    for(let i=0;i<40;i++) parts.push({x,y,vx:(Math.random()-0.5)*6,vy:(Math.random()-1.5)*6,life:60+Math.random()*40,c:cols[i%cols.length],s:2+Math.random()*3});
+  }
+  for(let i=0;i<5;i++) burst(Math.random()*innerWidth,Math.random()*innerHeight*0.6);
+  (function step(){
+    ctx.fillStyle='rgba(0,0,0,0.16)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/100); ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+    if(parts.length) requestAnimationFrame(step); else setTimeout(()=>{ canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); },400);
+  })();
+}
+
+/* ---------------- Helpers & UI ---------------- */
+function showFeedback(msg, ok){
+  const fb = document.querySelector('.feedback');
+  if(!fb) return;
+  fb.textContent = msg;
+  fb.className = 'feedback ' + (ok? 'correct':'wrong');
+}
+
+/* escape for HTML */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function resetAll(){
+  state = { roundKeys:['mcq','correction','truefalse','identify'], rIndex:0, qIndex:0, score:0, perRound:[0,0,0,0] };
+  scoreLabel.textContent = 'Score: 0';
+  showFeedback('', true);
+}
+
+/* retry button */
+retryBtn.addEventListener('click', ()=>{ resetAll(); render(); playRight(); });
+
+/* particles decorative */
+(function initParticles(){
+  const pWrap = document.getElementById('particles'); const count = 28;
+  for(let i=0;i<count;i++){ const s=document.createElement('span'); s.style.left = Math.random()*100 + '%'; s.style.top = Math.random()*100 + '%'; const size = 2 + Math.random()*4; s.style.width = size+'px'; s.style.height = size+'px'; s.style.opacity = 0.6*Math.random(); pWrap.appendChild(s); }
+})();
+
+/* ---------------- INIT ---------------- */
+resetAll(); render();
+
+</script>
+</body>
+</html>

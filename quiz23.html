@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Prepositions of Movement — Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#041226; --bg2:#063b66;
+  --glass: rgba(255,255,255,0.04);
+  --card: rgba(255,255,255,0.03);
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --ok:#2ecc71; --bad:#ff6b6b; --sel:#ffd877;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;display:flex;align-items:flex-start;justify-content:center;padding:28px;
+}
+
+/* blobs */
+.bg-wrap{position:fixed;inset:0;z-index:-5;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:40%;filter:blur(90px);opacity:.35;mix-blend-mode:screen}
+.blob.b1{width:420px;height:420px;left:-8%;top:8%;background:#ff8a65;animation:blob1 18s infinite alternate}
+.blob.b2{width:360px;height:360px;right:-6%;top:6%;background:#6ec6ff;animation:blob2 20s infinite alternate}
+.blob.b3{width:300px;height:300px;left:28%;bottom:-8%;background:#a28bff;animation:blob3 22s infinite alternate}
+@keyframes blob1{from{transform:translate(0,0)}to{transform:translate(60px,-50px)}}
+@keyframes blob2{from{transform:translate(0,0)}to{transform:translate(-40px,-60px)}}
+@keyframes blob3{from{transform:translate(0,0)}to{transform:translate(20px,-40px)}}
+
+/* container */
+.container{width:100%;max-width:1100px;z-index:2}
+.card{
+  background:var(--card);
+  border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);box-shadow:0 18px 40px rgba(0,0,0,0.5)
+}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+.nav a{color:var(--accent);text-decoration:none;font-weight:700;margin-right:10px}
+.title{color:var(--accent);font-weight:800;font-size:1.25rem}
+.lead{color:var(--muted);margin-top:6px}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin:12px 0;gap:12px;flex-wrap:wrap}
+.round{font-weight:700}
+.score{background:rgba(0,0,0,0.18);padding:6px 12px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* question box */
+.question-box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.qtext{font-size:1.05rem;color:#eef6ff;margin-bottom:12px}
+
+/* options */
+.options{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;cursor:pointer;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.04)}
+.opt:hover{transform:translateY(-3px)}
+.opt.disabled{pointer-events:none;opacity:0.6}
+.opt.correct{background:var(--ok);color:#062114;border-color:rgba(46,204,113,0.25)}
+.opt.wrong{background:var(--bad);color:#2b0b0b;border-color:rgba(255,0,0,0.12)}
+
+/* drag & drop */
+.drag-bank{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.drag-item{
+  padding:10px 14px;border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  cursor:grab;font-weight:700;color:#fff;
+}
+.drag-item.used{opacity:0.4;pointer-events:none}
+
+.drop-slot{
+  display:inline-block;
+  min-width:120px;
+  padding:8px 12px;
+  border-bottom:2px dashed rgba(255,255,255,0.3);
+  margin-left:6px;
+  margin-right:6px;
+  text-align:center;
+  border-radius:8px;
+}
+.drop-slot.filled{
+  border-bottom-color:var(--accent);
+  background:rgba(255,255,255,0.06);
+}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.match-item{padding:10px;border-radius:8px;background:rgba(255,255,255,0.04);margin-bottom:8px;cursor:pointer;font-weight:700;transition:box-shadow .12s,transform .12s}
+.match-item.selected{box-shadow:0 8px 20px rgba(0,0,0,0.45);outline:3px solid rgba(255,216,119,0.22);background:linear-gradient(90deg,#3b2a0d10,#ffd87710)}
+.match-item.matched{background:linear-gradient(90deg,#05330f10,#2ecc7110);border-left:6px solid var(--ok);pointer-events:none;opacity:0.95}
+.match-item.wrong{animation:shake .28s}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}100%{transform:translateX(0)}}
+
+/* reorder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.word{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.05);cursor:pointer;font-weight:700}
+.word.used{opacity:0.5;pointer-events:none}
+.built{min-height:44px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* feedback */
+.feedback{height:26px;margin-top:8px;font-weight:800}
+.feedback.ok{color:var(--ok)}
+.feedback.bad{color:var(--bad)}
+
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#062114}
+
+/* final */
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:900;text-align:center}
+
+/* fireworks canvas */
+canvas#fw{position:fixed;left:0;top:0;pointer-events:none;z-index:9999;display:none}
+
+/* responsive */
+@media(max-width:820px){ .match-wrap{flex-direction:column} .meta{flex-direction:column;align-items:flex-start} }
+</style>
+</head>
+<body>
+
+<div class="bg-wrap" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="container">
+  <div class="card" role="main" aria-live="polite">
+    <div class="header">
+      <div>
+        <div class="title">Prepositions of Movement — Quiz</div>
+        <div class="lead">10 MCQ → Drag A → Drag B → Matching → Reorder. Get ≥75 to unlock fireworks.</div>
+      </div>
+      <nav class="nav" aria-label="top navigation">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+    </div>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+
+    <div class="note" style="text-align:center;color:var(--muted);margin-top:8px">
+      Each logical question unit is weighted so the quiz totals 100 points.
+    </div>
+  </div>
+</div>
+
+<audio id="soundRight" src="rightclick.mp3" preload="auto"></audio>
+<audio id="soundWrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="soundFire" src="fireworks.mp3" preload="auto"></audio>
+<canvas id="fw"></canvas>
+
+<script>
+
+/* =========================================================
+   NEW ENGINE — CLEAN, FINAL, FIXED
+========================================================= */
+
+/* ---------------- QUIZ DATA ---------------- */
+const quizRounds = [
+{
+  title:"Round 1 — Multiple Choice",
+  type:"mcq-round",
+  items:[
+    { type:"mcq", q:"The children ran ___ the playground to reach the swings.", opts:["into","across","under"], a:"across" },
+    { type:"mcq", q:"She quietly walked ___ the bedroom so she wouldn’t wake the baby.", opts:["onto","into","over"], a:"into" },
+    { type:"mcq", q:"The cat jumped ___ the table to steal the fish.", opts:["onto","past","around"], a:"onto" },
+    { type:"mcq", q:"He drove ___ the bridge even though it was raining heavily.", opts:["off","over","along"], a:"over" },
+    { type:"mcq", q:"They strolled ___ the river, enjoying the view.", opts:["along","towards","out of"], a:"along" },
+    { type:"mcq", q:"The dog crawled ___ the sofa to hide its toy.", opts:["under","across","around"], a:"under" },
+    { type:"mcq", q:"She ran ___ the gate when she saw her father arriving.", opts:["towards","onto","into"], a:"towards" },
+    { type:"mcq", q:"The boy walked ___ the old shop without noticing it.", opts:["past","through","off"], a:"past" },
+    { type:"mcq", q:"They cycled ___ the narrow tunnel slowly.", opts:["under","through","out of"], a:"through" },
+    { type:"mcq", q:"The mouse ran ___ the cupboard as soon as it heard footsteps.", opts:["over","into","around"], a:"into" }
+  ]
+},
+
+{
+  title:"Round 2 — Drag & Drop (Part A)",
+  type:"drag-round",
+  items:[
+    { q:"She stepped ___ the bus quickly.", a:"onto" },
+    { q:"The baby rolled ___ the carpet.", a:"across" },
+    { q:"They walked ___ the bridge to reach the other side.", a:"across" },
+    { q:"The boy climbed ___ the roof to get the kite.", a:"onto" },
+    { q:"She walked ___ the hall without stopping.", a:"through" }
+  ]
+},
+
+{
+  title:"Round 3 — Drag & Drop (Part B)",
+  type:"drag-round",
+  items:[
+    { q:"The dog ran ___ the corner and disappeared.", a:"around" },
+    { q:"The cat jumped ___ the box after being scared.", a:"into" },
+    { q:"He moved ___ the door when he heard someone calling.", a:"towards" },
+    { q:"They crawled ___ the fence to get the ball.", a:"under" },
+    { q:"She ran ___ the house because it started to rain.", a:"out of" }
+  ]
+},
+
+{
+  title:"Round 4 — Matching",
+  type:"match-round",
+  items:[
+    {
+      type:"match",
+      left:[
+        "The boy swam across",
+        "The boy walked towards",
+        "The cat jumped off",
+        "They moved along",
+        "He climbed over"
+      ],
+      right:[
+        "the river carefully.",
+        "the gate slowly.",
+        "the chair after resting.",
+        "the path next to the river.",
+        "the wall to reach the ball."
+      ],
+      correctMap:[0,1,2,3,4]
+    }
+  ]
+},
+
+{
+  title:"Round 5 — Word Order",
+  type:"reorder-round",
+  items:[
+    { type:"reorder", scrambled:["The","ran","gate.","towards","boy"], a:"The boy ran towards the gate."},
+    { type:"reorder", scrambled:["across","carefully.","road","walked","She","the"], a:"She walked across the road carefully." },
+    { type:"reorder", scrambled:["along","tourists","beach.","The","the","walked"], a:"The tourists walked along the beach." },
+    { type:"reorder", scrambled:["fence","climbed","over","the","He","quickly."], a:"He climbed over the fence quickly." },
+    { type:"reorder", scrambled:["out of","teacher","The","classroom.","the","walked"], a:"The teacher walked out of the classroom." }
+  ]
+}
+];
+
+/* ========================================================= */
+
+function normalize(str){
+  return String(str).toLowerCase().trim().replace(/[^\w\s]/g,'').replace(/\s+/g,' ');
+}
+
+/* COUNT UNITS */
+let totalUnits = 0;
+quizRounds.forEach(r=>{
+  r.items.forEach(i=>{
+    if(i.type === "match") totalUnits += i.left.length;
+    else totalUnits++;
+  });
+});
+const POINT = 100 / totalUnits;
+
+let state = { round:0, item:0, score:0 };
+
+const quizArea = document.getElementById("quizArea");
+const roundLabel = document.getElementById("roundLabel");
+const scoreLabel = document.getElementById("scoreLabel");
+const soundRight = document.getElementById("soundRight");
+const soundWrong = document.getElementById("soundWrong");
+const soundFire = document.getElementById("soundFire");
+const canvasFW = document.getElementById("fw");
+
+/* =========================================================
+   RENDER
+========================================================= */
+function render(){
+  const round = quizRounds[state.round];
+  if(!round) return finish();
+
+  const item = round.items[state.item];
+  if(!item) return finish();
+
+  roundLabel.textContent = `${round.title} (${state.item+1}/${round.items.length})`;
+  scoreLabel.textContent = `Score: ${Math.round(state.score)}`;
+  quizArea.innerHTML = "";
+
+  switch(round.type){
+    case "mcq-round": renderMCQ(item); break;
+    case "drag-round": renderDrag(item, round); break;
+    case "match-round": renderMatch(item); break;
+    case "reorder-round": renderReorder(item); break;
+  }
+}
+
+/* =========================================================
+   ROUND 1 — MCQ
+========================================================= */
+function renderMCQ(item){
+  const box = document.createElement("div");
+  box.className = "question-box";
+
+  const options = shuffle(item.opts.slice());
+  box.innerHTML = `
+    <div class="qtext">${item.q}</div>
+    <div class="options">
+      ${options.map(o=>`<div class="opt" data-v="${o}">${o}</div>`).join("")}
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  box.querySelectorAll(".opt").forEach(opt=>{
+    opt.addEventListener("click",()=>{
+      box.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
+      const chosen = opt.dataset.v;
+
+      if(normalize(chosen)===normalize(item.a)){
+        opt.classList.add("correct");
+        soundRight.play();
+        state.score+=POINT;
+        box.querySelector(".feedback").textContent="Correct";
+        box.querySelector(".feedback").className="feedback ok";
+      } else {
+        opt.classList.add("wrong");
+        soundWrong.play();
+        box.querySelector(".feedback").textContent=`Wrong — answer: ${item.a}`;
+        box.querySelector(".feedback").className="feedback bad";
+
+        box.querySelectorAll(".opt").forEach(o=>{
+          if(normalize(o.dataset.v)===normalize(item.a)) o.classList.add("correct");
+        });
+      }
+      next();
+    });
+  });
+}
+
+/* =========================================================
+   ROUND 2 & 3 — DRAG
+========================================================= */
+function renderDrag(item, round){
+  const answers = round.items.map(i=>i.a);
+  const bank = shuffle([...new Set(answers)]);
+
+  const box = document.createElement("div");
+  box.className = "question-box";
+  box.innerHTML = `
+    <div class="qtext">${item.q.replace("___","<span class='drop-slot'></span>")}</div>
+    <div class="drag-bank">${bank.map(w=>`<div class="drag-item" draggable="true" data-w="${w}">${w}</div>`).join("")}</div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const slot = box.querySelector(".drop-slot");
+  const items = [...box.querySelectorAll(".drag-item")];
+
+  items.forEach(i=>{
+    i.addEventListener("dragstart",e=>{
+      e.dataTransfer.setData("text/plain",i.dataset.w);
+    });
+  });
+
+  slot.addEventListener("dragover",e=>e.preventDefault());
+
+  slot.addEventListener("drop",e=>{
+    e.preventDefault();
+    if(slot.textContent.trim()!=="") return;
+
+    const word = e.dataTransfer.getData("text/plain");
+    slot.textContent = word;
+    slot.classList.add("filled");
+
+    const fb=box.querySelector(".feedback");
+
+    if(normalize(word)===normalize(item.a)){
+      fb.textContent="Correct";
+      fb.className="feedback ok";
+      soundRight.play();
+      state.score+=POINT;
+    } else {
+      fb.textContent=`Wrong — answer: ${item.a}`;
+      fb.className="feedback bad";
+      soundWrong.play();
+    }
+
+    next();
+  });
+}
+
+/* =========================================================
+   ROUND 4 — MATCH
+========================================================= */
+function renderMatch(item){
+  const left = item.left.slice();
+  const right = shuffle(item.right.slice());
+  const correctMap = item.correctMap;
+
+  const box = document.createElement("div");
+  box.className = "question-box";
+
+  box.innerHTML = `
+    <div class="qtext">Match the items. Tap left → tap right.</div>
+    <div class="match-wrap">
+      <div class="match-col left-col">
+        ${left.map((l,i)=>`<div class="match-item left" data-i="${i}">${l}</div>`).join("")}
+      </div>
+      <div class="match-col right-col">
+        ${right.map(r=>`<div class="match-item right" data-val="${r}">${r}</div>`).join("")}
+      </div>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const leftEls = [...box.querySelectorAll(".left")];
+  const rightEls = [...box.querySelectorAll(".right")];
+
+  const mapRightToIndex = {};
+  item.right.forEach((r,i)=> mapRightToIndex[normalize(r)] = i );
+
+  let selected = null;
+  let count=0;
+
+  leftEls.forEach(l=>{
+    l.addEventListener("click",()=>{
+      if(l.classList.contains("matched")) return;
+      leftEls.forEach(x=>x.classList.remove("selected"));
+      l.classList.add("selected");
+      selected = Number(l.dataset.i);
+    });
+  });
+
+  rightEls.forEach(r=>{
+    r.addEventListener("click",()=>{
+      if(!selected && selected!==0){
+        soundWrong.play();
+        return;
+      }
+      if(r.classList.contains("matched")) return;
+
+      const chosenIndex = mapRightToIndex[normalize(r.dataset.val)];
+      const correctIndex = correctMap[selected];
+
+      if(chosenIndex===correctIndex){
+        const l = leftEls.find(x=>Number(x.dataset.i)===selected);
+        l.classList.add("matched");
+        r.classList.add("matched");
+        l.classList.remove("selected");
+
+        soundRight.play();
+        state.score += POINT;
+
+        count++;
+        if(count===left.length) next();
+
+      } else {
+        r.classList.add("wrong");
+        soundWrong.play();
+        setTimeout(()=>r.classList.remove("wrong"),400);
+      }
+      selected=null;
+      leftEls.forEach(x=>x.classList.remove("selected"));
+    });
+  });
+}
+
+/* =========================================================
+   ROUND 5 — REORDER
+========================================================= */
+function renderReorder(item){
+  const words = shuffle(item.scrambled.slice());
+  const box = document.createElement("div");
+  box.className="question-box";
+
+  box.innerHTML = `
+    <div class="qtext">Put the words in order:</div>
+    <div class="word-bank">${words.map(w=>`<div class="word" data-w="${w}">${w}</div>`).join("")}</div>
+    <div class="built"></div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  const built=[];
+  const bank = [...box.querySelectorAll(".word")];
+  const builtBox = box.querySelector(".built");
+  const fb = box.querySelector(".feedback");
+
+  bank.forEach(w=>{
+    w.addEventListener("click",()=>{
+      if(w.classList.contains("used")) return;
+      w.classList.add("used");
+      built.push(w.dataset.w);
+
+      builtBox.innerHTML = built.map(x=>`<div class="word used">${x}</div>`).join(" ");
+
+      if(built.length===item.scrambled.length){
+        const attempt = normalize(built.join(" "));
+        if(attempt===normalize(item.a)){
+          fb.textContent="Correct";
+          fb.className="feedback ok";
+          soundRight.play();
+          state.score+=POINT;
+        } else {
+          fb.textContent=`Wrong — answer: ${item.a}`;
+          fb.className="feedback bad";
+          soundWrong.play();
+        }
+        next();
+      }
+    });
+  });
+}
+
+/* =========================================================
+   NEXT QUESTION
+========================================================= */
+function next(){
+  setTimeout(()=>{
+    const round = quizRounds[state.round];
+    state.item++;
+
+    if(state.item>=round.items.length){
+      state.round++;
+      state.item=0;
+    }
+    render();
+  },900);
+}
+
+/* =========================================================
+   FINISH
+========================================================= */
+function finish(){
+  quizArea.innerHTML = `
+    <div class="question-box final">
+      <div class="final-score">${Math.round(state.score)} / 100</div>
+      <div class="actions">
+        <button class="btn primary" onclick="location.reload()">Try Again</button>
+        <a class="btn" href="lesson24_video.html">Next topic</a>
+      </div>
+    </div>
+  `;
+
+  if(state.score>=75){
+    runFireworks();
+    soundFire.play();
+  }
+}
+
+/* =========================================================
+   FIREWORKS
+========================================================= */
+function runFireworks(){
+  const canvas=canvasFW;
+  const ctx=canvas.getContext("2d");
+  canvas.style.display="block";
+  canvas.width=innerWidth; canvas.height=innerHeight;
+
+  const parts=[];
+
+  function burst(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height*0.5;
+    for(let i=0;i<60;i++){
+      parts.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-1.2)*8,
+        life:60+Math.random()*40,
+        color:`hsl(${Math.random()*360},80%,60%)`,
+        size:2+Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<6;i++) burst();
+
+  function anim(){
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.08;
+      p.life--;
+
+      ctx.globalAlpha=Math.max(p.life/100,0);
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+
+      if(p.life<=0) parts.splice(i,1);
+    }
+
+    if(parts.length>0) requestAnimationFrame(anim);
+    else canvas.style.display="none";
+  }
+  anim();
+}
+
+/* ========================================================= */
+function shuffle(arr){
+  arr=arr.slice();
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+/* START */
+render();
+
+</script>
+</body>
+</html>

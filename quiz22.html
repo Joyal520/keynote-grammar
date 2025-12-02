@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Prepositions of Place — Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#041226; --bg2:#063b66;
+  --glass: rgba(255,255,255,0.04);
+  --card: rgba(255,255,255,0.03);
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --ok:#2ecc71; --bad:#ff6b6b; --sel:#ffd877;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;display:flex;align-items:flex-start;justify-content:center;padding:28px;
+}
+
+/* blobs */
+.bg-wrap{position:fixed;inset:0;z-index:-5;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:40%;filter:blur(90px);opacity:.35;mix-blend-mode:screen}
+.blob.b1{width:420px;height:420px;left:-8%;top:8%;background:#ff8a65;animation:blob1 18s infinite alternate}
+.blob.b2{width:360px;height:360px;right:-6%;top:6%;background:#6ec6ff;animation:blob2 20s infinite alternate}
+.blob.b3{width:300px;height:300px;left:28%;bottom:-8%;background:#a28bff;animation:blob3 22s infinite alternate}
+@keyframes blob1{from{transform:translate(0,0)}to{transform:translate(60px,-50px)}}
+@keyframes blob2{from{transform:translate(0,0)}to{transform:translate(-40px,-60px)}}
+@keyframes blob3{from{transform:translate(0,0)}to{transform:translate(20px,-40px)}}
+
+/* container */
+.container{width:100%;max-width:1100px;z-index:2}
+.card{
+  background:var(--card);
+  border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);box-shadow:0 18px 40px rgba(0,0,0,0.5)
+}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+.nav a{color:var(--accent);text-decoration:none;font-weight:700;margin-right:10px}
+.title{color:var(--accent);font-weight:800;font-size:1.25rem}
+.lead{color:var(--muted);margin-top:6px}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin:12px 0;gap:12px;flex-wrap:wrap}
+.round{font-weight:700}
+.score{background:rgba(0,0,0,0.18);padding:6px 12px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* question box */
+#quizArea .question-box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.qtext{font-size:1.05rem;color:#eef6ff;margin-bottom:12px}
+
+/* options */
+.options{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;cursor:pointer;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.04)}
+.opt:hover{transform:translateY(-3px)}
+.opt.disabled{pointer-events:none;opacity:0.6}
+.opt.correct{background:var(--ok);color:#062114;border-color:rgba(46,204,113,0.25)}
+.opt.wrong{background:var(--bad);color:#2b0b0b;border-color:rgba(255,0,0,0.12)}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.match-item{padding:10px;border-radius:8px;background:rgba(255,255,255,0.04);margin-bottom:8px;cursor:pointer;font-weight:700;transition:box-shadow .12s,transform .12s}
+.match-item.selected{box-shadow:0 8px 20px rgba(0,0,0,0.45);outline:3px solid rgba(255,216,119,0.22);background:linear-gradient(90deg,#3b2a0d10,#ffd87710)}
+.match-item.matched{background:linear-gradient(90deg,#05330f10,#2ecc7110);border-left:6px solid var(--ok);pointer-events:none;opacity:0.95}
+.match-item.wrong{animation:shake .28s}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}100%{transform:translateX(0)}}
+
+/* word bank / reorder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.word{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.05);cursor:pointer;font-weight:700}
+.word.used{opacity:0.5;pointer-events:none}
+.built{min-height:44px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* drag-fill (not used here) */
+.drag-line{display:inline-block;min-width:80px;border-bottom:2px dashed rgba(255,255,255,0.12);padding:4px 6px;margin:0 6px;vertical-align:middle}
+.choice{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:pointer}
+
+/* feedback */
+.feedback{height:26px;margin-top:8px;font-weight:800}
+.feedback.ok{color:var(--ok)}
+.feedback.bad{color:var(--bad)}
+
+/* footer actions */
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#062114}
+
+/* final */
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:900;text-align:center}
+
+/* fireworks canvas */
+canvas#fw{position:fixed;left:0;top:0;pointer-events:none;z-index:9999}
+
+/* responsive */
+@media(max-width:820px){ .match-wrap{flex-direction:column} .meta{flex-direction:column;align-items:flex-start} }
+</style>
+</head>
+<body>
+
+<div class="bg-wrap" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="container">
+  <div class="card" role="main" aria-live="polite">
+    <div class="header">
+      <div>
+        <div class="title">Prepositions of Place — Quiz</div>
+        <div class="lead">4 rounds: MCQ → Fill → Matching → Reorder. Edit only QUIZ DATA below.</div>
+      </div>
+      <nav class="nav" aria-label="top navigation">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+    </div>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+
+    <div class="note" style="text-align:center;color:var(--muted);margin-top:8px">
+      Each question is weighted so the quiz totals 100 points. Matching counts each pair as a separate question.
+    </div>
+  </div>
+</div>
+
+<!-- audio (replace filenames if needed in your folder) -->
+<audio id="soundRight" src="rightclick.mp3" preload="auto"></audio>
+<audio id="soundWrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="soundFire" src="fireworks.mp3" preload="auto"></audio>
+
+<canvas id="fw" style="display:none"></canvas>
+
+<script>
+/* =========================================================
+   SIMPLE 4-ROUND QUIZ ENGINE (MCQ, FILL, MATCH, REORDER)
+   - Edit only the QUIZ DATA block below.
+   - Matching counts each left-right pair as an individual question.
+   ========================================================= */
+
+/* ------------------- QUIZ DATA (REPLACE QUESTIONS HERE) -------------------
+   Structure:
+   quizRounds = [
+     { title: "Round title", items: [ {type: "mcq", q:"", opts:[], a:""}, ... ] },
+     ...
+   ]
+
+   SUPPORTED TYPES IN THIS FILE:
+     - "mcq"   : { type:"mcq", q:"", opts:[], a:"correct option exactly as string" }
+     - "fill"  : { type:"fill", q:"prompt with blank", a:"expected single word/phrase" }
+     - "match" : { type:"match", left: [...], right: [...], correctMap: [rightIndexForLeft0, ...] }
+                NOTE: right array may be in logical order; engine randomizes right column.
+     - "reorder": { type:"reorder", scrambled:[...], a:"expected sentence (normalized)" }
+ --------------------------------------------------------------------------- */
+
+const quizRounds = [
+
+  /* ROUND 1 — MCQ (10 questions) */
+  {
+    title: "Round 1 — Multiple Choice",
+    items: [
+      { type:"mcq", q:"The cat is hiding _____ the sofa.", opts:["on","in","under","over"], a:"under" },
+      { type:"mcq", q:"There is a beautiful painting _____ the fireplace.", opts:["above","below","among","between"], a:"above" },
+      { type:"mcq", q:"We waited _____ the bus stop for twenty minutes.", opts:["at","on","in","near"], a:"at" },
+      { type:"mcq", q:"The supermarket is just _____ the library.", opts:["behind","next to","among","over"], a:"next to" },
+      { type:"mcq", q:"She stood _____ the mirror", opts:["in front of","in","on","at"], a:"in front of" },
+      { type:"mcq", q:"I found my keys _____ my jacket pocket.", opts:["on","in","at","above"], a:"in" },
+      { type:"mcq", q:"The bird flew _____ the lake and then landed.", opts:["over","under","below","behind"], a:"over" },
+      { type:"mcq", q:"There were hundreds of people _____ the concert hall.", opts:["between","among","inside","in front of"], a:"inside" },
+      { type:"mcq", q:"The temperature tonight will drop _____ zero.", opts:["under","below","over","above"], a:"below" },
+      { type:"mcq", q:"The little boy is standing _____ his mother and father.", opts:["next to","among","between","behind"], a:"between" }
+    ]
+  },
+
+  /* ROUND 2 — FILL IN THE BLANKS (10 questions) */
+  {
+    title: "Round 2 — Fill in the Blanks",
+    items: [
+      { type:"fill", q:"The shoes are __________ the bed.", a:"under" },
+      { type:"fill", q:"There is a lamp __________ the table.", a:"on" },
+      { type:"fill", q:"We live __________ 45 Apple Street.", a:"at" },
+      { type:"fill", q:"The sun disappeared __________ the clouds.", a:"behind" },
+      { type:"fill", q:"A spider is  __________ the wall.", a:"on" },
+      { type:"fill", q:"The bank is __________ the cinema and the café.", a:"between" },
+      { type:"fill", q:"It’s cold __________ the house; put on your coat.", a:"outside" },
+      { type:"fill", q:"The cat jumped __________ the fence.", a:"over" },
+      { type:"fill", q:"The basement __________ the ground floor.", a:"below" },
+      { type:"fill", q:"She stood __________ the crowd, waving at me.", a:"among" }
+    ]
+  },
+
+  /* ROUND 3 — MATCHING (5 pairs; counted as 5 questions) */
+  {
+    title: "Round 3 — Matching (5 pairs)",
+    items: [
+      {
+        type:"match",
+        left: [
+          "The children are playing…",
+          "The plane flew…",
+          "A red car is parked…",
+          "The supermarket is…",
+          "Birds were singing…"
+        ],
+        right: [
+          "in the garden.",
+          "over the city.",
+          "in front of the shop.",
+          "next to the post office.",
+          "in the tree."
+          
+        ],
+        // mapping: left index -> right index
+        correctMap: [0,1,2,3,4]
+      }
+    ]
+  },
+
+  /* ROUND 4 — REORDER (5 items) */
+  {
+    title: "Round 4 — Word Order",
+    items: [
+      { type:"reorder", scrambled:["stop.","We","at","the","bus","are"], a:"We are at the bus stop." },
+      { type:"reorder", scrambled:["clouds.","sun","The","above","is","the"], a:"The sun is above the clouds." },
+      { type:"reorder", scrambled:["building.","the","is","The","bank","next","to"], a:"The bank is next to the building." },
+      { type:"reorder", scrambled:["bed.","shoes","under","the","My","are"], a:"My shoes are under the bed." },
+      { type:"reorder", scrambled:["trees.","The","house","is","the","behind"], a:"The house is behind the trees." }
+    ]
+  }
+
+]; /* END QUIZ DATA */
+
+/* ------------------ internal helpers & state ------------------ */
+
+function playSound(id){
+  try{ const a = document.getElementById(id); a.currentTime = 0; a.play().catch(()=>{}); }catch(e){}
+}
+function normalize(s){ return String(s||'').trim().toLowerCase().replace(/[.,!?;:]+$/,'').replace(/\s+/g,' '); }
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* Count total logical questions so points sum to 100.
+   - mcq -> 1 per item
+   - fill -> 1 per item
+   - match -> each left item counts as 1
+   - reorder -> 1 per item
+*/
+let flatCount = 0;
+quizRounds.forEach(r => {
+  r.items.forEach(it=>{
+    if(it.type === 'match'){
+      flatCount += (it.left ? it.left.length : 0);
+    } else {
+      flatCount += 1;
+    }
+  });
+});
+const TOTAL_QUESTIONS = Math.max(1, flatCount);
+const POINTS_PER_UNIT = 100 / TOTAL_QUESTIONS; // fractional; we accumulate and clamp later
+
+/* state */
+let state = { roundIndex:0, itemIndex:0, score:0, answeredUnits:0 };
+const quizArea = document.getElementById('quizArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const roundLabel = document.getElementById('roundLabel');
+const canvasFW = document.getElementById('fw');
+
+function updateMeta(){
+  const curr = quizRounds[state.roundIndex];
+  const totalItems = (curr ? curr.items.length : 0);
+  roundLabel.textContent = `${curr ? curr.title : 'Complete'} (${state.itemIndex+1}/${totalItems})`;
+  scoreLabel.textContent = `Score: ${Math.round(state.score)}`;
+}
+
+/* Final screen */
+function showFinal(){
+  quizArea.innerHTML = `
+    <div class="question-box final">
+      <div class="final-score">${Math.round(state.score)} / 100</div>
+      <div style="text-align:center;color:var(--muted);margin-top:8px">Quiz complete</div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn primary" onclick="location.reload()">Try Again</button>
+        <a class="btn" href="lesson23_video.html">Next Topic</a>
+      </div>
+    </div>
+  `;
+  if(Math.round(state.score) >= 75){
+    runFireworks();
+    playSound('soundFire');
+  }
+}
+
+/* Advance logic */
+function goNext(delay=700){
+  setTimeout(()=>{
+    const currRound = quizRounds[state.roundIndex];
+    state.itemIndex++;
+    if(state.itemIndex >= (currRound ? currRound.items.length : 0)){
+      state.roundIndex++;
+      state.itemIndex = 0;
+      if(state.roundIndex >= quizRounds.length){
+        // clamp
+        if(state.score > 100) state.score = 100;
+        updateMeta();
+        showFinal();
+        return;
+      }
+    }
+    renderCurrent();
+  }, delay);
+}
+
+/* Award points for a unit (one question worth) */
+function awardUnitPoints(units){
+  // units = number of logical question-units to award (usually 1)
+  const pts = POINTS_PER_UNIT * units;
+  state.score += pts;
+  if(state.score > 100) state.score = 100;
+  state.answeredUnits += units;
+  updateMeta();
+}
+
+/* Render current item */
+function renderCurrent(){
+  updateMeta();
+  const round = quizRounds[state.roundIndex];
+  if(!round){ showFinal(); return; }
+  const item = round.items[state.itemIndex];
+  if(!item){ showFinal(); return; }
+
+  quizArea.innerHTML = '';
+  const box = document.createElement('div'); box.className = 'question-box';
+
+  /* ---------- MCQ ---------- */
+  if(item.type === 'mcq'){
+    const opts = shuffleArray(item.opts.slice());
+    box.innerHTML = `<div class="qtext">${escapeHtml(item.q)}</div>
+      <div class="options">${opts.map(o=>`<div class="opt" data-val="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('')}</div>
+      <div class="feedback"></div>`;
+    quizArea.appendChild(box);
+
+    box.querySelectorAll('.opt').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        box.querySelectorAll('.opt').forEach(b=>b.classList.add('disabled'));
+        const chosen = btn.dataset.val;
+        if(normalize(chosen) === normalize(item.a)){
+          btn.classList.add('correct');
+          playSound('soundRight');
+          awardUnitPoints(1);
+          box.querySelector('.feedback').textContent = 'Correct';
+          box.querySelector('.feedback').className = 'feedback ok';
+        } else {
+          btn.classList.add('wrong');
+          // reveal correct option if present
+          [...box.querySelectorAll('.opt')].forEach(b=>{
+            if(normalize(b.dataset.val) === normalize(item.a)) b.classList.add('correct');
+          });
+          playSound('soundWrong');
+          box.querySelector('.feedback').textContent = `Wrong — answer: ${item.a}`;
+          box.querySelector('.feedback').className = 'feedback bad';
+        }
+        goNext(900);
+      }, { once:true });
+    });
+
+    return;
+  }
+
+  /* ---------- FILL ---------- */
+  if(item.type === 'fill'){
+    box.innerHTML = `<div class="qtext">${escapeHtml(item.q)}</div>
+      <input id="typedAnswer" type="text" style="width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff" autocomplete="off" />
+      <div style="margin-top:10px"><button id="submitFill" class="btn primary">Submit</button></div>
+      <div class="feedback"></div>`;
+    quizArea.appendChild(box);
+    const input = box.querySelector('#typedAnswer');
+    const submit = box.querySelector('#submitFill');
+    input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') submit.click(); });
+    submit.addEventListener('click', ()=>{
+      const val = normalize(input.value);
+      if(!val){ input.focus(); return; }
+      if(val === normalize(item.a)){
+        playSound('soundRight');
+        awardUnitPoints(1);
+        box.querySelector('.feedback').textContent = 'Correct';
+        box.querySelector('.feedback').className = 'feedback ok';
+      } else {
+        playSound('soundWrong');
+        box.querySelector('.feedback').textContent = `Wrong — answer: ${item.a}`;
+        box.querySelector('.feedback').className = 'feedback bad';
+      }
+      goNext(700);
+    }, { once:true });
+    return;
+  }
+
+  /* ---------- MATCHING ---------- */
+  if(item.type === 'match'){
+    // left and right arrays; shuffle right for display
+    const left = item.left.slice();
+    const right = item.right.slice();
+    const shuffledRight = shuffleArray(right.slice());
+
+    box.innerHTML = `<div class="qtext">Match the left items with the correct right-endings.<br><small>Click a left item (it glows yellow), then click its matching right item.</small></div>
+      <div class="match-wrap">
+        <div class="match-col" id="leftCol">${left.map((l,i)=>`<div class="match-item left" data-index="${i}">${escapeHtml(l)}</div>`).join('')}</div>
+        <div class="match-col" id="rightCol">${shuffledRight.map((r,i)=>`<div class="match-item right" data-val="${escapeHtml(r)}">${escapeHtml(r)}</div>`).join('')}</div>
+      </div>
+      <div class="feedback"></div>`;
+    quizArea.appendChild(box);
+
+    const leftEls = [...box.querySelectorAll('.match-item.left')];
+    const rightEls = [...box.querySelectorAll('.match-item.right')];
+    let selectedLeftIndex = null;
+    let matchedCount = 0;
+    // We need mapping from right text -> its original index in item.right
+    const rightToIndex = {};
+    right.forEach((txt, idx)=>{ rightToIndex[normalize(txt)] = idx; });
+
+    leftEls.forEach(le => {
+      le.addEventListener('click', ()=>{
+        if(le.classList.contains('matched')) return;
+        leftEls.forEach(x=>x.classList.remove('selected'));
+        le.classList.add('selected');
+        selectedLeftIndex = Number(le.dataset.index);
+        // left selection visual: glow yellow
+        playSound('soundRight'); // light click sound for selection (you requested click sound on selection)
+      });
+    });
+
+    rightEls.forEach(re => {
+      re.addEventListener('click', ()=>{
+        if(re.classList.contains('matched')) return;
+        if(selectedLeftIndex === null){
+          // instruct user
+          const fb = box.querySelector('.feedback');
+          fb.textContent = 'Select a left item first';
+          fb.className = 'feedback bad';
+          playSound('soundWrong');
+          setTimeout(()=>{ fb.textContent = ''; },800);
+          return;
+        }
+        // Determine which right index corresponds to this displayed right text
+        const chosenText = normalize(re.textContent);
+        const chosenRightIndex = rightToIndex[chosenText];
+        // The correct right index for the currently selected left:
+        const correctRightIndexForLeft = item.correctMap[selectedLeftIndex];
+
+        if(chosenRightIndex === correctRightIndexForLeft){
+          // Correct pair
+          // mark left & this right as matched and green
+          const leftEl = leftEls.find(x=>Number(x.dataset.index) === selectedLeftIndex);
+          leftEl.classList.add('matched'); leftEl.classList.remove('selected');
+          re.classList.add('matched');
+          playSound('soundRight');
+          box.querySelector('.feedback').textContent = 'Correct pair';
+          box.querySelector('.feedback').className = 'feedback ok';
+          matchedCount++;
+          // award one logical unit (one pair)
+          awardUnitPoints(1);
+          // lock these two elements so they cannot be clicked again
+          leftEl.style.pointerEvents = 'none';
+          re.style.pointerEvents = 'none';
+        } else {
+          // Wrong pair: flash wrong and small sound
+          re.classList.add('wrong');
+          playSound('soundWrong');
+          box.querySelector('.feedback').textContent = 'Wrong pair';
+          box.querySelector('.feedback').className = 'feedback bad';
+          setTimeout(()=> re.classList.remove('wrong'), 500);
+        }
+
+        selectedLeftIndex = null;
+        leftEls.forEach(x=>x.classList.remove('selected'));
+
+        // If all pairs matched (matchedCount equals left.length) then auto-next after a short delay
+        if(matchedCount >= left.length){
+          goNext(900);
+        }
+      }, { once:false });
+    });
+    return;
+  }
+
+  /* ---------- REORDER ---------- */
+    if(item.type === 'reorder'){
+    // store index on each bank button so undo is reliable even with duplicate words
+    const scrambled = shuffleArray(item.scrambled.slice());
+    box.innerHTML = `<div class="qtext">Put the words in the correct order. Click words to build the sentence in order.</div>
+      <div class="word-bank">${scrambled.map((w,i)=>`<div class="word" data-w="${escapeHtml(w)}" data-index="${i}">${escapeHtml(w)}</div>`).join('')}</div>
+      <div style="margin-top:8px; display:flex; gap:10px;">
+        <button id="undoBtn" class="btn">Undo</button>
+        <button id="clearBtn" class="btn">Clear</button>
+      </div>
+      <div class="built" id="builtArea"></div>
+      <div class="feedback"></div>`;
+    quizArea.appendChild(box);
+
+    // builtIndices holds the sequence of bank indexes chosen (safer than storing words)
+    const builtIndices = [];
+    const bankEls = Array.from(box.querySelectorAll('.word'));
+
+    bankEls.forEach(btn => {
+      btn.addEventListener('click', ()=>{
+        if(btn.classList.contains('used')) return;
+        btn.classList.add('used');
+        const idx = Number(btn.dataset.index);
+        builtIndices.push(idx);
+        // render built area from indexes
+        document.getElementById('builtArea').innerHTML = builtIndices.map(i=>`<div class="word used">${escapeHtml(bankEls[i].dataset.w)}</div>`).join(' ');
+        // if full length reached, validate using the original target sentence
+        if(builtIndices.length === item.scrambled.length){
+          const attempt = normalize(builtIndices.map(i=>bankEls[i].dataset.w).join(' '));
+          if(attempt === normalize(item.a)){
+            playSound('soundRight');
+            awardUnitPoints(1);
+            box.querySelector('.feedback').textContent = 'Correct';
+            box.querySelector('.feedback').className = 'feedback ok';
+          } else {
+            playSound('soundWrong');
+            box.querySelector('.feedback').textContent = `Wrong — expected: ${item.a}`;
+            box.querySelector('.feedback').className = 'feedback bad';
+          }
+          goNext(800);
+        }
+      });
+    });
+
+    // Clear button resets everything
+    box.querySelector('#clearBtn').addEventListener('click', ()=>{
+      builtIndices.length = 0;
+      bankEls.forEach(x=>x.classList.remove('used'));
+      document.getElementById('builtArea').innerHTML = '';
+      box.querySelector('.feedback').textContent = '';
+    });
+
+    // Undo removes the last chosen index, re-enables that bank element and re-renders
+    box.querySelector('#undoBtn').addEventListener('click', ()=>{
+      if(builtIndices.length === 0) return;
+      const lastIndex = builtIndices.pop();
+      const bankBtn = bankEls[lastIndex];
+      if(bankBtn) bankBtn.classList.remove('used');
+      document.getElementById('builtArea').innerHTML = builtIndices.map(i=>`<div class="word used">${escapeHtml(bankEls[i].dataset.w)}</div>`).join(' ');
+      box.querySelector('.feedback').textContent = '';
+    });
+
+    return;
+  }
+
+
+  /* fallback: unsupported */
+  box.innerHTML = `<div class="qtext">Unsupported item type: ${escapeHtml(String(item.type))}</div>`;
+  quizArea.appendChild(box);
+  goNext(700);
+}
+
+/* ---------------- utility functions ---------------- */
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+/* ---------- fireworks (visual) ---------- */
+function runFireworks(){
+  const canvas = canvasFW;
+  const ctx = canvas.getContext('2d');
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const parts = [];
+  function burst(x,y){
+    const colors = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    for(let i=0;i<60;i++){
+      parts.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-1.5)*8,
+        life:60 + Math.random()*40,
+        color: colors[i%colors.length],
+        size: 2 + Math.random()*3
+      });
+    }
+  }
+  for(let i=0;i<6;i++) burst(Math.random()*canvas.width, Math.random()*canvas.height*0.6 + 50);
+  function step(){
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life--;
+      ctx.globalAlpha = Math.max(0,p.life/100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      if(p.life <= 0) parts.splice(i,1);
+    }
+    if(parts.length > 0) requestAnimationFrame(step);
+    else setTimeout(()=>{ canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); }, 400);
+  }
+  step();
+}
+
+/* start quiz */
+if(quizRounds.length === 0){
+  quizArea.innerHTML = '<div class="question-box">No quiz data found. Edit the quizRounds array in the script.</div>';
+} else {
+  renderCurrent();
+  updateMeta();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Adjectives Quiz — Story / MCQ / Match / Builder | Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#00172b; --bg2:#013a63;
+    --yellow:#ffd24d; --muted:#cfe9ff; --ok:#2ecc71; --bad:#ff6b6b;
+    --glass: rgba(255,255,255,0.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf6ff;
+    display:flex;align-items:center;justify-content:center;padding:22px;
+  }
+
+  .container{width:100%;max-width:980px}
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 14px 40px rgba(0,0,0,0.6)
+  }
+
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .title{color:var(--yellow);font-weight:800;font-size:1.25rem}
+  .meta{color:var(--muted);font-size:0.95rem}
+
+  .progress-wrap{display:flex;gap:12px;align-items:center}
+  .progress{width:280px;height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+  .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd24d,#ffcc33);transition:width .35s}
+  .score{color:var(--yellow);font-weight:800}
+
+  .question{padding:18px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
+  .qtext{font-size:1.15rem;margin-bottom:12px;min-height:48px}
+
+  .answers{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+  .choice{background:var(--yellow);color:#000;padding:14px 16px;border-radius:10px;font-weight:800;cursor:pointer;border:none;text-align:left}
+  .choice:hover{transform:translateY(-3px)}
+  .choice.disabled{opacity:0.65;pointer-events:none}
+  .choice.correct{background:var(--ok);color:#002218}
+  .choice.wrong{background:var(--bad);color:#fff}
+
+  .fill-input{display:flex;gap:8px;align-items:center;margin-top:8px}
+  input[type="text"]{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:#001f2e;font-weight:700}
+  /* yellow glow when typing - applied by JS class 'type-active' */
+  .type-active{background:#ffeb3b !important;color:#000 !important;border:2px solid #ffdf5a !important;box-shadow:0 0 12px #ffeb3b !important}
+
+  .tokens{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .token{background:var(--yellow);color:#000;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:800}
+  .token.used{opacity:0.4;pointer-events:none}
+  .built{min-height:56px;padding:10px;border-radius:10px;border:1px dashed rgba(255,255,255,0.06);display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;background:rgba(255,255,255,0.02)}
+
+  .story-wrap{display:flex;gap:18px;align-items:flex-start}
+  .story{line-height:1.6;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px dashed rgba(255,255,255,0.04);flex:1; white-space: normal; }
+  .story .word{cursor:pointer;padding:2px 6px;border-radius:6px;color:#cfe9ff;display:inline-block}
+  .story .word.correct{background:var(--ok);color:#002218;font-weight:800;box-shadow:0 6px 18px rgba(46,201,113,0.08)}
+  .story .word.incorrect{animation:shake .28s}
+  @keyframes shake{20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+
+  .story-aside{width:220px;text-align:center}
+  .img-placeholder{width:200px;height:140px;border-radius:10px;background:linear-gradient(180deg,#083359,#0b4b7a);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-weight:700;margin-bottom:8px}
+
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .pair-box{display:flex;flex-direction:column;gap:10px}
+  .pair-item{background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;cursor:pointer;text-align:center;font-weight:700}
+  .pair-item.matched{background:var(--ok);color:#002218;pointer-events:none}
+
+  .controls{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+  .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer}
+  .btn.primary{background:var(--yellow);color:#001f2e;font-weight:800}
+  .feedback{height:30px;margin-top:8px;font-weight:700;color:var(--muted)}
+
+  .final{text-align:center;padding:18px}
+  .final-score{font-size:2.4rem;color:var(--yellow);font-weight:900}
+  .final-actions{display:flex;gap:12px;justify-content:center;margin-top:12px}
+
+  canvas#fw{position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999}
+
+  @media(max-width:720px){ .progress{width:160px} .story-wrap{flex-direction:column} .story-aside{width:100%;text-align:center} }
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <div>
+        <div class="title">Adjectives Quiz — 4 sections</div>
+        <div class="meta">Story Quest (10 words) • MCQ (5) • Match (5) • Builder (5) — 100 pts</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress" aria-hidden><i id="progFill"></i></div>
+        <div class="score" id="scoreLabel">0 / 100</div>
+      </div>
+    </div>
+
+    <div id="questionCard" class="question" role="main" aria-live="polite">
+      <div class="qtext" id="qtext">Press Start to begin</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="controls">
+        <div id="qcount">Q 0 / 20</div>
+        <div>
+          <button id="startBtn" class="btn primary">Start</button>
+          <button id="skipBtn" class="btn" style="display:none">Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="finalScreen" style="display:none" class="question">
+      <div class="final">
+        <div class="final-score" id="finalScore">0 / 100</div>
+        <div id="finalMsg" style="color:var(--muted);margin-top:8px">Result</div>
+        <div class="final-actions" id="finalActions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Local source PDF path (as requested) ---------- */
+const SOURCE_PDF = '/mnt/data/Keynote Grammar - final.pdf'; // local path you uploaded
+
+/* ---------- AUDIO ASSETS (place files or use online URLs) ---------- */
+const S = {
+  click: new Audio('bubble.mp3'),
+  correct: new Audio('rightclick.mp3'),
+  wrong: new Audio('wrongclick.mp3'),
+  fire: new Audio('fireworks.mp3')
+};
+function safePlay(a){ try{ a.currentTime=0; a.play().catch(()=>{}); }catch(e){} }
+
+/* ---------- QUIZ CONTENT ---------- */
+/* Story: easy ~150 words with 10 simple adjectives embedded */
+const STORY_TEXT = `Tom lived in a small village near an old river. One day he carried a new red kite to the hill. The sky was bright, and his happy friend Mina walked with him on the long road. A blue bird made a loud call as a quiet cat watched from a stone. Tom let the kite rise, and Mina cheered. When the wind slowed, the kite fell near the river. They followed it, collected the string, and fixed the frame. Soon the kite flew again, moving steadily as they talked and enjoyed the simple moment.`;
+
+/* 10 simple adjectives — beginners */
+const STORY_ADJECTIVES = [
+  'small','old','new','red','bright','happy','long','blue','loud','quiet'
+];
+
+/* ------------------ MCQ ITEMS (replacing previous fill-in) ------------------ */
+/* 5 items, 6 points each (user-provided) */
+const FILL_ITEMS = [
+  { q: "The cake is very ___.",   a: "sweet",   choices: ["sweet","bitter","cold"] },
+  { q: "The day is ___ and sunny.", a: "bright",  choices: ["cold","bright","windy"] },
+  { q: "Giraffes are ___ animals.",         a: "tall",   choices: ["small","short","tall"] },
+  { q: "She feels ___ after work.", a: "tired",   choices: ["tired","happy","fresh"] },
+  { q: "The ___ dog barked at me .", a: "angry",     choices: ["angry","friendly","sad"] }
+];
+
+/* Match pairs: 5 pairs, 5 pts each */
+const MATCH_ITEMS = [
+  { left: "The soup", right: "hot" },
+  { left: "The baby", right: "cute" },
+  { left: "The exam", right: "hard" },
+  { left: "The room", right: "clean" },
+  { left: "The mountain", right: "high" }
+];
+
+/* Builder items: 5 items, 5 pts each */
+const BUILDER_ITEMS = [
+  { words: ['The','cake','was','delicious'], answer: 'The cake was delicious' },
+  { words: ['She','is','very','kind'], answer: 'She is very kind' },
+  { words: ['They','were','on','time'], answer: 'They were on time' },
+  { words: ['It','will','be','fun'], answer: 'It will be fun' },
+  { words: ['He','was','very','tall'], answer: 'He was very tall' }
+];
+
+/* ---------- POINTS ---------- */
+const POINTS = {
+  storyPerWord: 2,   // 10 words × 2 pts = 20
+  fillPerItem: 6,    // MCQ round uses 6 pts each (5 × 6 = 30)
+  matchPerItem: 5,   // 5 × 5 = 25
+  builderPerItem: 5  // 5 × 5 = 25
+};
+
+/* ---------- STATE ---------- */
+/* Overall flow: story(10 units) -> MCQ (5 units) -> match (5 units) -> builder (5 units) = 25 internal units but we display progress as 20 steps:
+   - For progress bar we count story=10 then each other question one unit to total 20 (story 10 + mcq 5 + match 3? No — keep total 20 as UX: story 10 + mcq 5 + match 3 + builder 2 is messy.
+   Simpler: treat story=10 + mcq=5 + match=3 + builder=2 is confusing; instead we'll keep the earlier approach:
+   We will display Q 1..20 where story counts as 10, mcq 5, match 3, builder 2 would be wrong.
+   To keep consistency with your prior UX, we use overallCount 0..19 (20) where:
+     - story contributes 10 units (one per found adjective)
+     - mcq contributes 5 units (one per question)
+     - match contributes 3 units? No — we must make totals align.
+   To keep scoring correct and simple, we'll increment overallCount like this:
+     storyFound -> +1 each (10)
+     each MCQ -> +1 (5) => total 15
+     each MATCH pair -> +1 (5) => total 20
+     BUILDER -> will NOT change progress count (builder items will run after overallCount reaches 20)
+   This keeps the visual progression consistent with "20 Qs" shown to learner while still awarding correct points.
+*/
+let sectionIndex = 0; // 0:story, 1:mcq, 2:match, 3:builder
+let storyFoundSet = new Set();
+let mcqIndex = 0;
+let matchMatchedCount = 0;
+let builderIndex = 0;
+let overallCount = 0; // 0..19 progression shown as Q 1..20
+let score = 0;
+
+/* DOM refs */
+const qtext = document.getElementById('qtext');
+const answers = document.getElementById('answers');
+const feedback = document.getElementById('feedback');
+const progFill = document.getElementById('progFill');
+const scoreLabel = document.getElementById('scoreLabel');
+const qcount = document.getElementById('qcount');
+const startBtn = document.getElementById('startBtn');
+const skipBtn = document.getElementById('skipBtn');
+const finalScreen = document.getElementById('finalScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const finalActions = document.getElementById('finalActions');
+const fw = document.getElementById('fw');
+
+/* Attach start/skip */
+startBtn.addEventListener('click', ()=>{ safePlay(S.click); startQuiz(); });
+skipBtn.addEventListener('click', ()=>{ safePlay(S.click); manualAdvance(); });
+
+/* ---------- Start / Meta ---------- */
+function startQuiz(){
+  sectionIndex = 0;
+  storyFoundSet.clear();
+  mcqIndex = 0;
+  matchMatchedCount = 0;
+  builderIndex = 0;
+  overallCount = 0;
+  score = 0;
+  startBtn.style.display='none';
+  skipBtn.style.display='inline-block';
+  finalScreen.style.display='none';
+  document.getElementById('questionCard').style.display='block';
+  render();
+}
+
+function updateMeta(){
+  progFill.style.width = `${Math.round((overallCount/20)*100)}%`;
+  scoreLabel.textContent = `${score} / 100`;
+  qcount.textContent = `Q ${Math.min(overallCount+1,20)} / 20`;
+}
+
+/* ---------- Render dispatcher ---------- */
+function render(){
+  updateMeta();
+  answers.innerHTML = '';
+  feedback.textContent = '';
+
+  // If we finished the "20 visible units" (story10 + mcq5 + match5 = 20), then run builder set after user finishes match phase.
+  // After match phase completes overallCount hits 20 -> then builder runs sequentially and final shown after builders processed.
+  if(sectionIndex === 0){
+    renderStory();
+    return;
+  }
+  if(sectionIndex === 1){
+    renderMCQ();
+    return;
+  }
+  if(sectionIndex === 2){
+    renderMatch();
+    return;
+  }
+  if(sectionIndex === 3){
+    // builder runs after overallCount reached 20; builder items are 5 and will complete the flow
+    renderBuilder();
+    return;
+  }
+}
+
+/* ------------------ STORY ------------------ */
+function renderStory(){
+  safePlay(S.click);
+  qtext.textContent = `Story Quest — find the 10 simple adjectives in the story`;
+  answers.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'story-wrap';
+
+  // story text area
+  const storyDiv = document.createElement('div');
+  storyDiv.className = 'story';
+  // ensure neat alignment by preserving normal spacing; split tokens
+  const parts = STORY_TEXT.split(/\s+/);
+  parts.forEach((token) => {
+    const clean = token.replace(/[.,!?:;]$/,'').toLowerCase();
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = token + ' ';
+    span.dataset.clean = clean;
+    if(storyFoundSet.has(clean)) span.classList.add('correct');
+    span.addEventListener('click', () => {
+      // ignore if finished story stage
+      if(storyFoundSet.size >= STORY_ADJECTIVES.length) return;
+      if(STORY_ADJECTIVES.includes(clean)){
+        if(!storyFoundSet.has(clean)){
+          storyFoundSet.add(clean);
+          span.classList.add('correct');
+          score += POINTS.storyPerWord;
+          safePlay(S.correct);
+          feedback.textContent = `Found "${clean}" — +${POINTS.storyPerWord} pts`;
+          // increment overallCount by 1 for each found adjective
+          overallCount = Math.min(20, overallCount + 1);
+          updateMeta();
+          // when all found: move to MCQ after brief delay
+          if(storyFoundSet.size >= STORY_ADJECTIVES.length){
+            setTimeout(() => {
+              sectionIndex = 1; // MCQ
+              // ensure progress aligns (story contributed 10)
+              overallCount = Math.max(overallCount, STORY_ADJECTIVES.length);
+              render();
+            }, 800);
+          }
+        }
+      } else {
+        span.classList.add('incorrect');
+        safePlay(S.wrong);
+        feedback.textContent = `Not one of the target adjectives`;
+        setTimeout(()=> span.classList.remove('incorrect'), 350);
+      }
+    });
+    storyDiv.appendChild(span);
+  });
+
+  // aside with image placeholder and PDF download
+  const aside = document.createElement('div');
+  aside.className = 'story-aside';
+  const img = document.createElement('img');
+img.src = 'story1.png';   // your real image file
+img.alt = 'Story Illustration';
+img.style.width = '200px';
+img.style.height = '140px';
+img.style.objectFit = 'cover';
+img.style.borderRadius = '10px';
+aside.appendChild(img);
+
+  const hint = document.createElement('div');
+  hint.style.color = 'var(--muted)';
+  hint.style.fontSize = '0.95rem';
+  hint.style.marginTop = '6px';
+  hint.innerHTML = `Tap the <strong>10</strong> simple adjectives. Each = ${POINTS.storyPerWord} pts.<br><a href="${SOURCE_PDF}" download style="color:var(--yellow);font-weight:800;text-decoration:none"></a>`;
+  aside.appendChild(hint);
+
+  wrap.appendChild(storyDiv);
+  wrap.appendChild(aside);
+
+  answers.appendChild(wrap);
+}
+
+/* ------------------ MCQ (replaces fill-in round) ------------------ */
+function renderMCQ(){
+  safePlay(S.click);
+  qtext.textContent = `MCQ — choose the correct adjective (${mcqIndex+1} / ${FILL_ITEMS.length})`;
+  answers.innerHTML = '';
+  const item = FILL_ITEMS[mcqIndex];
+
+  const p = document.createElement('div');
+  p.className = 'qtext';
+  p.textContent = item.q;
+  answers.appendChild(p);
+
+  // shuffle choices
+  const opts = item.choices.slice().sort(()=>Math.random()-0.5);
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      // disable all options
+      Array.from(answers.querySelectorAll('.choice')).forEach(b => b.classList.add('disabled'));
+      if(normalize(opt) === normalize(item.a)){
+        btn.classList.add('correct');
+        safePlay(S.correct);
+        score += POINTS.fillPerItem;
+        feedback.textContent = `Correct +${POINTS.fillPerItem} pts`;
+      } else {
+        btn.classList.add('wrong');
+        safePlay(S.wrong);
+        feedback.textContent = `Wrong — correct: ${item.a}`;
+        // reveal correct
+        Array.from(answers.querySelectorAll('.choice')).find(x => normalize(x.textContent) === normalize(item.a))?.classList.add('correct');
+      }
+      // increment meta/progress
+      overallCount = Math.min(20, overallCount + 1); // each MCQ counts once
+      updateMeta();
+      // advance to next MCQ or section
+      setTimeout(()=> {
+        mcqIndex++;
+        if(mcqIndex >= FILL_ITEMS.length){
+          sectionIndex = 2; // move to match
+          // ensure overallCount at least 10 + 5 = 15
+          overallCount = Math.max(overallCount, STORY_ADJECTIVES.length + FILL_ITEMS.length);
+        }
+        render();
+      }, 800);
+    }, {once:true});
+    answers.appendChild(btn);
+  });
+}
+
+/* ------------------ MATCH ------------------ */
+function renderMatch(){
+  safePlay(S.click);
+  qtext.textContent = `Match — pair the left with the correct adjective`;
+  answers.innerHTML = '';
+
+  const lefts = MATCH_ITEMS.map(i => i.left);
+  const rights = MATCH_ITEMS.map(i => i.right).sort(()=>Math.random()-0.5);
+
+  const grid = document.createElement('div');
+  grid.className = 'match-grid';
+  const leftBox = document.createElement('div'); leftBox.className = 'pair-box';
+  const rightBox = document.createElement('div'); rightBox.className = 'pair-box';
+
+  lefts.forEach(l => {
+    const el = document.createElement('div');
+    el.className = 'pair-item';
+    el.textContent = l;
+    el.dataset.left = l;
+    leftBox.appendChild(el);
+  });
+  rights.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'pair-item';
+    el.textContent = r;
+    el.dataset.right = r;
+    rightBox.appendChild(el);
+  });
+
+  grid.appendChild(leftBox);
+  grid.appendChild(rightBox);
+  answers.appendChild(grid);
+
+  let selectedLeft = null;
+  leftBox.querySelectorAll('.pair-item').forEach(el => {
+    el.addEventListener('click', () => {
+      if(el.classList.contains('matched')) return;
+      leftBox.querySelectorAll('.pair-item').forEach(x => x.style.outline = '');
+      el.style.outline = '3px solid rgba(255,210,77,0.9)';
+      selectedLeft = el.dataset.left;
+      feedback.textContent = 'Now pick the matching adjective on the right';
+    });
+  });
+
+  rightBox.querySelectorAll('.pair-item').forEach(el => {
+    el.addEventListener('click', () => {
+      if(!selectedLeft){
+        feedback.textContent = 'Select a subject from the left first';
+        return;
+      }
+      const chosen = el.dataset.right;
+      const correct = MATCH_ITEMS.some(p => p.left === selectedLeft && p.right === chosen);
+      if(correct){
+        const leftEl = Array.from(leftBox.children).find(x => x.dataset.left === selectedLeft);
+        leftEl.classList.add('matched');
+        el.classList.add('matched');
+        score += POINTS.matchPerItem;
+        safePlay(S.correct);
+        feedback.textContent = `Correct +${POINTS.matchPerItem} pts`;
+        matchMatchedCount++;
+        // increase overallCount per matched pair (we want match to supply the remaining units up to 20)
+        overallCount = Math.min(20, overallCount + 1);
+        updateMeta();
+        // if all matched, advance to builder after short delay
+        if(matchMatchedCount >= MATCH_ITEMS.length){
+          setTimeout(()=> {
+            sectionIndex = 3; // builder phase
+            render();
+          }, 900);
+        }
+      } else {
+        safePlay(S.wrong);
+        feedback.textContent = 'Wrong — try another';
+        el.classList.add('incorrect');
+        setTimeout(()=> el.classList.remove('incorrect'), 350);
+      }
+      selectedLeft = null;
+      leftBox.querySelectorAll('.pair-item').forEach(x => x.style.outline = '');
+    });
+  });
+}
+
+/* ------------------ BUILDER ------------------ */
+function renderBuilder(){
+  safePlay(S.click);
+  const item = BUILDER_ITEMS[builderIndex];
+  qtext.textContent = `Sentence Builder — ${builderIndex+1} / ${BUILDER_ITEMS.length}`;
+  answers.innerHTML = '';
+
+  const prompt = document.createElement('div'); prompt.className = 'qtext'; prompt.textContent = 'Build a correct sentence:';
+  answers.appendChild(prompt);
+
+  const built = document.createElement('div'); built.className = 'built'; answers.appendChild(built);
+
+// Undo button
+const undoBtn = document.createElement('button');
+undoBtn.textContent = 'Undo';
+undoBtn.className = 'btn';
+undoBtn.style.marginTop = '10px';
+undoBtn.style.background = 'var(--yellow)';
+undoBtn.style.color = '#001f2e';
+undoBtn.style.fontWeight = '800';
+undoBtn.style.width = '100%';
+
+undoBtn.addEventListener('click', () => {
+  const builtTokens = built.querySelectorAll('.token');
+  if(builtTokens.length === 0) return;
+
+  const lastToken = builtTokens[builtTokens.length - 1];
+  const word = lastToken.textContent;
+
+  // remove token from built area
+  lastToken.remove();
+
+  // unmark original token
+  const originalToken = Array.from(tokensWrap.children)
+    .find(t => t.textContent === word && t.classList.contains('used'));
+  if(originalToken) originalToken.classList.remove('used');
+});
+answers.appendChild(undoBtn);
+
+  const tokensWrap = document.createElement('div'); tokensWrap.className = 'tokens';
+  const shuffled = item.words.slice().sort(()=>Math.random()-0.5);
+  shuffled.forEach(w => {
+    const t = document.createElement('div'); t.className = 'token'; t.textContent = w;
+    t.addEventListener('click', ()=>{
+      if(t.classList.contains('used')) return;
+      t.classList.add('used');
+      const tokenCopy = document.createElement('div'); tokenCopy.className = 'token'; tokenCopy.textContent = w;
+      tokenCopy.addEventListener('click', ()=>{
+        // remove and unmark original
+        tokenCopy.remove();
+        const orig = Array.from(tokensWrap.children).find(x => x.textContent === w && x.classList.contains('used'));
+        if(orig) orig.classList.remove('used');
+      });
+      built.appendChild(tokenCopy);
+      const usedCount = tokensWrap.querySelectorAll('.used').length;
+      if(usedCount === shuffled.length){
+        setTimeout(()=> evaluateBuilder(item, built), 400);
+      }
+    });
+    tokensWrap.appendChild(t);
+  });
+  answers.appendChild(tokensWrap);
+
+  // typing alternative
+  const typeRow = document.createElement('div'); typeRow.className = 'fill-input';
+  const typeInput = document.createElement('input'); typeInput.type = 'text'; typeInput.placeholder = 'Or type the sentence and press Enter';
+  typeInput.addEventListener('focus', ()=> typeInput.classList.add('type-active'));
+  typeInput.addEventListener('blur', ()=> typeInput.classList.remove('type-active'));
+  typeInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      typeInput.disabled = true;
+      const candidate = typeInput.value.trim();
+      if(normalize(candidate) === normalize(item.answer)){
+        score += POINTS.builderPerItem; safePlay(S.correct); feedback.textContent = `Correct +${POINTS.builderPerItem} pts`;
+      } else { safePlay(S.wrong); feedback.textContent = `Wrong — ${item.answer}`; }
+      // builder does not affect overallCount (the 20-step progress has already completed)
+      builderIndex++;
+      if(builderIndex >= BUILDER_ITEMS.length){
+        setTimeout(()=> finish(), 900);
+      } else {
+        setTimeout(()=> render(), 900);
+      }
+      updateMeta();
+    }
+  });
+  typeRow.appendChild(typeInput);
+  answers.appendChild(typeRow);
+}
+
+/* Evaluate builder */
+function evaluateBuilder(item, builtDiv){
+  const candidate = Array.from(builtDiv.children).map(n=>n.textContent).join(' ').trim();
+  if(normalize(candidate) === normalize(item.answer)){
+    score += POINTS.builderPerItem; safePlay(S.correct); feedback.textContent = `Correct +${POINTS.builderPerItem} pts`;
+  } else {
+    safePlay(S.wrong); feedback.textContent = `Wrong — ${item.answer}`;
+  }
+  builderIndex++;
+  if(builderIndex >= BUILDER_ITEMS.length){
+    setTimeout(()=> finish(), 900);
+  } else {
+    setTimeout(()=> render(), 900);
+  }
+  updateMeta();
+}
+
+/* Manual advance (skip) */
+function manualAdvance(){
+  if(sectionIndex === 0){
+    // skip story -> go to MCQ
+    sectionIndex = 1;
+    overallCount = Math.max(overallCount, STORY_ADJECTIVES.length); // ensure story progress set
+    render();
+    return;
+  }
+  if(sectionIndex === 1){
+    // skip one MCQ
+    overallCount = Math.min(20, overallCount + 1);
+    mcqIndex++;
+    if(mcqIndex >= FILL_ITEMS.length) sectionIndex = 2;
+    render();
+    return;
+  }
+  if(sectionIndex === 2){
+    // skip match section entirely
+    overallCount = 20;
+    sectionIndex = 3;
+    render();
+    return;
+  }
+  if(sectionIndex === 3){
+    // skip builder item
+    builderIndex++;
+    if(builderIndex >= BUILDER_ITEMS.length) finish();
+    else render();
+    return;
+  }
+}
+
+/* Finish and results */
+function finish(){
+  updateMeta();
+  document.getElementById('questionCard').style.display='none';
+  finalScreen.style.display='block';
+  finalScore.textContent = `${score} / 100`;
+  finalMsg.textContent = score >= 75 ? 'Excellent — well done!' : 'Keep practising — try again to reach 75+';
+  finalActions.innerHTML = '';
+
+  const retry = document.createElement('button'); retry.className='btn primary'; retry.textContent='Retry';
+  retry.addEventListener('click', ()=> { startQuiz(); });
+  finalActions.appendChild(retry);
+
+  const home = document.createElement('button'); home.className='btn'; home.textContent='Home';
+  home.addEventListener('click', ()=> location.href='index.html');
+  finalActions.appendChild(home);
+
+  const next = document.createElement('button'); next.className='btn'; next.textContent='Next Topic';
+  next.addEventListener('click', ()=> location.href='lesson7_video.html');
+  finalActions.appendChild(next);
+
+  if(score >= 75){
+    safePlay(S.fire);
+    runFireworks();
+  }
+}
+
+/* Fireworks canvas visual */
+function runFireworks(){
+  const c = fw;
+  c.style.display='block';
+  c.width = innerWidth; c.height = innerHeight;
+  const ctx = c.getContext('2d');
+  const parts = [];
+  function spawn(){
+    for(let i=0;i<120;i++){
+      parts.push({
+        x: Math.random()*c.width,
+        y: Math.random()*c.height*0.6,
+        vx: (Math.random()-0.5)*8,
+        vy: (Math.random()-0.9)*8,
+        life: 60 + Math.random()*80,
+        color: `hsl(${Math.random()*360},100%,60%)`,
+        r: 1 + Math.random()*3
+      });
+    }
+  }
+  spawn(); setTimeout(spawn, 300);
+  function frame(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,c.width,c.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/140);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      if(p.life <= 0) parts.splice(i,1);
+    }
+    if(parts.length) requestAnimationFrame(frame);
+    else setTimeout(()=>{ c.style.display='none'; ctx.clearRect(0,0,c.width,c.height); }, 600);
+  }
+  frame();
+}
+
+/* Utilities */
+function normalize(s){ return String(s||'').trim().toLowerCase().replace(/[.,!?;:]+$/,''); }
+
+/* initial UI state */
+updateMeta();
+qtext.textContent = 'Press Start to begin the Adjectives Quiz (Story → MCQ → Match → Builder)';
+answers.innerHTML = `<div style="padding:12px;color:var(--muted)">Sections: Story (find 10 adjectives) → MCQ (5) → Match (5) → Sentence Builder (5). Each correct answer awards points. Ready?</div>`;
+
+/* expose for debug */
+window._QUIZ = { STORY_TEXT, STORY_ADJECTIVES, FILL_ITEMS, MATCH_ITEMS, BUILDER_ITEMS, SOURCE_PDF };
+</script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Verb Forms — Interactive Quiz | Keynote Grammar</title>
+<style>
+/* BASIC RESET + FONTS */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg,#001f3f,#004d99);
+  color:#fff;
+  min-height:100vh;
+  padding:32px;
+}
+.container{max-width:900px;margin:auto;background:rgba(255,255,255,0.05);padding:24px;border-radius:14px;backdrop-filter:blur(8px);box-shadow:0 12px 32px rgba(0,0,0,0.45)}
+h1{text-align:center;color:#ffcc33;margin-bottom:4px}
+.lead{text-align:center;color:#dfefff;margin-bottom:20px}
+#quizArea{margin-top:18px}
+.question-box{background:rgba(255,255,255,0.04);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);margin-bottom:12px}
+.options{display:grid;gap:10px;margin-top:12px}
+.opt{padding:12px;border-radius:10px;background:rgba(255,255,255,0.08);color:#fff;font-weight:600;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:0.15s}
+.opt:hover{transform:translateY(-3px)}
+.opt.correct{background:#2ecc71;color:#001f3f}
+.opt.wrong{background:#e74c3c;color:#fff}
+.feedback{height:28px;margin-top:10px;font-weight:700}
+.fill-input input{width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,0.08);border:none;color:#fff;outline:none}
+.match-wrap{display:flex;gap:20px;margin-top:14px}
+.match-col{flex:1;background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05)}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.05);font-weight:700;cursor:pointer}
+.match-item.selected{outline:3px solid rgba(255,204,51,0.25)}
+.match-item.matched{opacity:.5;pointer-events:none;background:#001f3f}
+.word-bank{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.word{padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;font-weight:700}
+.word.used{opacity:.5;pointer-events:none}
+.built{min-height:48px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;border:1px solid rgba(255,255,255,0.1);display:flex;gap:8px;flex-wrap:wrap}
+.drag-slot{min-height:48px;padding:12px;background:rgba(255,255,255,0.06);border-radius:10px;border:2px dashed rgba(255,255,255,0.12);margin-bottom:10px;font-weight:700;text-align:center}
+.final-buttons{margin-top:18px;text-align:center}
+.final-buttons button{margin:6px;padding:10px 18px;border-radius:40px;border:none;font-weight:700;cursor:pointer}
+.btn-primary{background:#ffcc33;color:#001f3f}
+.btn-ghost{background:#ffffff22;color:#fff}
+.btn-negative{background:#ff4d4d;color:#fff}
+#fw{position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999}
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+
+<div class="container">
+  <h1>Verb Forms — Interactive Quiz</h1>
+  <p class="lead">4 rounds · total 100 points · Auto-advance · Sounds · Fireworks</p>
+  <div id="roundLabel" style="font-weight:700;margin-bottom:6px"></div>
+  <div id="scoreLabel" style="font-weight:700;margin-bottom:12px"></div>
+  <div id="quizArea"></div>
+</div>
+
+<script>
+/* --------- AUDIO (place these files in same folder) --------- */
+const sCorrect = new Audio('rightclick.mp3');
+const sWrong   = new Audio('wrongclick.mp3');
+const sClick   = new Audio('bubble.mp3');
+const sFire    = new Audio('fireworks.mp3');
+
+/* safe play wrapper (silences promise errors) */
+function safePlay(audio){
+  try { audio.currentTime = 0; audio.play().catch(()=>{}); } catch(e) {}
+}
+
+/* --------- DATA --------- 
+   Each round must contribute 25 points:
+   - mcq: 5 items -> 5 points each
+   - fill: 5 items -> 5 points each
+   - formation: pairs inside single item -> 5 points per pair (5 pairs -> 25)
+   - reorder: 5 items -> 5 points each
+*/
+const data = {
+  mcq:[ /* 5 */ 
+    {q:"I _____ (go) to school every day.", opts:["go","goes","going","went"], a:"go"},
+    {q:"She is_____ (do) her homework now.", opts:["did","does","doing","do"], a:"doing"},
+    {q:"They _____ (eat) when I arrived.", opts:["eat","eats","ate","eaten"], a:"ate"},
+    {q:"He has _____ (write) three letters today.", opts:["write","wrote","written","writing"], a:"written"},
+    {q:"She often _____ (watch) TV.", opts:["watch","watches","watched","watching"], a:"watches"}
+  ],
+  fill:[ /* 5 */
+    {q:"He _____ (go) to the store yesterday.", choices:["went","goes","go","gone"], a:"went"},
+    {q:"They have _____ (eat) already.", choices:["ate","eating","eaten","eat"], a:"eaten"},
+    {q:"She _____ (read) books every day.", choices:["reads","read","red","reading"], a:"reads"},
+    {q:"I am _____ (watch) a film now.", choices:["watch","watching","watched","watches"], a:"watching"},
+    {q:"We will _____ (see) you tomorrow.", choices:["saw","see","seen","seeing"], a:"see"}
+  ],
+  formation:[ /* 1 formation item, inside it 5 pairs */
+    { pairs:[
+        ['I','am listening to music'],
+        ['He did not','go to the beach'],
+        ['They','were playing in the garden'],
+        ['She has','finished the task'],
+        ['John','plays football in the evenings']
+    ] }
+  ],
+  reorder:[ /* 5 */
+    {words:["yesterday","I","a","saw","movie"], target:"I saw a movie yesterday"},
+    {words:["often","goes","He","to","school"], target:"He often goes to school"},
+    {words:["is","She","singing","now"], target:"She is singing now"},
+    {words:["They","have","never","been","there"], target:"They have never been there"},
+    {words:["has","My","finished","mother","cooking","dinner"], target:"My mother has finished cooking dinner"}
+  ]
+};
+
+/* --------- STATE --------- */
+let st = {
+  rounds: ['mcq','fill','formation','reorder'],
+  r: 0,      // current round index
+  q: 0,      // current question index inside that round
+  score: 0,
+  per: [0,0,0,0] // points per round
+};
+
+const quizArea = document.getElementById('quizArea');
+const roundLabel = document.getElementById('roundLabel');
+const scoreLabel = document.getElementById('scoreLabel');
+const fwCanvas = document.getElementById('fw');
+
+/* return number of items in current round (use pairs length for formation if needed) */
+function roundLimit(){
+  const key = st.rounds[st.r];
+  if(key === 'formation'){
+    // formation contains items; we support multiple formation items if present;
+    // each formation item has .pairs array; here we treat length as number of formation items,
+    // but scoring inside formation is per-pair, so the advancement logic uses the item count (usually 1).
+    return data[key].length;
+  }
+  return (data[key] && data[key].length) ? data[key].length : 0;
+}
+
+/* meta display */
+function setMeta(){
+  const key = st.rounds[st.r];
+  const limit = roundLimit();
+  roundLabel.textContent = `Round ${st.r+1} — ${key.toUpperCase()} (${st.q+1}/${limit})`;
+  scoreLabel.textContent = `Score: ${Math.round(st.score)}`;
+}
+
+/* advance, using dynamic limit */
+function nextQ(delay = 900){
+  setTimeout(()=>{
+    const key = st.rounds[st.r];
+    const limit = roundLimit();
+    st.q++;
+    if(st.q >= limit){
+      st.r++;
+      st.q = 0;
+      if(st.r >= st.rounds.length){
+        return final();
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* small feedback */
+function fb(msg, ok){
+  const f = document.querySelector('.feedback');
+  if(!f) return;
+  f.textContent = msg;
+  f.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+}
+
+/* main render */
+function render(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const key = st.rounds[st.r];
+  if(key === 'mcq') renderMCQ();
+  else if(key === 'fill') renderFill();
+  else if(key === 'formation') renderFormation();
+  else if(key === 'reorder') renderReorder();
+  else final();
+}
+
+/* ---------- MCQ ---------- */
+function renderMCQ(){
+  safePlay(sClick);
+  const q = data.mcq[st.q];
+  const box = document.createElement('div'); box.className = 'question-box';
+  box.innerHTML = `<div class="qtext">${q.q}</div><div class="options"></div><div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  // points per MCQ question (25 points distributed across number of items in this round)
+  const roundTotal = 25;
+  const perItem = roundTotal / data.mcq.length; // expected 5
+
+  const optsWrap = box.querySelector('.options');
+  q.opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.dataset.val = opt;
+    btn.addEventListener('click', function handler(){
+      optsWrap.querySelectorAll('.opt').forEach(x => x.disabled = true);
+      const val = this.dataset.val;
+      if(normalize(val) === normalize(q.a)){
+        this.classList.add('correct');
+        st.score += perItem; st.per[0] += perItem;
+        safePlay(sCorrect);
+        fb('Correct', true);
+      } else {
+        this.classList.add('wrong');
+        safePlay(sWrong);
+        fb('Wrong — ' + q.a, false);
+        Array.from(optsWrap.querySelectorAll('.opt')).find(x => normalize(x.dataset.val) === normalize(q.a))?.classList.add('correct');
+      }
+      scoreLabel.textContent = `Score: ${Math.round(st.score)}`;
+      nextQ();
+    }, {once:true});
+    optsWrap.appendChild(btn);
+  });
+}
+
+/* ---------- FILL (click tokens) ---------- */
+function renderFill(){
+  safePlay(sClick);
+  const q = data.fill[st.q];
+  const box = document.createElement('div'); box.className = 'question-box';
+  box.innerHTML = `<div class="qtext">${q.q}</div>
+    <div id="slot" class="drag-slot">Drop here (click option)</div>
+    <div class="word-bank"></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  const roundTotal = 25;
+  const perItem = roundTotal / data.fill.length; // 5
+
+  const bank = box.querySelector('.word-bank');
+  shuffle(q.choices.slice()).forEach(ch => {
+    const el = document.createElement('div'); el.className = 'word'; el.textContent = ch;
+    el.addEventListener('click', () => {
+      safePlay(sClick);
+      document.getElementById('slot').textContent = ch;
+      if(normalize(ch) === normalize(q.a)){
+        st.score += perItem; st.per[1] += perItem;
+        safePlay(sCorrect);
+        fb('Correct', true);
+      } else {
+        safePlay(sWrong);
+        fb('Wrong — ' + q.a, false);
+      }
+      scoreLabel.textContent = `Score: ${Math.round(st.score)}`;
+      // disable bank
+      bank.querySelectorAll('.word').forEach(w => w.style.pointerEvents = 'none');
+      nextQ();
+    }, {once:true});
+    bank.appendChild(el);
+  });
+}
+
+/* ---------- FORMATION (match pairs) ----------
+   This round is special: a single item with multiple pairs.
+   We award points per pair so formation round sums to 25.
+*/
+function renderFormation(){
+  safePlay(sClick);
+  // Use the current formation item (most setups will have just one)
+  const formationIndex = st.q;
+  const item = data.formation[formationIndex];
+  if(!item || !Array.isArray(item.pairs)){
+    // nothing to do, skip
+    nextQ(400);
+    return;
+  }
+
+  const pairs = item.pairs.slice(); // array of [left, right]
+  const lefts = pairs.map(p => p[0]);
+  const rightsShuffled = shuffle(pairs.map(p => p[1]));
+
+  const box = document.createElement('div'); box.className = 'question-box';
+  box.innerHTML = `<div class="qtext">Match the left items to the correct right items.<br><small>Tap a left item (select), then tap its right match.</small></div>
+    <div class="match-wrap"><div class="match-col" id="L"></div><div class="match-col" id="R"></div></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  const L = box.querySelector('#L'), R = box.querySelector('#R');
+  lefts.forEach((l, i) => {
+    const el = document.createElement('div'); el.className = 'match-item left'; el.dataset.i = i; el.textContent = l;
+    L.appendChild(el);
+  });
+  rightsShuffled.forEach(r => {
+    const el = document.createElement('div'); el.className = 'match-item right'; el.textContent = r; el.dataset.v = r;
+    R.appendChild(el);
+  });
+
+  // scoring: formation round total is 25, divide among number of pairs
+  const roundTotal = 25;
+  const perPair = roundTotal / pairs.length; // e.g., 25/5 = 5
+
+  let selIndex = null;
+  let correctCount = 0;
+  // left click selects
+  L.querySelectorAll('.left').forEach(li => {
+    li.addEventListener('click', () => {
+      if(li.classList.contains('matched')) return;
+      selIndex = Number(li.dataset.i);
+      L.querySelectorAll('.left').forEach(x => x.classList.remove('selected'));
+      li.classList.add('selected');
+      fb('Select the matching item on the right.', true);
+    });
+  });
+
+  // right click attempts match with selected left
+  R.querySelectorAll('.right').forEach(ri => {
+    ri.addEventListener('click', () => {
+      if(selIndex === null){
+        fb('Select a left item first.', false);
+        return;
+      }
+      const correctRight = pairs[selIndex][1];
+      if(ri.dataset.v === correctRight){
+        // correct pair (only award once per matched pair)
+        safePlay(sCorrect);
+        fb('Correct', true);
+        ri.classList.add('matched');
+        const leftEl = L.querySelector(`[data-i="${selIndex}"]`);
+        if(leftEl) leftEl.classList.add('matched');
+        // award per pair points
+        st.score += perPair; st.per[2] += perPair;
+        correctCount++;
+      } else {
+        safePlay(sWrong);
+        fb('Wrong — try another', false);
+      }
+      // clear selection
+      selIndex = null;
+      L.querySelectorAll('.left').forEach(x => x.classList.remove('selected'));
+      scoreLabel.textContent = `Score: ${Math.round(st.score)}`;
+      if(correctCount >= pairs.length){
+        // whole formation item complete -> proceed
+        nextQ();
+      }
+    });
+  });
+}
+
+/* ---------- REORDER (sentence builder) ---------- */
+function renderReorder(){
+  safePlay(sClick);
+  const q = data.reorder[st.q];
+  const words = shuffle(q.words.slice());
+  const box = document.createElement('div'); box.className = 'question-box';
+  box.innerHTML = `<div class="qtext">Rearrange to form a correct sentence. Tap words in order.</div>
+    <div class="word-bank"></div>
+    <div class="built"></div>
+    <div style="margin-top:10px"><button id="undo" class="opt" style="width:80px;text-align:center">Undo</button></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  const roundTotal = 25;
+  const perItem = roundTotal / data.reorder.length; // 5
+
+  const bank = box.querySelector('.word-bank');
+  const built = box.querySelector('.built');
+  const chosen = [];
+  words.forEach(w => {
+    const el = document.createElement('div'); el.className = 'word'; el.textContent = w;
+    el.addEventListener('click', ()=> {
+      safePlay(sClick);
+      if(el.classList.contains('used')) return;
+      el.classList.add('used');
+      chosen.push(w);
+      renderBuilt();
+      if(chosen.length === q.words.length){
+        const attempt = chosen.join(' ');
+        if(normalize(attempt) === normalize(q.target)){
+          safePlay(sCorrect);
+          st.score += perItem; st.per[3] += perItem;
+          fb('Correct', true);
+        } else {
+          safePlay(sWrong);
+          fb('Wrong — ' + q.target, false);
+        }
+        scoreLabel.textContent = `Score: ${Math.round(st.score)}`;
+        // disable remaining tokens
+        bank.querySelectorAll('.word').forEach(x => x.classList.add('used'));
+        nextQ(1200);
+      }
+    }, {once:false});
+    bank.appendChild(el);
+  });
+
+  function renderBuilt(){
+    built.innerHTML = chosen.map(x => `<div class="word used">${x}</div>`).join('');
+  }
+
+  box.querySelector('#undo').addEventListener('click', ()=>{
+    const last = chosen.pop();
+    if(!last) return;
+    const token = Array.from(bank.querySelectorAll('.word')).find(x => x.textContent === last && x.classList.contains('used'));
+    if(token) token.classList.remove('used');
+    renderBuilt();
+  });
+}
+
+/* ---------- FINAL ---------- */
+function final(){
+  quizArea.innerHTML = '';
+  roundLabel.textContent = 'Finished';
+
+  // Round scores may be floating; round to nearest integer for display, but keep underlying st.score as exact
+  const displayedScore = Math.round(st.score);
+
+  const box = document.createElement('div'); box.className = 'question-box';
+  box.innerHTML = `
+    <div style="text-align:center;font-size:2.4rem;color:#ffcc33;font-weight:800;margin-bottom:12px">${displayedScore} / 100</div>
+    <div style="text-align:center;margin-bottom:12px">Breakdown:</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px">
+      <div style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px">MCQ: ${Math.round(st.per[0])} / 25</div>
+      <div style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px">Fill: ${Math.round(st.per[1])} / 25</div>
+      <div style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px">Match: ${Math.round(st.per[2])} / 25</div>
+      <div style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px">Reorder: ${Math.round(st.per[3])} / 25</div>
+    </div>
+    <div id="finalButtons" class="final-buttons"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const btns = document.getElementById('finalButtons');
+
+  if(displayedScore >= 75){
+    // pass
+    playFireworks(); // canvas + sound
+    btns.innerHTML = `
+      <button class="btn-primary" id="nextTopic">Next Topic</button>
+      <button class="btn-ghost" id="homeBtn">Home</button>
+    `;
+    document.getElementById('nextTopic').addEventListener('click', ()=> location.href = 'next-topic.html');
+    document.getElementById('homeBtn').addEventListener('click', ()=> location.href = 'index.html');
+  } else {
+    // fail
+    btns.innerHTML = `
+      <button class="btn-negative" id="tryAgain">Try Again</button>
+      <button class="btn-ghost" id="homeBtn2">Home</button>
+    `;
+    document.getElementById('tryAgain').addEventListener('click', ()=> location.reload());
+    document.getElementById('homeBtn2').addEventListener('click', ()=> location.href = 'index.html');
+  }
+}
+
+/* ---------- UTIL ---------- */
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function normalize(s){ return String(s||'').trim().toLowerCase(); }
+
+/* ---------- FIREWORKS + SOUND ---------- */
+function playFireworks(){
+  safePlay(sFire);
+  const c = fwCanvas;
+  c.style.display = 'block';
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  const ctx = c.getContext('2d');
+
+  const particles = [];
+  function burst(x, y){
+    const hue = Math.floor(Math.random()*360);
+    for(let i=0;i<60;i++){
+      particles.push({
+        x, y,
+        vx: (Math.random()-0.5) * (4 + Math.random()*8),
+        vy: (Math.random()-0.7) * (4 + Math.random()*8),
+        life: 60 + Math.random()*60,
+        color: `hsl(${hue + Math.floor(Math.random()*40)-20}, 90%, ${50 + Math.random()*20}%)`,
+        size: 2 + Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<6;i++){
+    burst(window.innerWidth*(0.12 + Math.random()*0.76), window.innerHeight*(0.2 + Math.random()*0.6));
+  }
+
+  function tick(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,c.width,c.height);
+    for(let i = particles.length - 1; i >= 0; i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.02; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life / 100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    if(particles.length > 0) requestAnimationFrame(tick);
+    else setTimeout(()=>{ c.style.display = 'none'; ctx.clearRect(0,0,c.width,c.height); }, 500);
+  }
+  tick();
+}
+
+/* ---------- START ---------- */
+render();
+
+</script>
+</body>
+</html>

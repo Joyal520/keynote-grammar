@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conjunctions — Interactive Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#061126; --bg2:#0b3153;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --glass: rgba(255,255,255,0.04);
+  --card-bg: rgba(255,255,255,0.03);
+  --ok:#27ae60; --bad:#e74c3c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;min-height:100vh;padding:28px;display:flex;justify-content:center;align-items:flex-start;
+}
+
+/* moving blobs */
+.bg-wrap{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.35;mix-blend-mode:screen;animation:blobMove 16s ease-in-out infinite}
+.blob.b1{width:420px;height:420px;left:-10%;top:0;background:#ff7a7a}
+.blob.b2{width:360px;height:360px;right:-8%;top:8%;background:#6fe7ff;animation-duration:20s;animation-delay:2s}
+.blob.b3{width:300px;height:300px;left:18%;bottom:-10%;background:#a89bff;animation-duration:22s;animation-delay:4s}
+@keyframes blobMove{0%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}100%{transform:translate(0,0)}}
+
+/* card */
+.container{width:100%;max-width:980px;margin:10px auto;z-index:2}
+.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.06);padding:22px;border-radius:14px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,0.5)}
+
+/* header */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:10px}
+.nav a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:10px}
+
+/* headings */
+h1{font-size:1.4rem;color:var(--accent);text-align:center;margin-bottom:6px}
+.lead{text-align:center;color:var(--muted);margin-bottom:12px}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.round{font-weight:700}
+.score{background:rgba(0,0,0,0.18);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* MCQ */
+.question-box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.qtext{font-size:1.05rem;margin-bottom:10px;color:#fff}
+.options{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;font-weight:700;transition:transform .12s,background .12s}
+.opt:hover{transform:translateY(-3px)}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.correct{background:var(--ok);color:#062014;border-color:var(--ok)}
+.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+
+/* fill-in */
+.fill-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.blank{min-width:80px;min-height:38px;border-bottom:2px dashed rgba(255,255,255,0.2);display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.02)}
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.choice{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:pointer;font-weight:700}
+.choice.used{opacity:.35;pointer-events:none}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.04);cursor:pointer;font-weight:700}
+.match-item.selected{outline:3px solid rgba(255,210,77,0.12);background:rgba(255,210,77,0.05)}
+.match-item.matched{opacity:.5;pointer-events:none;border-left:4px solid var(--accent)}
+
+/* ordering */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.word{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:pointer;font-weight:700}
+.word.used{opacity:.4;pointer-events:none}
+.built{min-height:48px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* feedback */
+.feedback{height:28px;margin-top:8px;font-weight:800;letter-spacing:.2px}
+.feedback.correct{color:var(--ok)}
+.feedback.wrong{color:var(--bad)}
+
+/* buttons */
+.actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.05);border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#062226}
+
+/* final */
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:800;text-align:center;margin-bottom:8px}
+.breakdown{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.pill{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);color:#eaf6ff;font-weight:700}
+
+@media (max-width:720px){
+  body{padding:16px}
+  .match-wrap{flex-direction:column}
+}
+canvas#fw{position:fixed;left:0;top:0;pointer-events:none;z-index:9999}
+</style>
+</head>
+
+<body>
+<div class="bg-wrap"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<audio id="soundCorrect" src="rightclick.mp3"></audio>
+<audio id="soundWrong" src="wrongclick.mp3"></audio>
+<audio id="soundFW" src="fireworks.mp3"></audio>
+
+<div class="container">
+  <div class="card">
+
+    <div class="header">
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+      <div style="min-width:120px;text-align:right;color:var(--muted);font-weight:600">Conjunctions — Advanced Quiz</div>
+    </div>
+
+    <h1>Conjunctions — Interactive Quiz</h1>
+    <p class="lead">4 rounds — MCQ, Fill-in, Matching, Sentence Ordering — 100 points</p>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1 — MCQ</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+    <div style="text-align:center;margin-top:10px;color:var(--muted)">Score ≥ 75 = celebration</div>
+
+  </div>
+</div>
+
+<canvas id="fw" style="display:none;"></canvas>
+
+<script>
+
+/* ===================================================================
+   QUIZ DATA
+   =================================================================== */
+
+const data = {
+
+  /* ----- ROUND 1: MCQ ----- */
+  mcq: [
+    { q:"___ you finish your work, you may leave.", opts:["Once","Though","Except"], a:"Once" },
+    { q:"We went home ___ the movie ended.", opts:["after","until","though"], a:"after" },
+    { q:"I brushed my teeth ___ I went to bed.", opts:["before","unless","although"], a:"before" },
+    { q:"Wait here ___ I come back.", opts:["until","once","except"], a:"until" },
+    { q:"Take an umbrella ___ it rains.", opts:["if","except","though"], a:"if" },
+    { q:"You cannot enter ___ you have a ticket.", opts:["unless","before","although"], a:"unless" },
+    { q:"___ he was tired, he continued working.", opts:["Though","Once","Except"], a:"Though" },
+    { q:"___ it was late, they kept talking.", opts:["Although","Until","Once"], a:"Although" },
+    { q:"___ she studied a lot, she felt nervous.", opts:["Even though","Before","Unless"], a:"Even though" },
+    { q:"Everyone attended ___ Tom.", opts:["except","though","until"], a:"except" }
+  ],
+
+  /* ----- ROUND 2: FILL IN ----- */
+  fill: [
+    { text:"___ you finish, submit your work.", blanks:1, choices:["Before","Once","Though","Unless"], a:["Once"] },
+    { text:"We waited ___ the rain stopped.", blanks:1, choices:["until","except","though","before"], a:["until"] },
+    { text:"___ you pay, you cannot join the class.", blanks:1, choices:["Unless","if","After","Though"], a:["Unless"] },
+    { text:"She left ___ the meeting ended.", blanks:1, choices:["after","even though","until","except"], a:["after"] },
+    { text:"___ he apologised, she was still upset.", blanks:1, choices:["Even though","Before","Once","Unless"], a:["Even though"] }
+  ],
+
+  /* ----- ROUND 3: MATCHING ----- */
+  matchLeft: [
+    "Once you finish",
+    "We left",
+    "The store closes",
+    "He kept walking",
+    "Everyone came"
+  ],
+
+  matchRight: [
+    "before 9 PM.",
+    "except John.",
+    "after the show ended.",
+    "until he reached home.",
+    "submit your work."
+  ],
+
+  matchMap: {
+    0: "submit your work.",
+    1: "after the show ended.",
+    2: "before you eat.",
+    3: "until he reached home.",
+    4: "except John."
+  },
+
+  /* ----- ROUND 4: ORDERING ----- */
+  order: [
+    {
+      scrambled:["Once","you","finish","your","work,","you","may","leave."],
+      target:[
+        "Once you finish your work, you may leave.",
+        "You may leave once you finish your work."
+      ]
+    },
+    {
+      scrambled:["Wash","your","hands","before","you","eat."],
+      target:"Wash your hands before you eat."
+    },
+    {
+      scrambled:["We","stayed","here","until","he","returned."],
+      target:"We stayed here until he returned."
+    },
+    {
+      scrambled:["Even","though","she","was","tired,","she","kept","working."],
+      target:[
+        "Even though she was tired, she kept working.",
+        "She kept working even though she was tired."
+      ]
+    },
+    {
+      scrambled:["Everyone","joined","the","game","except","Tom."],
+      target:"Everyone joined the game except Tom."
+    }
+  ]
+
+}; // <<< THIS WAS THE IMPORTANT FIX (closing the data object)
+
+/* ===================================================================
+   STATE
+   =================================================================== */
+
+let state = {
+  rounds: ["mcq","fill","match","order"],
+  rIndex: 0,
+  qIndex: 0,
+  score: 0,
+  perRound: [0,0,0,0]
+};
+
+const scoring = {
+  mcqPer:4, fillPer:4, matchPer:6, orderPer:6
+};
+
+/* ===================================================================
+   HELPERS
+   =================================================================== */
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function normalize(s){
+  if(!s) return "";
+  let str = String(s)
+    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035\u201C\u201D\u201E\u201F]/g,"'")
+    .replace(/’/g,"'")
+    .toLowerCase()
+    .replace(/[^a-z0-9'\s]/gi,' ')
+    .replace(/\s+/g,' ').trim()
+    .replace(/'/g,'');
+  return str;
+}
+
+const soundCorrect=document.getElementById("soundCorrect");
+const soundWrong=document.getElementById("soundWrong");
+const soundFW=document.getElementById("soundFW");
+function playCorrect(){ try{ soundCorrect.currentTime=0; soundCorrect.play(); }catch(e){} }
+function playWrong(){ try{ soundWrong.currentTime=0; soundWrong.play(); }catch(e){} }
+
+/* ===================================================================
+   META DISPLAY
+   =================================================================== */
+
+function setMeta(){
+  const key = state.rounds[state.rIndex];
+  const names = {
+    mcq:"Round 1 — MCQ",
+    fill:"Round 2 — Fill",
+    match:"Round 3 — Matching",
+    order:"Round 4 — Sentence Order"
+  };
+
+  const limits = { mcq:5, fill:5, match:1, order:5 };
+  const prog = `${state.qIndex+1}/${limits[key]}`;
+
+  document.getElementById("roundLabel").textContent =
+    `${names[key]} (${prog})`;
+
+  document.getElementById("scoreLabel").textContent =
+    `Score: ${state.score}`;
+}
+
+/* ===================================================================
+   NAVIGATION
+   =================================================================== */
+
+function nextQ(delay=700){
+  setTimeout(()=>{
+    const key = state.rounds[state.rIndex];
+    const limits = { mcq:5, fill:5, match:1, order:5 };
+
+    state.qIndex++;
+    if(state.qIndex >= limits[key]){
+      state.rIndex++;
+      state.qIndex=0;
+      if(state.rIndex >= state.rounds.length){
+        showFinal();
+        return;
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* ===================================================================
+   FINAL SCREEN
+   =================================================================== */
+
+function showFinal(){
+  quizArea.innerHTML = `
+    <div class="question-box final">
+      <div class="final-score">${state.score} / 100</div>
+      <div style="text-align:center;color:var(--muted)">Quiz complete.</div>
+      <div class="breakdown">
+        <div class="pill">MCQ: ${state.perRound[0]} / 20</div>
+        <div class="pill">Fill: ${state.perRound[1]} / 20</div>
+        <div class="pill">Match: ${state.perRound[2]} / 30</div>
+        <div class="pill">Order: ${state.perRound[3]} / 30</div>
+      </div>
+      <div class="actions" style="margin-top:16px">
+        <button class="btn primary" id="retry">Try Again</button>
+        <a class="btn" href="lesson26_video.html">Next Topic</a>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("retry").onclick = ()=>{
+    state={rounds:["mcq","fill","match","order"],rIndex:0,qIndex:0,score:0,perRound:[0,0,0,0]};
+    setMeta(); render();
+  };
+
+  if(state.score >= 75){
+    runFireworks();
+    try{ soundFW.currentTime=0; soundFW.play(); }catch(e){}
+  }
+}
+
+/* ===================================================================
+   FIREWORKS
+   =================================================================== */
+
+function runFireworks(){
+  const canvas = document.getElementById("fw");
+  canvas.style.display="block";
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const ctx=canvas.getContext("2d");
+  const parts=[];
+
+  function burst(x,y){
+    const cols=['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    for(let i=0;i<60;i++){
+      parts.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-1.5)*8,
+        life:80+Math.random()*40,
+        c:cols[i%cols.length],
+        s:1+Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<5;i++)
+    burst(Math.random()*canvas.width, Math.random()*canvas.height*0.6);
+
+  (function tick(){
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/120);
+      ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+
+    if(parts.length>0) requestAnimationFrame(tick);
+    else canvas.style.display='none';
+  })();
+}
+
+/* ===================================================================
+   RENDER CONTROLLER
+   =================================================================== */
+
+function render(){
+  setMeta();
+  quizArea.innerHTML='';
+  const key=state.rounds[state.rIndex];
+  if(key==="mcq") renderMCQ();
+  if(key==="fill") renderFill();
+  if(key==="match") renderMatch();
+  if(key==="order") renderOrder();
+}
+
+/* ===================================================================
+   RENDER — MCQ
+   =================================================================== */
+
+function renderMCQ(){
+  const q=data.mcq[state.qIndex];
+  const opts=shuffle(q.opts);
+
+  const box=document.createElement("div");
+  box.className="question-box";
+  box.innerHTML=`
+    <div class="qtext">${q.q}</div>
+    <div class="options">
+      ${opts.map(o=>`<div class="opt" data-v="${o}">${o}</div>`).join("")}
+    </div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  box.querySelectorAll(".opt").forEach(btn=>{
+    btn.onclick=()=>{
+      if(btn.classList.contains("disabled")) return;
+      box.querySelectorAll(".opt").forEach(x=>x.classList.add("disabled"));
+
+      const chosen=btn.dataset.v;
+
+      if(normalize(chosen)===normalize(q.a)){
+        btn.classList.add("correct");
+        playCorrect();
+        state.score+=scoring.mcqPer;
+        state.perRound[0]+=scoring.mcqPer;
+        box.querySelector(".feedback").textContent="Correct";
+        box.querySelector(".feedback").className="feedback correct";
+      }else{
+        btn.classList.add("wrong");
+        playWrong();
+        const correctBtn=[...box.querySelectorAll(".opt")]
+          .find(x=>normalize(x.dataset.v)===normalize(q.a));
+        if(correctBtn) correctBtn.classList.add("correct");
+        box.querySelector(".feedback").textContent="Wrong — "+q.a;
+        box.querySelector(".feedback").className="feedback wrong";
+      }
+
+      setMeta();
+      nextQ(900);
+    };
+  });
+}
+
+/* ===================================================================
+   RENDER — FILL
+   =================================================================== */
+
+function renderFill(){
+  const q=data.fill[state.qIndex];
+
+  const box=document.createElement("div");
+  box.className="question-box";
+  box.innerHTML=`
+    <div class="qtext">${q.text.replace(/___/g,"__________")}</div>
+    <div class="fill-row" id="blanksRow">
+      ${Array.from({length:q.blanks}).map(()=>`<div class="blank"></div>`).join("")}
+    </div>
+    <div class="choices">${q.choices.map(c=>`<div class="choice" data-val="${c}">${c}</div>`).join("")}</div>
+    <div style="margin-top:8px"><button class="btn" id="clearFill">Clear</button></div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const blanks=[...box.querySelectorAll(".blank")];
+  const choices=[...box.querySelectorAll(".choice")];
+  let fillIndex=0;
+  const accepted=q.a.map(x=>normalize(x));
+
+  choices.forEach(ch=>{
+    ch.onclick=()=>{
+      if(ch.classList.contains("used")) return;
+      if(fillIndex>=blanks.length) return;
+
+      blanks[fillIndex].textContent=ch.dataset.val;
+      ch.classList.add("used");
+      fillIndex++;
+
+      if(fillIndex>=blanks.length){
+        const filled=blanks.map(b=>normalize(b.textContent));
+        const correct=filled.every(f=>accepted.includes(f));
+
+        if(correct){
+          playCorrect();
+          state.score+=scoring.fillPer;
+          state.perRound[1]+=scoring.fillPer;
+          box.querySelector(".feedback").textContent="Correct";
+          box.querySelector(".feedback").className="feedback correct";
+        }else{
+          playWrong();
+          box.querySelector(".feedback").textContent=
+            "Wrong — expected: "+q.a.join(" / ");
+          box.querySelector(".feedback").className="feedback wrong";
+        }
+
+        setMeta();
+        nextQ(900);
+      }
+    };
+  });
+
+  box.querySelector("#clearFill").onclick=()=>{
+    blanks.forEach(b=>b.textContent="");
+    choices.forEach(c=>c.classList.remove("used"));
+    fillIndex=0;
+    box.querySelector(".feedback").textContent="";
+  };
+}
+
+/* ===================================================================
+   RENDER — MATCH
+   =================================================================== */
+
+function renderMatch(){
+  const left=data.matchLeft.slice();
+  const right=shuffle(data.matchRight.slice());
+
+  const box=document.createElement("div");
+  box.className="question-box";
+  box.innerHTML=`
+    <div class="qtext">Match correctly: left → right</div>
+    <div class="match-wrap">
+      <div class="match-col" id="leftCol">
+        ${left.map((l,i)=>`<div class="match-item left-item" data-index="${i}">${l}</div>`).join("")}
+      </div>
+      <div class="match-col" id="rightCol">
+        ${right.map(r=>`<div class="match-item right-item" data-val="${encodeURIComponent(r)}">${r}</div>`).join("")}
+      </div>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const leftEls=[...box.querySelectorAll(".left-item")];
+  const rightEls=[...box.querySelectorAll(".right-item")];
+
+  let selectedLeft=null;
+  let matched=0;
+
+  leftEls.forEach(li=>{
+    li.onclick=()=>{
+      if(li.classList.contains("matched")) return;
+      leftEls.forEach(x=>x.classList.remove("selected"));
+      li.classList.add("selected");
+      selectedLeft=+li.dataset.index;
+      box.querySelector(".feedback").textContent="Choose the matching ending.";
+    };
+  });
+
+  rightEls.forEach(ri=>{
+    ri.onclick=()=>{
+      if(ri.classList.contains("matched")) return;
+
+      if(selectedLeft===null){
+        playWrong();
+        box.querySelector(".feedback").textContent="Select a left item first.";
+        return;
+      }
+
+      const chosen=decodeURIComponent(ri.dataset.val);
+      const correct=data.matchMap[selectedLeft];
+
+      if(normalize(chosen)===normalize(correct)){
+        const leftEl=leftEls.find(x=>+x.dataset.index===selectedLeft);
+        leftEl.classList.add("matched");
+        ri.classList.add("matched");
+
+        matched++;
+        playCorrect();
+        state.score+=scoring.matchPer;
+        state.perRound[2]+=scoring.matchPer;
+
+        box.querySelector(".feedback").textContent="Correct!";
+      } else {
+        ri.classList.add("wrong");
+        playWrong();
+        box.querySelector(".feedback").textContent="Wrong — try again.";
+        setTimeout(()=>ri.classList.remove("wrong"),600);
+      }
+
+      selectedLeft=null;
+      leftEls.forEach(x=>x.classList.remove("selected"));
+      setMeta();
+
+      if(matched>=leftEls.length){
+        nextQ(900);
+      }
+    };
+  });
+}
+
+/* ===================================================================
+   ORDERING
+   =================================================================== */
+
+function checkOrderAnswer(user,index){
+  const target=data.order[index].target;
+  const arr=Array.isArray(target)?target:[target];
+  return arr.some(a=>normalize(a)===normalize(user));
+}
+
+function renderOrder(){
+  const q=data.order[state.qIndex];
+  const shuffled=shuffle(q.scrambled);
+
+  const box=document.createElement("div");
+  box.className="question-box";
+  box.innerHTML=`
+    <div class="qtext">Arrange into a correct sentence.</div>
+    <div class="word-bank">${shuffled.map(w=>`<div class="word" data-w="${w}">${w}</div>`).join("")}</div>
+    <div class="built" id="builtArea"></div>
+    <div style="margin-top:10px">
+      <button class="btn" id="undoWord">Undo</button>
+      <button class="btn" id="clearWords">Clear</button>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const built=[];
+  const builtArea=box.querySelector("#builtArea");
+  const words=[...box.querySelectorAll(".word")];
+
+  function refresh(){
+    builtArea.innerHTML=built.map(w=>`<div class="word used">${w}</div>`).join("");
+
+    if(built.length===q.scrambled.length){
+      const attempt=built.join(" ");
+      if(checkOrderAnswer(attempt,state.qIndex)){
+        playCorrect();
+        state.score+=scoring.orderPer;
+        state.perRound[3]+=scoring.orderPer;
+        box.querySelector(".feedback").textContent="Correct";
+        box.querySelector(".feedback").className="feedback correct";
+      }else{
+        playWrong();
+        const expected = Array.isArray(q.target)
+          ? q.target.join(" OR ")
+          : q.target;
+
+        box.querySelector(".feedback").textContent="Wrong — expected: "+expected;
+        box.querySelector(".feedback").className="feedback wrong";
+      }
+
+      setMeta();
+      nextQ(1200);
+    }
+  }
+
+  words.forEach(w=>{
+    w.onclick=()=>{
+      if(w.classList.contains("used")) return;
+      built.push(w.dataset.w);
+      w.classList.add("used");
+      refresh();
+    };
+  });
+
+  box.querySelector("#undoWord").onclick=()=>{
+    const last=built.pop();
+    if(last){
+      const btn=words.find(x=>x.dataset.w===last && x.classList.contains("used"));
+      if(btn) btn.classList.remove("used");
+    }
+    builtArea.innerHTML="";
+    box.querySelector(".feedback").textContent="";
+    refresh();
+  };
+
+  box.querySelector("#clearWords").onclick=()=>{
+    built.length=0;
+    words.forEach(x=>x.classList.remove("used"));
+    builtArea.innerHTML="";
+    box.querySelector(".feedback").textContent="";
+  };
+}
+
+/* ===================================================================
+   INIT
+   =================================================================== */
+const quizArea=document.getElementById("quizArea");
+setMeta();
+render();
+
+</script>
+</body>
+</html>

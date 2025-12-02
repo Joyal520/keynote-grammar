@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conjunctions — Interactive Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#061126; --bg2:#0b3153;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --glass: rgba(255,255,255,0.04);
+  --card-bg: rgba(255,255,255,0.03);
+  --ok:#27ae60; --bad:#e74c3c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;min-height:100vh;padding:28px;display:flex;justify-content:center;align-items:flex-start;
+}
+
+/* moving blobs (background) */
+.bg-wrap{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.35;mix-blend-mode:screen;animation:blobMove 16s ease-in-out infinite}
+.blob.b1{width:420px;height:420px;left:-10%;top:0;background:#ff7a7a}
+.blob.b2{width:360px;height:360px;right:-8%;top:8%;background:#6fe7ff;animation-duration:20s;animation-delay:2s}
+.blob.b3{width:300px;height:300px;left:18%;bottom:-10%;background:#a89bff;animation-duration:22s;animation-delay:4s}
+@keyframes blobMove{0%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}100%{transform:translate(0,0)}}
+
+/* container card */
+.container{width:100%;max-width:980px;margin:10px auto;z-index:2}
+.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.06);padding:22px;border-radius:14px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,0.5)}
+
+/* header/navigation */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:10px}
+.nav a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:10px}
+
+/* headings */
+h1{font-size:1.4rem;color:var(--accent);text-align:center;margin-bottom:6px}
+.lead{text-align:center;color:var(--muted);margin-bottom:12px}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.round{font-weight:700}
+.score{background:rgba(0,0,0,0.18);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* question box */
+.question-box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.qtext{font-size:1.05rem;margin-bottom:10px;color:#fff}
+
+/* MCQ / buttons */
+.options{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;font-weight:700;transition:transform .12s,background .12s}
+.opt:hover{transform:translateY(-3px)}
+.opt.disabled{pointer-events:none;opacity:.7}
+.opt.correct{background:var(--ok);color:#062014;border-color:var(--ok)}
+.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+
+/* drag-to-fill blanks */
+.fill-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.blank{min-width:80px;min-height:38px;border-bottom:2px dashed rgba(255,255,255,0.2);display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.02)}
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.choice{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:pointer;font-weight:700}
+.choice.used{opacity:.35;pointer-events:none}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.04);cursor:pointer;font-weight:700}
+.match-item.selected{outline:3px solid rgba(255,210,77,0.12);background:rgba(255,210,77,0.05)}
+.match-item.matched{opacity:.5;pointer-events:none;border-left:4px solid var(--accent)}
+
+/* builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.word{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:pointer;font-weight:700}
+.word.used{opacity:.4;pointer-events:none}
+.built{min-height:48px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* feedback */
+.feedback{height:28px;margin-top:8px;font-weight:800;letter-spacing:.2px}
+.feedback.correct{color:var(--ok)}
+.feedback.wrong{color:var(--bad)}
+
+/* actions */
+.actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.05);border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#062226}
+
+/* final */
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:800;text-align:center;margin-bottom:8px}
+.breakdown{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.pill{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);color:#eaf6ff;font-weight:700}
+
+@media (max-width:720px){ body{padding:16px} .match-wrap{flex-direction:column} }
+canvas#fw{position:fixed;left:0;top:0;pointer-events:none;z-index:9999}
+</style>
+</head>
+<body>
+<div class="bg-wrap" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<!-- audio (put .mp3 files in same folder) -->
+<audio id="soundCorrect" src="rightclick.mp3" preload="auto"></audio>
+<audio id="soundWrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="soundFW" src="fireworks.mp3" preload="auto"></audio>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+      <div style="min-width:120px;text-align:right;color:var(--muted);font-weight:600">Conjunctions — Advanced Quiz</div>
+    </div>
+
+    <h1>Conjunctions — Interactive Quiz</h1>
+    <p class="lead">4 rounds — MCQ, Fill-in (drag-like), Matching, Sentence Ordering — total 100 points</p>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1 — MCQ (1/5)</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+
+    <div class="note" style="text-align:center;margin-top:10px;color:var(--muted)">Click answers; choices auto-disappear when used. Correct = + points. Score ≥ 75 shows celebration.</div>
+  </div>
+</div>
+
+<canvas id="fw" style="display:none;"></canvas>
+
+<script>
+/* =========================
+   Quiz data (your questions)
+   ========================= */
+
+const data = {
+  /* Round 1 - MCQ (5) - 20 points total → 4 pts each */
+  mcq: [
+    { q:"We cancelled the trip ___ the storm was too strong.", opts:["and","because","or"], a:"because" },
+    { q:"She wanted to go out, ___ she had too much homework.", opts:["but","so","when"], a:"but" },
+    { q:"I’ll call you ___ I need your help.", opts:["whenever","because","and"], a:"whenever" },
+    { q:"He stayed calm ___ everyone else was panicking.", opts:["since","but","or"], a:"but" },
+    { q:"Take a jacket ___ it might get cold later.", opts:["so","when","or"], a:"or" }
+  ],
+
+  /* Round 2 - Fill in the Blanks */
+  fill: [
+    { text: "She didn’t join the meeting ___ she wasn’t feeling well.", blanks: 1, choices:["and","but","or","because"] , a:["because"] },
+    { text: "___the bell rings, class begins.", blanks: 1, choices:["when","until","so","unless"] , a:["when"] },
+    { text: "I wanted to go to the party, ___ I was too tired..", blanks: 1, choices:["so","because","but","and"] , a:["but"] },
+    { text: "He didn’t study, ___ he failed the exam..", blanks: 1, choices:["so","and","because","until"] , a:["so"] },
+    { text: "Would you like to have tea ___ coffee?", blanks: 1, choices:["and","or","but","because"] , a:["or"] }
+  ],
+
+  /* Round 3 - Matching */
+  matchLeft: [
+    "I wore my boots",
+    "She smiled",
+    "We left early",
+    "He reads books",
+    "Call me"
+  ],
+  matchRight: [
+    "because it was raining.",
+    "as she heard the good news.",
+    "since the show finished.",
+    "whenever he has free time.",
+    "when you arrive."
+  ],
+  matchMap: {
+    0: "because it was raining.",
+    1: "as she heard the good news.",
+    2: "since the show finished.",
+    3: "whenever he has free time.",
+    4: "when you arrive."
+  },
+
+  /* Round 4 - Sentence Ordering (Corrected) */
+  order: [
+    {
+      scrambled: ["Although", "it", "was", "raining,", "we", "went", "for", "a", "walk."],
+      target: [
+        "Although it was raining, we went for a walk.",
+        "We went for a walk although it was raining."
+      ]
+    },
+    {
+      scrambled:["we","stayed","inside","because","it","was","raining"],
+      target: "we stayed inside because it was raining"
+    },
+    {
+      scrambled: ["Once", "I", "finish", "my", "homework,", "I’ll", "play", "outside."],
+      target: [
+        "Once I finish my homework, I’ll play outside.",
+        "I’ll play outside once I finish my homework."
+      ]
+    },
+    {
+      scrambled: ["She", "answered", "every", "question", "except", "the", "last", "one."],
+      target: [
+        "She answered every question except the last one.",
+        "Except the last one, she answered every question."
+      ]
+    },
+    {
+      scrambled:["she","was","cooking","while","she","was","listening","to","music"],
+      target:"she was cooking while she was listening to music"
+    }
+  ]
+};
+
+/* In Flex Mode we keep orderTargets as arrays (each entry may be array or single string).
+   But the canonical list isn't strictly necessary now because renderOrder will check
+   data.order[state.qIndex].target first, then fallback to a global orderTargets if present.
+   We'll use data.order[*].target as primary source of accepted answers. */
+
+const orderTargets = [
+  [
+    "Although it was raining, we went for a walk.",
+    "We went for a walk although it was raining."
+  ],
+  [
+    "We stayed inside because it was raining"
+  ],
+  [
+    "Once I finish my homework, I’ll play outside.",
+    "I’ll play outside once I finish my homework."
+  ],
+  [
+    "She answered every question except the last one.",
+    "Except the last one, she answered every question."
+  ],
+  [
+    "She was cooking while she was listening to music"
+  ]
+];
+
+/* =========================
+   State and scoring config
+   ========================= */
+
+let state = {
+  rounds: ["mcq","fill","match","order"],
+  rIndex: 0,
+  qIndex: 0,
+  score: 0,
+  perRound: [0,0,0,0]
+};
+
+/* scoring allocation */
+const scoring = {
+  mcqPer: 4,    // 5 * 4 = 20
+  fillPer: 4,   // 5 * 4 = 20
+  matchPer: 6,  // 5 * 6 = 30
+  orderPer: 6   // 5 * 6 = 30
+};
+
+/* UI refs */
+const quizArea = document.getElementById('quizArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const roundLabel = document.getElementById('roundLabel');
+const soundCorrect = document.getElementById('soundCorrect');
+const soundWrong = document.getElementById('soundWrong');
+const soundFW = document.getElementById('soundFW');
+const fwCanvas = document.getElementById('fw');
+
+/* helpers */
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+
+/* Normalise string consistently.
+   - Convert smart quotes/apostrophes to straight.
+   - Lowercase, collapse spaces, remove punctuation (retain letters/numbers and spaces).
+   Note: both user attempts and targets go through the same normaliser so comparisons are reliable.
+*/
+function normalize(s){
+  if(!s && s !== '') return '';
+  let str = String(s);
+  // normalize smart apostrophes and quotes to straight apostrophe
+  str = str.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035\u201C\u201D\u201E\u201F]/g, "'");
+  // Some data uses fancy Unicode right single quote for contraction (I’ll). Replace with straight.
+  str = str.replace(/’/g, "'");
+  // Lowercase
+  str = str.toLowerCase();
+  // Remove characters that are not letters, numbers, apostrophes or spaces
+  // Keep apostrophes only so "i'll" -> "i'll" consistently; we'll strip apostrophes after collapsing spaces
+  str = str.replace(/[^a-z0-9'\s]/gi, ' ');
+  // Collapse whitespace
+  str = str.replace(/\s+/g, ' ').trim();
+  // Remove apostrophes to avoid mismatch between curly and straight forms and contraction variants
+  str = str.replace(/'/g, '');
+  return str;
+}
+
+function playCorrect(){ try{ soundCorrect.currentTime=0; soundCorrect.play(); }catch(e){} }
+function playWrong(){ try{ soundWrong.currentTime=0; soundWrong.play(); }catch(e){} }
+
+/* meta update */
+function setMeta(){
+  const key = state.rounds[state.rIndex];
+  const names = { mcq:"Round 1 — MCQ", fill:"Round 2 — Fill", match:"Round 3 — Matching", order:"Round 4 — Sentence Order" };
+  let progress='';
+  if(key==='mcq') progress = `${state.qIndex+1}/5`;
+  if(key==='fill') progress = `${state.qIndex+1}/5`;
+  if(key==='match') progress = `1/1`;
+  if(key==='order') progress = `${state.qIndex+1}/5`;
+  roundLabel.textContent = `${names[key]} (${progress})`;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* navigation to next */
+function nextQ(delay=700){
+  setTimeout(()=>{
+    const key = state.rounds[state.rIndex];
+    const limits = { mcq:5, fill:5, match:1, order:5 };
+    state.qIndex++;
+    if(state.qIndex >= limits[key]){
+      state.rIndex++;
+      state.qIndex = 0;
+      if(state.rIndex >= state.rounds.length){
+        showFinal();
+        return;
+      }
+    }
+    render();
+  }, delay);
+}
+
+/* final screen */
+function showFinal(){
+  quizArea.innerHTML = '';
+  const box = document.createElement('div'); box.className='question-box final';
+  box.innerHTML = `
+    <div class="final-score">${state.score} / 100</div>
+    <div style="text-align:center;color:var(--muted)">Quiz complete — review your score below.</div>
+    <div class="breakdown" style="margin-top:12px">
+      <div class="pill">MCQ: ${state.perRound[0]} / 20</div>
+      <div class="pill">Fill: ${state.perRound[1]} / 20</div>
+      <div class="pill">Match: ${state.perRound[2]} / 30</div>
+      <div class="pill">Order: ${state.perRound[3]} / 30</div>
+    </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn primary" id="retry">Try Again</button>
+      <a class="btn" href="lesson26_video.html">Next Topic</a>
+    </div>
+  `;
+  quizArea.appendChild(box);
+  document.getElementById('retry').addEventListener('click', ()=>{
+    state = { rounds:["mcq","fill","match","order"], rIndex:0, qIndex:0, score:0, perRound:[0,0,0,0] };
+    setMeta(); render();
+  });
+
+  if(state.score >= 75){
+    runFireworks();
+    try{ soundFW.currentTime=0; soundFW.play().catch(()=>{}); }catch(e){}
+  }
+}
+
+/* fireworks — simple particle burst */
+function runFireworks(){
+  const canvas = fwCanvas;
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const parts = [];
+  function burst(x,y){
+    const cols=['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    const cnt = 60;
+    for(let i=0;i<cnt;i++){
+      parts.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-1.5)*8,
+        life:80+Math.random()*40,
+        c:cols[i%cols.length],
+        s:1+Math.random()*3
+      });
+    }
+  }
+  for(let i=0;i<5;i++) burst(Math.random()*canvas.width, Math.random()*canvas.height*0.6);
+  let running=true;
+  function tick(){
+    ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life--;
+      ctx.globalAlpha = Math.max(0,p.life/120);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+    if(parts.length>0 && running) requestAnimationFrame(tick); else { canvas.style.display='none'; running=false; }
+  }
+  tick();
+}
+
+/* ============== RENDER CONTROLLER ============== */
+function render(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const key = state.rounds[state.rIndex];
+  if(key === 'mcq') renderMCQ();
+  else if(key === 'fill') renderFill();
+  else if(key === 'match') renderMatch();
+  else if(key === 'order') renderOrder();
+}
+
+/* ------------------- ROUND 1: MCQ ------------------- */
+/* 4 points each */
+function renderMCQ(){
+  const q = data.mcq[state.qIndex];
+  const box = document.createElement('div'); box.className='question-box';
+  const opts = shuffle(q.opts.slice());
+  box.innerHTML = `
+    <div class="qtext">${q.q}</div>
+    <div class="options">${opts.map(o=>`<div class="opt" data-v="${o}">${o}</div>`).join('')}</div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  box.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.classList.contains('disabled')) return;
+      box.querySelectorAll('.opt').forEach(x=>x.classList.add('disabled'));
+      const chosen = btn.dataset.v;
+      if(normalize(chosen) === normalize(q.a)){
+        btn.classList.add('correct'); playCorrect();
+        state.score += scoring.mcqPer;
+        state.perRound[0] += scoring.mcqPer;
+        document.querySelector('.feedback').textContent = 'Correct';
+        document.querySelector('.feedback').className = 'feedback correct';
+      } else {
+        btn.classList.add('wrong'); playWrong();
+        const correctBtn = [...box.querySelectorAll('.opt')].find(x=>normalize(x.dataset.v) === normalize(q.a));
+        if(correctBtn) correctBtn.classList.add('correct');
+        document.querySelector('.feedback').textContent = 'Wrong — ' + q.a;
+        document.querySelector('.feedback').className = 'feedback wrong';
+      }
+      setMeta();
+      nextQ(900);
+    }, {once:true});
+  });
+}
+
+/* ------------------- ROUND 2: Fill-in (click choice to fill next blank) ------------------- */
+/* 4 points each */
+function renderFill(){
+  const q = data.fill[state.qIndex];
+  const box = document.createElement('div'); box.className='question-box';
+  box.innerHTML = `
+    <div class="qtext">${q.text.replace(/___/g,'__________')}</div>
+    <div class="fill-row" id="blanksRow">${Array.from({length: q.blanks}).map(()=>`<div class="blank"></div>`).join('')}</div>
+    <div class="choices" id="choicesRow">${q.choices.map(c=>`<div class="choice" data-val="${c}">${c}</div>`).join('')}</div>
+    <div style="margin-top:8px"><button class="btn" id="clearFill">Clear answers</button></div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const blanks = Array.from(box.querySelectorAll('.blank'));
+  const choices = Array.from(box.querySelectorAll('.choice'));
+  let fillIndex = 0;
+  const accepted = (Array.isArray(q.a) ? q.a : [q.a]).map(x=>normalize(x));
+
+  choices.forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      if(ch.classList.contains('used')) return;
+      if(fillIndex >= blanks.length) return;
+      blanks[fillIndex].textContent = ch.dataset.val;
+      ch.classList.add('used');
+      fillIndex++;
+      if(fillIndex >= blanks.length){
+        const filled = blanks.map(b=>normalize(b.textContent || ''));
+        const correct = filled.every((f) => accepted.includes(f));
+        if(correct){
+          playCorrect();
+          state.score += scoring.fillPer;
+          state.perRound[1] += scoring.fillPer;
+          document.querySelector('.feedback').textContent = 'Correct';
+          document.querySelector('.feedback').className = 'feedback correct';
+        } else {
+          playWrong();
+          document.querySelector('.feedback').textContent = 'Wrong — expected: ' + (Array.isArray(q.a) ? q.a.join(' / ') : q.a);
+          document.querySelector('.feedback').className = 'feedback wrong';
+        }
+        setMeta();
+        nextQ(900);
+      }
+    });
+  });
+
+  document.getElementById('clearFill').addEventListener('click', ()=>{
+    blanks.forEach(b=>b.textContent='');
+    choices.forEach(c=>c.classList.remove('used'));
+    fillIndex = 0;
+    document.querySelector('.feedback').textContent = '';
+    document.querySelector('.feedback').className = 'feedback';
+  });
+}
+
+/* ------------------- ROUND 3: Matching (single UI with 5 pairs) ------------------- */
+/* 6 points per pair => 30 total */
+function renderMatch(){
+  const left = data.matchLeft.slice();
+  const rightShuffled = shuffle(data.matchRight.slice());
+  const box = document.createElement('div'); box.className='question-box';
+  box.innerHTML = `
+    <div class="qtext">Match left sentence with the correct ending. Click a left item, then a right item.</div>
+    <div class="match-wrap">
+      <div class="match-col" id="leftCol">${left.map((l,i)=>`<div class="match-item left-item" data-index="${i}">${l}</div>`).join('')}</div>
+      <div class="match-col" id="rightCol">${rightShuffled.map((r,i)=>`<div class="match-item right-item" data-val="${encodeURIComponent(r)}">${r}</div>`).join('')}</div>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const leftItems = Array.from(box.querySelectorAll('.left-item'));
+  const rightItems = Array.from(box.querySelectorAll('.right-item'));
+  let selectedLeft = null;
+  let matched = 0;
+
+  leftItems.forEach(li=>{
+    li.addEventListener('click', ()=>{
+      if(li.classList.contains('matched')) return;
+      leftItems.forEach(x=>x.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedLeft = Number(li.dataset.index);
+      document.querySelector('.feedback').textContent = 'Now pick the correct ending.';
+      document.querySelector('.feedback').className = 'feedback';
+    });
+  });
+
+  rightItems.forEach(ri=>{
+    ri.addEventListener('click', ()=>{
+      if(ri.classList.contains('matched')) return;
+      if(selectedLeft === null){
+        document.querySelector('.feedback').textContent = 'Select a left item first.';
+        document.querySelector('.feedback').className = 'feedback wrong';
+        playWrong();
+        return;
+      }
+      const chosen = decodeURIComponent(ri.dataset.val);
+      const correct = data.matchMap[selectedLeft];
+      if(normalize(chosen) === normalize(correct)){
+        const leftEl = leftItems.find(x => Number(x.dataset.index) === selectedLeft);
+        leftEl.classList.add('matched');
+        ri.classList.add('matched');
+        matched++;
+        playCorrect();
+        state.score += scoring.matchPer;
+        state.perRound[2] += scoring.matchPer;
+        document.querySelector('.feedback').textContent = 'Correct pair!';
+        document.querySelector('.feedback').className = 'feedback correct';
+      } else {
+        ri.classList.add('wrong');
+        document.querySelector('.feedback').textContent = 'Wrong — try again.';
+        document.querySelector('.feedback').className = 'feedback wrong';
+        playWrong();
+        setTimeout(()=> ri.classList.remove('wrong'),600);
+      }
+      selectedLeft = null; leftItems.forEach(x=>x.classList.remove('selected'));
+      setMeta();
+      if(matched >= left.length){
+        nextQ(900);
+      }
+    });
+  });
+}
+
+/* ------------------- ROUND 4: Sentence Ordering ------------------- */
+/* clickable tiles; 6 points each */
+
+/* Utility: check a user's assembled sentence against multiple accepted targets */
+function checkOrderAnswer(userAnswer, index){
+  // primary source: try data.order[index].target
+  let accepted = null;
+  if(data.order && data.order[index] && data.order[index].target !== undefined){
+    accepted = data.order[index].target;
+  } else if(orderTargets && orderTargets[index] !== undefined){
+    accepted = orderTargets[index];
+  } else {
+    // fallback to using the raw target on data.order if present
+    accepted = data.order[index] && data.order[index].target ? data.order[index].target : '';
+  }
+
+  // ensure accepted is an array of strings
+  const acceptedArray = Array.isArray(accepted) ? accepted : [accepted];
+
+  const userNorm = normalize(userAnswer || '');
+  return acceptedArray.some(a => normalize(a) === userNorm);
+}
+
+/* Render ordering question */
+function renderOrder(){
+  const q = data.order[state.qIndex];
+  const shuffled = shuffle(q.scrambled.slice());
+  const box = document.createElement('div'); box.className='question-box';
+  box.innerHTML = `
+    <div class="qtext">Put the words in the correct order to form a proper sentence. Click words in order.</div>
+    <div class="word-bank" id="wordBank">${shuffled.map(w=>`<div class="word" data-w="${w}">${w}</div>`).join('')}</div>
+    <div class="built" id="builtArea" aria-live="polite" style="min-height:56px;padding:10px"></div>
+    <div style="margin-top:10px">
+      <button class="btn" id="undoWord">Undo</button>
+      <button class="btn" id="clearWords">Clear</button>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const built = [];
+  const bankEls = Array.from(box.querySelectorAll('.word'));
+  const builtArea = box.querySelector('#builtArea');
+
+  function refreshBuilt(){
+    builtArea.innerHTML = built.map(w=>`<div class="word used" style="padding:6px 10px;border-radius:6px;background:rgba(255,255,255,0.06);margin-right:6px">${w}</div>`).join('');
+    if(built.length === q.scrambled.length){
+      const attempt = built.join(' ');
+      const isCorrect = checkOrderAnswer(attempt, state.qIndex);
+      if(isCorrect){
+        playCorrect();
+        state.score += scoring.orderPer;
+        state.perRound[3] += scoring.orderPer;
+        document.querySelector('.feedback').textContent = 'Correct';
+        document.querySelector('.feedback').className = 'feedback correct';
+      } else {
+        playWrong();
+        // show expected alternatives for helpful feedback
+        const accepted = data.order && data.order[state.qIndex] && data.order[state.qIndex].target !== undefined
+          ? data.order[state.qIndex].target
+          : (orderTargets[state.qIndex] || []);
+        const acceptedDisplay = Array.isArray(accepted) ? accepted.join(' OR ') : accepted;
+        document.querySelector('.feedback').textContent = 'Wrong — expected: ' + acceptedDisplay;
+        document.querySelector('.feedback').className = 'feedback wrong';
+      }
+      setMeta();
+      nextQ(1200);
+    }
+  }
+
+  bankEls.forEach(be=>{
+    be.addEventListener('click', ()=>{
+      if(be.classList.contains('used')) return;
+      built.push(be.dataset.w);
+      be.classList.add('used');
+      refreshBuilt();
+    });
+  });
+
+  document.getElementById('undoWord').addEventListener('click', ()=>{
+    const last = built.pop();
+    if(last){
+      const btn = bankEls.find(x=>x.dataset.w === last && x.classList.contains('used'));
+      if(btn) btn.classList.remove('used');
+    }
+    refreshBuilt();
+    document.querySelector('.feedback').textContent = '';
+    document.querySelector('.feedback').className = 'feedback';
+  });
+
+  document.getElementById('clearWords').addEventListener('click', ()=>{
+    built.length = 0;
+    bankEls.forEach(x=>x.classList.remove('used'));
+    refreshBuilt();
+    document.querySelector('.feedback').textContent = '';
+    document.querySelector('.feedback').className = 'feedback';
+  });
+}
+
+/* ========== INIT ========== */
+setMeta();
+render();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Keynote Grammar — Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* --- Minimal Clean UI --- */
+:root{
+  --bg1:#041226; --bg2:#063b66;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --ok:#2ecc71; --bad:#ff6b6b;
+}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:white;
+  padding:20px;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  background:rgba(255,255,255,0.05);
+  padding:25px;
+  border-radius:14px;
+  backdrop-filter:blur(6px);
+}
+h1{text-align:center;color:var(--accent);margin-bottom:10px}
+#roundLabel,#scoreLabel{font-weight:700;margin:8px 0}
+
+/* Question Box */
+.question-box{
+  background:rgba(255,255,255,0.06);
+  padding:16px;
+  border-radius:12px;
+  margin-top:20px;
+}
+.qtext{margin-bottom:12px;font-size:1.1rem}
+
+/* MCQ */
+.options{display:grid;gap:10px}
+.opt{
+  background:rgba(255,255,255,0.1);
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+.opt.correct{background:var(--ok);color:#00220f}
+.opt.wrong{background:var(--bad)}
+.opt.disabled{opacity:.5;pointer-events:none}
+
+/* Fill */
+input.answer-field{
+  width:100%;padding:10px;border:none;
+  border-radius:8px;background:rgba(255,255,255,0.1);
+  color:white;
+}
+
+/* Matching */
+.match-wrap{display:flex;gap:20px;flex-wrap:wrap}
+.match-col{flex:1;min-width:200px}
+.match-item{
+  background:rgba(255,255,255,0.1);
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+.match-item.selected{outline:3px solid #ffe28a}
+.match-item.matched{background:var(--ok);color:#00220f;opacity:.7}
+
+/* Reorder */
+.word-bank{display:flex;flex-wrap:wrap;gap:10px}
+.word{background:rgba(255,255,255,0.15);padding:8px 12px;border-radius:8px;cursor:pointer}
+.word.used{opacity:.4;pointer-events:none}
+.built{background:rgba(255,255,255,0.08);min-height:40px;padding:10px;border-radius:8px;margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* Buttons */
+.btn{
+  background:var(--accent);
+  color:black;
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Keynote Grammar — Quiz</h1>
+  <div id="roundLabel"></div>
+  <div id="scoreLabel"></div>
+  <div id="quizArea"></div>
+</div>
+
+<!-- Sounds -->
+<audio id="rightClick" src="rightclick.mp3" preload="auto"></audio>
+<audio id="wrongClick" src="wrongclick.mp3" preload="auto"></audio>
+
+<script>
+/* =========================================================
+   QUIZ DATA
+   ========================================================= */
+const quizRounds = [
+  {
+    title: "Round 1 — Multiple Choice",
+    items: [
+      { type:"mcq", q:"We always have a family video-call ___ New Year’s Day.", opts:["at","on","in","by"], a:"on" },
+      { type:"mcq", q:"The last train leaves ___ 11.45 p.m.", opts:["at","on","in","until"], a:"at" },
+      { type:"mcq", q:"I plan to finish the report ___ Friday afternoon.", opts:["at","on","in","since"], a:"on" },
+      { type:"mcq", q:"They have lived here ___ 2018.", opts:["for","since","until","during"], a:"since" },
+      { type:"mcq", q:"The museum is closed ___ winter but reopens in March.", opts:["at","on","in","by"], a:"in" },
+      { type:"mcq", q:"We can’t leave ___ the bell rings.", opts:["before","by","until","after"], a:"until" },
+      { type:"mcq", q:"She waited at the gate ___ twenty minutes.", opts:["since","for","during","by"], a:"for" },
+      { type:"mcq", q:"The baby woke up twice ___ the night.", opts:["at","during","before","since"], a:"during" },
+      { type:"mcq", q:"The homework must be handed in ___ next Wednesday.", opts:["until","by","on","in"], a:"by" },
+      { type:"mcq", q:"We usually take a walk ___ sunset.", opts:["at","on","in","for"], a:"at" }
+    ]
+  },
+
+  {
+    title: "Round 2 — Fill in the Blanks",
+    items: [
+      { type:"fill", q:"I’ll call you _____ eight o’clock sharp.", a:"at" },
+      { type:"fill", q:"My parents arrive _____ 15 August.", a:"on" },
+      { type:"fill", q:"We always go skiing _____ January.", a:"in" },
+      { type:"fill", q:"Please send the invoice _____ the end of the month.", a:"by" },
+      { type:"fill", q:"The children played outside _____ four hours yesterday.", a:"for" },
+      { type:"fill", q:"He has worked here _____ he graduated.", a:"since" },
+      { type:"fill", q:"The lights suddenly went out _____ the concert.", a:"during" },
+      { type:"fill", q:"Let’s meet _____ the lecture, not earlier.", a:"after" },
+      { type:"fill", q:"The shop stays open _____ 10 p.m. every day.", a:"until" },
+      { type:"fill", q:"Don’t eat anything _____ the surgery.", a:"before" }
+    ]
+  },
+
+  {
+    title: "Round 3 — Matching",
+    items: [
+      {
+        type:"match",
+        left:[
+          "I was born",
+          "We can discuss it",
+          "She has been asleep",
+          "The birds stopped singing",
+          "Everyone looked happy",
+          "The hikers reached the summit"
+        ],
+        right:[
+          "in the summer of 2010.",
+          "during our lunch break.",
+          "since midnight.",
+          "at 3 a.m. exactly.",
+          "by the time the sun rose.",
+          "on the morning of the wedding."
+        ],
+        correctMap:[0,1,2,3,4,5]
+      }
+    ]
+  },
+
+  {
+    title: "Round 4 — Reorder the Sentences",
+    items: [
+      { type:"reorder", scrambled:["the","meeting","at","starts","9.15","a.m."], a:"the meeting starts at 9.15 a.m." },
+      { type:"reorder", scrambled:["in","England","often","May","rains","it"], a:"it often rains in England May" },
+      { type:"reorder", scrambled:["until","waited","we","midnight","announcement","the"], a:"we waited until midnight the announcement" },
+      { type:"reorder", scrambled:["since","2022","together","they","have","lived"], a:"they have lived together since 2022" },
+      { type:"reorder", scrambled:["during","not","talk","please","film","the"], a:"please do not talk during the film" }
+    ]
+  }
+];
+
+/* =========================================================
+   QUIZ ENGINE (FIXED & FULLY WORKING)
+   ========================================================= */
+function playRight(){document.getElementById("rightClick").play().catch(()=>{})}
+function playWrong(){document.getElementById("wrongClick").play().catch(()=>{})}
+
+const fireSound = new Audio("fireworks.mp3");
+
+function normalize(s){return String(s||"").trim().toLowerCase();}
+
+const quizArea=document.getElementById("quizArea");
+const roundLabel=document.getElementById("roundLabel");
+const scoreLabel=document.getElementById("scoreLabel");
+
+let roundIndex=0,itemIndex=0,score=0;
+const totalQuestions = quizRounds.reduce((sum,r)=>sum+r.items.length,0);
+const POINT = 100/totalQuestions;
+
+function updateMeta(){
+  roundLabel.textContent=quizRounds[roundIndex].title;
+  scoreLabel.textContent=`Score: ${Math.round(score)}`;
+}
+
+function next(delay=400){
+  setTimeout(()=>{
+    itemIndex++;
+    if(itemIndex>=quizRounds[roundIndex].items.length){
+      roundIndex++; itemIndex=0;
+      if(roundIndex>=quizRounds.length) return showFinal();
+    }
+    render();
+  },delay);
+}
+
+function showFinal(){
+  quizArea.innerHTML=`
+    <div style="text-align:center;">
+      <h2 style="color:#ffd24d;font-size:2rem;">
+        Final Score: ${Math.round(score)} / 100
+      </h2>
+      <div id="fwContainer" style="margin-top:20px;"></div>
+      <button class="btn" onclick="location.reload()">Retry Quiz</button>
+      <a class="btn" href="topics.html">Next Topic</a>
+    </div>
+  `;
+  fireSound.play().catch(()=>{});
+  launchFireworks();
+}
+
+function launchFireworks(){
+  const c=document.getElementById("fwContainer");
+  for(let i=0;i<15;i++){
+    let fw=document.createElement("div");
+    fw.style.position="absolute";
+    fw.style.left=Math.random()*80+"%";
+    fw.style.top=Math.random()*50+"%";
+    fw.style.width="10px";fw.style.height="10px";
+    fw.style.borderRadius="50%";
+    fw.style.background=["#ff4d4d","#4dff4d","#4d4dff","#ffff4d"][Math.floor(Math.random()*4)];
+    fw.style.animation="explode 1.2s ease-out forwards";
+    c.appendChild(fw);
+    setTimeout(()=>fw.remove(),1300);
+  }
+}
+
+const style=document.createElement("style");
+style.innerHTML=`
+  @keyframes explode {
+    0% {transform:scale(1);opacity:1;}
+    100% {transform:scale(10);opacity:0;}
+  }
+`;
+document.head.appendChild(style);
+
+function render(){
+  updateMeta();
+  quizArea.innerHTML="";
+  const item=quizRounds[roundIndex].items[itemIndex];
+  const box=document.createElement("div");
+  box.className="question-box";
+
+  /* MCQ */
+  if(item.type==="mcq"){
+    box.innerHTML=`
+      <div class="qtext">${item.q}</div>
+      <div class="options">
+        ${item.opts.map(o=>`<div class="opt" data-v="${o}" tabindex="0">${o}</div>`).join("")}
+      </div>
+    `;
+    quizArea.appendChild(box);
+    box.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick=()=>chooseMCQ(btn,item);
+      btn.onkeypress=e=>{if(e.key==="Enter") chooseMCQ(btn,item)};
+    });
+  }
+
+  /* Fill */
+  else if(item.type==="fill"){
+    box.innerHTML=`
+      <div class="qtext">${item.q}</div>
+      <input class="answer-field" id="fillInput" autofocus>
+    `;
+    quizArea.appendChild(box);
+    const input=document.getElementById("fillInput");
+    input.onkeypress=e=>{if(e.key==="Enter") submitFill(item)};
+  }
+
+  /* Matching */
+  else if(item.type==="match"){
+    const left=item.left, right=item.right;
+    const shuffledRight=right.slice().sort(()=>Math.random()-0.5);
+    box.innerHTML=`
+      <div class="qtext">Match A to B</div>
+      <div class="match-wrap">
+        <div class="match-col">
+          ${left.map((v,i)=>`<div class="match-item left" data-i="${i}">${v}</div>`).join("")}
+        </div>
+        <div class="match-col">
+          ${shuffledRight.map(v=>`<div class="match-item right">${v}</div>`).join("")}
+        </div>
+      </div>
+    `;
+    quizArea.appendChild(box);
+
+    let selected=null, matched=0;
+    const leftEls=box.querySelectorAll(".left"), rightEls=box.querySelectorAll(".right");
+
+    leftEls.forEach(l=>{
+      l.onclick=()=>{
+        if(l.classList.contains("matched")) return;
+        leftEls.forEach(x=>x.classList.remove("selected"));
+        l.classList.add("selected");
+        selected=l;
+      };
+    });
+
+    rightEls.forEach(r=>{
+      r.onclick=()=>{
+        if(!selected) return;
+        const leftIndex=Number(selected.dataset.i);
+        const correctRight=item.right[item.correctMap[leftIndex]];
+        if(normalize(r.textContent)==normalize(correctRight)){
+          selected.classList.add("matched");
+          r.classList.add("matched");
+          matched++; playRight();
+          if(matched===leftEls.length) score+=POINT, next();
+        } else playWrong();
+        selected.classList.remove("selected"); selected=null;
+      };
+    });
+  }
+
+  /* Reorder */
+  else if(item.type==="reorder"){
+    const scrambled=item.scrambled.slice().sort(()=>Math.random()-0.5);
+    box.innerHTML=`
+      <div class="qtext">Arrange the words</div>
+      <div class="word-bank">${scrambled.map(w=>`<div class="word" data-w="${w}" tabindex="0">${w}</div>`).join("")}</div>
+      <div class="built" id="built"></div>
+      <button class="btn" id="clearBtn">Clear</button>
+    `;
+    quizArea.appendChild(box);
+
+    let built=[];
+    const words=box.querySelectorAll(".word");
+
+    words.forEach(w=>{
+      w.onclick=()=>useWord(w,item,built,scrambled);
+      w.onkeypress=e=>{if(e.key==="Enter") useWord(w,item,built,scrambled)};
+    });
+
+    document.getElementById("clearBtn").onclick=()=>{
+      built.length=0;
+      words.forEach(x=>x.classList.remove("used"));
+      document.getElementById("built").innerHTML="";
+    };
+  }
+}
+
+/* MCQ handler */
+function chooseMCQ(btn,item){
+  const val=btn.dataset.v;
+  if(val===item.a){ playRight(); score+=POINT; }
+  else playWrong();
+  next();
+}
+
+/* Fill handler */
+function submitFill(item){
+  const val=normalize(document.getElementById("fillInput").value);
+  if(val===normalize(item.a)){ playRight(); score+=POINT; }
+  else playWrong();
+  next();
+}
+
+/* Reorder handler */
+function useWord(w,item,built,scrambled){
+  if(w.classList.contains("used")) return;
+  w.classList.add("used");
+  built.push(w.dataset.w);
+
+  document.getElementById("built").innerHTML =
+    built.map(x=>`<div class="word used">${x}</div>`).join("");
+
+  if(built.length===scrambled.length){
+    if(normalize(built.join(" "))===normalize(item.a)){
+      playRight(); score+=POINT;
+    } else playWrong();
+    next();
+  }
+}
+
+/* Start */
+render();
+</script>
+
+</body>
+</html>

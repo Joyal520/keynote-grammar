@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Possessive Adjective and Pronouns Quiz | Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#00172b; --bg2:#013a63;
+    --yellow:#ffd24d; --muted:#cfe9ff; --ok:#2ecc71; --bad:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+
+  /* ---------- Center THE BOX ---------- */
+  body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf6ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+
+  .container{
+    width:100%;
+    max-width:980px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .card{
+    width:100%;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.55);
+  }
+
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .title{color:var(--yellow);font-weight:800;font-size:1.3rem}
+  .meta{color:var(--muted);font-size:0.95rem}
+
+  .progress-wrap{display:flex;gap:12px;align-items:center}
+  .progress{width:260px;height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
+  .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd24d,#ffcc33);transition:width .35s}
+  .score{color:var(--yellow);font-weight:800}
+
+  .question{padding:18px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+  .qtext{font-size:1.15rem;margin-bottom:14px;min-height:48px}
+
+  .answers{margin-top:10px;display:flex;flex-direction:column;gap:12px}
+  .choice{background:var(--yellow);color:#000;padding:14px;border-radius:10px;font-weight:800;cursor:pointer}
+  .choice:hover{transform:translateY(-3px)}
+  .choice.disabled{opacity:0.6;pointer-events:none}
+  .choice.correct{background:var(--ok);color:#002218}
+  .choice.wrong{background:var(--bad);color:#fff}
+
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+  .pair-box{display:flex;flex-direction:column;gap:10px}
+  .pair-item{background:rgba(255,255,255,0.04);padding:10px;border-radius:8px;cursor:pointer;text-align:center;font-weight:700}
+  .pair-item.matched{background:var(--ok);color:#002218}
+
+  .tokens{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .token{background:var(--yellow);color:#000;padding:10px 14px;border-radius:999px;font-weight:800;cursor:pointer}
+  .token.used{opacity:0.35}
+
+  .built{min-height:50px;padding:10px;border-radius:10px;border:1px dashed rgba(255,255,255,0.06);display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+  .controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+  .btn{padding:10px 14px;border-radius:10px;font-weight:800;border:none;cursor:pointer}
+  .btn.primary{background:var(--yellow);color:#001f2e}
+
+  .feedback{height:32px;margin-top:6px;font-weight:700;color:var(--muted)}
+
+  .final{text-align:center;padding:18px}
+  .final-score{font-size:2.3rem;color:var(--yellow);font-weight:900}
+  .final-actions{display:flex;gap:12px;justify-content:center;margin-top:14px}
+
+  canvas#fw{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:9999}
+</style>
+</head>
+
+<body>
+
+<canvas id="fw"></canvas>
+
+<div class="container">
+  <div class="card">
+
+    <div class="header">
+      <div>
+        <div class="title">Possessive adjective and Pronouns Quiz</div>
+        <div class="meta">MCQ • Fill-in • Matching • Sentence Builder — 20 Questions — 100 Points</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress"><i id="progFill"></i></div>
+        <div class="score" id="scoreLabel">0 / 100</div>
+      </div>
+    </div>
+
+    <div id="questionCard" class="question">
+      <div class="qtext" id="qtext">Press Start to begin</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="controls">
+        <div id="qcount">Q 0 / 20</div>
+        <div>
+          <button id="startBtn" class="btn primary">Start</button>
+          <button id="skipBtn" class="btn" style="display:none">Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="finalScreen" class="question" style="display:none">
+      <div class="final">
+        <div class="final-score" id="finalScore"></div>
+        <div id="finalMsg" style="margin-top:8px"></div>
+
+        <div class="final-actions" id="finalActions"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== Sounds ===== */
+const S = {
+  click:new Audio("bubble.mp3"),
+  correct:new Audio("rightclick.mp3"),
+  wrong:new Audio("wrongclick.mp3"),
+  fire:new Audio("fireworks.mp3")
+};
+function safePlay(a){ try{a.currentTime=0; a.play().catch(()=>{});}catch(e){} }
+
+/* =======================================
+   POSSESSIVE ADJECTIVES & PRONOUNS QUIZ
+   ======================================= */
+
+/* MCQ */
+const MCQS = [
+  {q:"Choose the correct possessive adjective: This is ___ bag.", 
+   a:"my", c:["my","mine","me"]},
+
+  {q:"Select the correct possessive pronoun: The blue shoes are ___.", 
+   a:"hers", c:["her","hers","she"]},
+
+  {q:"Choose the correct possessive adjective: We visited ___ grandmother yesterday.", 
+   a:"our", c:["ours","our","us"]},
+
+  {q:"Select the correct possessive pronoun: That red car is ___.", 
+   a:"theirs", c:["their","theirs","them"]},
+
+  {q:"Choose the correct option: He brought ___ lunchbox.", 
+   a:"his", c:["him","his","he"]}
+];
+
+/* Fill-in (adjectives + pronouns mixed) */
+const FILLS = [
+  {q:"I forgot ___ homework at home.", a:"my"},
+  {q:"Is this pen ___?", a:"yours"},
+  {q:"The cat is licking ___ paws.", a:"its"},
+  {q:"We cleaned ___ rooms.", a:"our"},
+  {q:"Those toys are not mine. They are ___.", a:"theirs"}
+];
+
+/* Match (Sentence Halves with Possessive Adjectives) */
+const MATCH = [
+  {left:"This is", right:"my book"},
+  {left:"She lost", right:"her umbrella"},
+  {left:"They parked", right:"their bicycles outside"},
+  {left:"He forgot", right:"his jacket at home"},
+  {left:"We cleaned", right:"our classroom today"}
+];
+
+/* Sentence Builder */
+const BUILD = [
+  {words:["This","is","my","phone"], answer:"This is my phone"},
+  {words:["The","decision","is","theirs"], answer:"The decision is theirs"},
+  {words:["Her","brother","is","a","doctor"], answer:"Her brother is a doctor"},
+  {words:["That","bag","is","mine"], answer:"That bag is mine"},
+  {words:["Our","team","won","the","match"], answer:"Our team won the match"}
+];
+
+
+/* ===== State ===== */
+let stage = 0; // 0 mcq, 1 fill, 2 match, 3 builder
+let score = 0;
+let qIndex = 0;
+let matCount = 0;
+
+const progFill = document.getElementById("progFill");
+const scoreLabel = document.getElementById("scoreLabel");
+const qcount = document.getElementById("qcount");
+const qtext = document.getElementById("qtext");
+const answers = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const startBtn = document.getElementById("startBtn");
+const skipBtn = document.getElementById("skipBtn");
+
+/* ===== Start Quiz ===== */
+startBtn.onclick = () => { safePlay(S.click); start(); };
+skipBtn.onclick = () => { safePlay(S.click); next(); };
+
+function start(){
+  startBtn.style.display="none";
+  skipBtn.style.display="inline-block";
+  score=0; stage=0; qIndex=0; matCount=0;
+  renderMCQ();
+}
+
+/* ===== Update Meta ===== */
+function updateMeta(){
+  const step = Math.min(qIndex + (stage*5), 20);
+  progFill.style.width = `${(step/20)*100}%`;
+  qcount.textContent = `Q ${step} / 20`;
+  scoreLabel.textContent = `${score} / 100`;
+}
+
+/* ===== Render MCQ ===== */
+function renderMCQ(){
+  updateMeta();
+  answers.innerHTML="";
+  feedback.textContent="";
+  const item = MCQS[qIndex];
+  qtext.textContent = item.q;
+
+  item.c.sort(()=>Math.random()-0.5).forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.className="choice";
+    btn.textContent=opt;
+    btn.onclick=()=>{
+      document.querySelectorAll(".choice").forEach(c=>c.classList.add("disabled"));
+      if(opt===item.a){
+        btn.classList.add("correct");
+        score+=5; safePlay(S.correct);
+      } else {
+        btn.classList.add("wrong");
+        safePlay(S.wrong);
+        [...document.querySelectorAll(".choice")].find(x=>x.textContent===item.a).classList.add("correct");
+      }
+      setTimeout(()=>next(),700);
+    };
+    answers.appendChild(btn);
+  });
+}
+
+/* ===== Move Forward ===== */
+function next(){
+  if(stage===0){ qIndex++; if(qIndex>=5){ stage=1; qIndex=0; renderFill(); } else renderMCQ(); return; }
+  if(stage===1){ qIndex++; if(qIndex>=5){ stage=2; qIndex=0; renderMatch(); } else renderFill(); return; }
+  if(stage===2){ qIndex++; if(qIndex>=5){ stage=3; qIndex=0; renderBuilder(); } else renderMatch(); return; }
+}
+
+/* ===== Render Fill ===== */
+function renderFill(){
+  updateMeta();
+  answers.innerHTML="";
+  feedback.textContent="";
+  const item = FILLS[qIndex];
+
+  qtext.textContent = item.q;
+
+  const input=document.createElement("input");
+  input.type="text"; input.placeholder="Type answer and press Enter";
+  input.className="choice";
+  input.onkeydown=e=>{
+    if(e.key==="Enter"){
+      if(input.value.trim().toLowerCase()===item.a.toLowerCase()){
+        input.style.background= "var(--ok)"; score+=5; safePlay(S.correct);
+      } else { input.style.background="var(--bad)"; safePlay(S.wrong); }
+      setTimeout(()=>next(),600);
+    }
+  };
+  answers.appendChild(input);
+  input.focus();
+}
+
+/* ===== Render Matching ===== */
+function renderMatch(){
+  updateMeta();
+  answers.innerHTML="";
+  feedback.textContent="";
+
+  qtext.textContent="Match the correct sentence halves";
+
+  const left = MATCH.map(x=>x.left);
+  const right = MATCH.map(x=>x.right).sort(()=>Math.random()-0.5);
+
+  const grid=document.createElement("div");
+  grid.className="match-grid";
+
+  const L=document.createElement("div"); L.className="pair-box";
+  const R=document.createElement("div"); R.className="pair-box";
+
+  left.forEach(l=>{
+    const el=document.createElement("div");
+    el.className="pair-item"; el.textContent=l; el.dataset.left=l;
+    L.appendChild(el);
+  });
+
+  right.forEach(r=>{
+    const el=document.createElement("div");
+    el.className="pair-item"; el.textContent=r; el.dataset.right=r;
+    R.appendChild(el);
+  });
+
+  grid.appendChild(L); grid.appendChild(R);
+  answers.appendChild(grid);
+
+  let selected=null;
+  L.querySelectorAll(".pair-item").forEach(el=>{
+    el.onclick=()=>{
+      L.querySelectorAll(".pair-item").forEach(x=>x.style.outline="none");
+      el.style.outline="3px solid var(--yellow)";
+      selected = el.dataset.left;
+    };
+  });
+
+  R.querySelectorAll(".pair-item").forEach(el=>{
+    el.onclick=()=>{
+      if(!selected){ feedback.textContent="Select on left first"; return; }
+      const match=MATCH.find(x=>x.left===selected);
+      if(match.right===el.dataset.right){
+        safePlay(S.correct); score+=5;
+        const leftEl=[...L.children].find(x=>x.dataset.left===selected);
+        leftEl.classList.add("matched");
+        el.classList.add("matched");
+        matCount++;
+        if(matCount>=5){ setTimeout(()=>renderBuilder(),700); }
+      } else {
+        safePlay(S.wrong);
+      }
+      selected=null;
+      L.querySelectorAll(".pair-item").forEach(x=>x.style.outline="none");
+    };
+  });
+}
+
+/* ===== Builder ===== */
+function renderBuilder() {
+  answers.innerHTML = "";
+  feedback.textContent = "";
+  updateMeta();
+
+  buildStack = []; // reset stack every question
+
+  const item = BUILD[qIndex];
+  qtext.textContent = `Build the sentence (${qIndex+1}/5)`;
+
+  const built = document.createElement("div");
+  built.className = "built";
+
+  const tokens = document.createElement("div");
+  tokens.className = "tokens";
+
+  // Undo Button
+  const undoBtn = document.createElement("button");
+  undoBtn.textContent = "Undo";
+  undoBtn.className = "btn";
+  undoBtn.style.marginTop = "10px";
+  undoBtn.onclick = undoLastWord;
+
+  const shuffled = item.words.slice().sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(w => {
+    const t = document.createElement("div");
+    t.className = "token";
+    t.textContent = w;
+
+    t.onclick = () => {
+      if (t.classList.contains("used")) return;
+
+      t.classList.add("used");
+
+      const copy = document.createElement("div");
+      copy.className = "token";
+      copy.textContent = w;
+
+      built.appendChild(copy);
+
+      // Track the match for undo
+      buildStack.push({ original: t, clone: copy });
+
+      // If the sentence is complete, evaluate
+      if (built.children.length === item.words.length) {
+        const builtSentence = [...built.children].map(x => x.textContent).join(" ");
+
+        if (builtSentence === item.answer) {
+          score += 5;
+          safePlay(S.correct);
+        } else {
+          safePlay(S.wrong);
+        }
+
+        setTimeout(() => {
+          qIndex++;
+          if (qIndex >= 5) finish();
+          else renderBuilder();
+        }, 600);
+      }
+    };
+
+    tokens.appendChild(t);
+  });
+
+  answers.appendChild(built);
+  answers.appendChild(tokens);
+  answers.appendChild(undoBtn);
+}
+
+/* ===== Finish ===== */
+function finish(){
+  document.getElementById("questionCard").style.display="none";
+  const final=document.getElementById("finalScreen");
+  final.style.display="block";
+
+  finalScore.textContent = `${score} / 100`;
+  finalMsg.textContent = score>=75 ? "Excellent! Well done!" : "Keep practising — try again.";
+
+  const box=document.getElementById("finalActions");
+  box.innerHTML="";
+
+  const retry=document.createElement("button");
+  retry.className="btn primary"; retry.textContent="Retry";
+  retry.onclick=start;
+  box.appendChild(retry);
+
+  const home=document.createElement("button");
+  home.className="btn"; home.textContent="Home";
+  home.onclick=()=>location.href="index.html";
+  box.appendChild(home);
+
+  const next=document.createElement("button");
+  next.className="btn"; next.textContent="Next Topic";
+  next.onclick=()=>location.href="lesson4_video.html";
+  box.appendChild(next);
+
+  safePlay(S.fire);
+  runFireworks();
+}
+
+/* ===== Fireworks ===== */
+function runFireworks(){
+  const c=document.getElementById("fw");
+  c.style.display="block";
+  c.width=innerWidth; c.height=innerHeight;
+  const ctx=c.getContext("2d");
+  const parts=[];
+  function spawn(){
+    for(let i=0;i<140;i++){
+      parts.push({
+        x:Math.random()*c.width,
+        y:Math.random()*c.height*0.6,
+        vx:(Math.random()-0.5)*7,
+        vy:(Math.random()-0.9)*7,
+        life:70+Math.random()*80,
+        color:`hsl(${Math.random()*360},100%,60%)`,
+        r:1+Math.random()*3
+      });
+    }
+  }
+  spawn(); setTimeout(spawn,350);
+  function frame(){
+    ctx.fillStyle="rgba(0,0,0,0.14)";
+    ctx.fillRect(0,0,c.width,c.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.03; p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/150);
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+    if(parts.length) requestAnimationFrame(frame);
+    else setTimeout(()=>c.style.display="none",600);
+  }
+  frame();
+}
+
+function normalize(s){
+  return String(s||"").trim().toLowerCase();
+}
+
+function undoLastWord() {
+  if (buildStack.length === 0) return;
+
+  const last = buildStack.pop();
+
+  // Remove the word from the built area
+  last.clone.remove();
+
+  // Free the original token
+  last.original.classList.remove("used");
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Grammar Mastery — There / Correct-Wrong Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#00172b; --bg2:#013a63;
+    --yellow:#ffd24d;
+    --muted:#cfe9ff;
+    --card: rgba(255,255,255,0.04);
+    --glass: rgba(255,255,255,0.06);
+    --ok:#2ecc71; --bad:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Poppins",sans-serif;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf6ff;
+    min-height:100vh;
+    padding:28px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .wrap{width:100%;max-width:980px}
+  .card{
+    background:var(--card);
+    border-radius:14px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(8px);
+    box-shadow:0 14px 40px rgba(0,0,0,0.5);
+  }
+
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  h1{color:var(--yellow);font-size:1.4rem}
+  .meta{color:var(--muted);font-weight:600}
+
+  #quizArea{margin-top:12px}
+  .question-box{
+    background:rgba(255,255,255,0.03);
+    padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+    margin-bottom:12px;
+  }
+
+  .qtext{font-size:1.15rem;margin-bottom:12px;color:#eaf6ff;min-height:3rem}
+  .choices{display:flex;flex-wrap:wrap;gap:10px}
+  .choice{
+    background:var(--yellow);
+    color:#001f2e;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:1.05rem;
+    min-width:120px;
+    text-align:center;
+    border:2px solid rgba(0,0,0,0.08);
+    transition:transform .12s, box-shadow .12s;
+  }
+  .choice:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,0.3)}
+  .choice.disabled{pointer-events:none;opacity:0.6}
+  .choice.correct{background:var(--ok);color:#002218}
+  .choice.wrong{background:var(--bad);color:#fff}
+
+  /* Larger answer text when selected or reveal */
+  .choice .label{font-size:1.15rem;display:block}
+
+  /* Fill input */
+  .fill-input input{
+    width:100%;padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.08);color:#001f2e;font-weight:700;font-size:1.05rem
+  }
+
+  /* Sentence builder */
+  .token-bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .token{background:var(--glass);padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:700;color:#001f2e}
+  .token.used{opacity:0.45;pointer-events:none}
+  .built{min-height:56px;background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;border:1px dashed rgba(255,255,255,0.06);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .undo-btn{margin-top:10px;padding:8px 12px;border-radius:999px;border:none;background:#ffffff22;color:#fff;font-weight:700;cursor:pointer}
+
+  /* Matching */
+  .match-wrap{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+  .match-col{flex:1;min-width:180px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+  .match-item{padding:10px;border-radius:8px;background:rgba(255,255,255,0.06);margin-bottom:8px;cursor:pointer;font-weight:700;color:#eaf6ff}
+  .match-item.selected{outline:3px solid rgba(0,0,0,0.06);background:var(--yellow);color:#001f2e}
+  .match-item.matched{background:var(--ok);color:#002218;pointer-events:none;opacity:0.85}
+
+  .feedback{height:28px;margin-top:10px;font-weight:700}
+
+  /* Sentence-builder tokens: yellow with black text */
+.token {
+    background: #ffd24d !important;  /* bright yellow */
+    color: #000 !important;          /* black text */
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.15s;
+}
+
+.token:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    transform: translateY(-2px);
+}
+
+.token.used {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+
+  /* final */
+  .final-score{font-size:2.6rem;color:var(--yellow);font-weight:900;text-align:center;margin-bottom:12px}
+  .final-actions{display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+
+  /* fireworks canvas */
+  canvas#fw{position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999}
+
+  /* make choice text larger when on hover/selected (accessibility) */
+  .choice:focus,.choice:hover{outline:none}
+
+  @media (max-width:720px){
+    .choice{min-width:44%;font-size:1rem}
+    .qtext{font-size:1.05rem}
+  }
+</style>
+</head>
+<body>
+  <canvas id="fw"></canvas>
+
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div>
+          <h1>Grammar Mastery — There / Correct-Wrong</h1>
+          <div class="meta">20 questions · Auto-advance · Sounds · Fireworks at ≥ 75</div>
+        </div>
+        <div style="text-align:right">
+          <div id="scoreLabel" style="font-weight:800;color:var(--yellow)">Score: 0</div>
+          <div id="progressLabel" style="color:var(--muted);font-weight:700">Q 1 / 20</div>
+        </div>
+      </header>
+
+      <div id="quizArea"></div>
+
+      <div id="finalArea" style="display:none;margin-top:10px"></div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   Sounds (assume in same folder)
+   ========================= */
+const SOUND = {
+  correct: new Audio('rightclick.mp3'),
+  wrong:   new Audio('wrongclick.mp3'),
+  click:   new Audio('bubble.mp3'),
+  fire:    new Audio('fireworks.mp3')
+};
+function safePlay(audio){
+  try{ audio.currentTime = 0; audio.play().catch(()=>{}); }catch(e){}
+}
+
+/* =========================
+   QUESTIONS (20, 5 points each)
+   types: mcq, cw (correct/wrong), fitb, sb (sentence builder), match
+   ========================= */
+const QUESTIONS = [
+  // 5 MCQ
+  {type:'mcq', q:"Choose the correct phrase for a single future event.", opts:["There was","There are","There will be","There were"], a:"There will be"},
+  {type:'mcq', q:"___ 8 planets in our solar system (Present, Plural)", opts:["there is","there are","there was","there will be"], a:"there are"},
+  {type:'mcq', q:"Yesterday, ___ a huge storm. (Past, Singular)", opts:["there are","there is","there will be","there was"], a:"there was"},
+  {type:'mcq', q:"Next year, ___ new opportunities for growth. (Future, Plural)", opts:["there are","there will be","there is","there were"], a:"there will be"},
+  {type:'mcq', q:"Right now, ___ only one cookie left on the plate. (Present, Singular)", opts:["there were","there are","there is","there will be"], a:"there is"},
+
+  // 5 Correct/Wrong (replacement of True/False)
+  // For these, we present a sentence and ask: "Is this sentence correct?"
+  {type:'cw', q:"There were many birds on the roof yesterday.", a:true},
+  {type:'cw', q:"There is three cars parked outside right now.", a:false},
+  {type:'cw', q:"There was many children in the park.", a:false},
+  {type:'cw', q:"There will be an important announcement tomorrow morning.", a:true},
+  {type:'cw', q:"There is a loud noise last night.", a:false},
+
+  // 5 Fill-in-the-blank (submit on Enter)
+  {type:'fitb', q:"_________ a problem with the computer. It is not working", a:"There is"},
+  {type:'fitb', q:"Last week, _________ several complaints about the noise.", a:"There were"},
+  {type:'fitb', q:"_________ many robots in the future.", a:"There will be"},
+  {type:'fitb', q:"Right now, __________ a fly buzzing around my head.", a:"There is"},
+  {type:'fitb', q:"Before the fire, __________ many wooden buildings in this area.", a:"There were"},
+
+  // 3 Sentence-builder (sb) — reorder tokens; auto-evaluate when complete or Enter; undo button included
+  {type:'sb', q:"Build a grammatically correct sentence.", words:["There","is","a","test","on","Friday"], a:"There is a test on Friday."},
+  {type:'sb', q:"Build a grammatically correct sentence.", words:["There","will","be","a","meeting","tomorrow"], a:"There will be a meeting tomorrow."},
+  {type:'sb', q:"Build a grammatically correct sentence.", words:["There","was","a","rat","in","the","kitchen"], a:"There was a rat in the kitchen."},
+  {type:'sb', q:"Build a grammatically correct sentence.", 
+ words:["There","will","be","a","concert","tonight"], 
+ a:"There will be a concert tonight."},
+  {type:'sb', q:"Build a grammatically correct sentence.", words:["There","are","many","trees","in","the","forest"], a:"There are many trees in the forest."}
+];
+
+/* Ensure total questions count and points */
+const POINTS_PER_QUESTION = 5;
+const TOTAL_QUESTIONS = QUESTIONS.length;
+const PASS_SCORE = 75;
+
+/* =========================
+   State
+   ========================= */
+let idx = 0;
+let score = 0;
+
+/* DOM refs */
+const quizArea = document.getElementById('quizArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const progressLabel = document.getElementById('progressLabel');
+const fwCanvas = document.getElementById('fw');
+const finalArea = document.getElementById('finalArea');
+
+/* Utility */
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function normalize(s){ return String(s||'').trim().toLowerCase().replace(/[.,!?;:]+$/,''); }
+
+/* Update meta */
+function updateMeta(){
+  scoreLabel.textContent = `Score: ${score}`;
+  progressLabel.textContent = `Q ${Math.min(idx+1, TOTAL_QUESTIONS)} / ${TOTAL_QUESTIONS}`;
+}
+
+/* Auto-advance helper */
+function advance(delay=800){
+  setTimeout(()=>{
+    idx++;
+    if(idx >= TOTAL_QUESTIONS){
+      showFinal();
+    } else {
+      render();
+    }
+  }, delay);
+}
+
+/* Render controller */
+function render(){
+  updateMeta();
+  quizArea.innerHTML = '';
+  finalArea.style.display = 'none';
+
+  const item = QUESTIONS[idx];
+  const box = document.createElement('div'); box.className='question-box';
+  const qhtml = `<div class="qtext">${escapeHtml(item.q)}</div>`;
+  box.innerHTML = qhtml + `<div class="content"></div><div class="feedback"></div>`;
+  quizArea.appendChild(box);
+  const content = box.querySelector('.content');
+  const feedback = box.querySelector('.feedback');
+
+  // Helper to write feedback
+  function setFeedback(text, ok){
+    feedback.textContent = text;
+    feedback.className = 'feedback ' + (ok ? 'ok':'bad');
+  }
+
+  /* ---------- MCQ ---------- */
+  if(item.type === 'mcq'){
+    safePlay(SOUND.click);
+    const choices = document.createElement('div'); choices.className='choices';
+    item.opts.forEach(opt=>{
+      const b = document.createElement('button');
+      b.className='choice';
+      b.innerHTML = `<span class="label">${escapeHtml(opt)}</span>`;
+      b.addEventListener('click', ()=>{
+        // disable siblings
+        choices.querySelectorAll('.choice').forEach(x=>x.classList.add('disabled'));
+        if(normalize(opt) === normalize(item.a)){
+          b.classList.add('correct');
+          safePlay(SOUND.correct);
+          score += POINTS_PER_QUESTION;
+        } else {
+          b.classList.add('wrong');
+          safePlay(SOUND.wrong);
+          // reveal correct
+          Array.from(choices.querySelectorAll('.choice')).find(x => normalize(x.textContent) === normalize(item.a))?.classList.add('correct');
+        }
+        updateMeta();
+        advance();
+      }, {once:true});
+      choices.appendChild(b);
+    });
+    content.appendChild(choices);
+  }
+
+  /* ---------- CORRECT / WRONG ---------- */
+  else if(item.type === 'cw'){
+    safePlay(SOUND.click);
+    const instr = document.createElement('div');
+    instr.style.marginBottom='10px';
+    instr.style.color='var(--muted)';
+    instr.textContent = 'Instruction: Is this sentence correct? Choose Correct or Wrong.';
+    content.appendChild(instr);
+
+    const wrapper = document.createElement('div'); wrapper.className='choices';
+
+    const correctBtn = document.createElement('button');
+    correctBtn.className = 'choice';
+    correctBtn.innerHTML = `<span class="label">Correct</span>`;
+    correctBtn.addEventListener('click', ()=>{
+      wrapper.querySelectorAll('.choice').forEach(x=>x.classList.add('disabled'));
+      if(item.a === true){
+        correctBtn.classList.add('correct');
+        safePlay(SOUND.correct);
+        score += POINTS_PER_QUESTION;
+      } else {
+        correctBtn.classList.add('wrong');
+        safePlay(SOUND.wrong);
+        // mark wrong visually
+        wrongBtn.classList.add('correct'); // show right answer (Wrong)
+      }
+      updateMeta();
+      advance();
+    }, {once:true});
+
+    const wrongBtn = document.createElement('button');
+    wrongBtn.className = 'choice';
+    wrongBtn.innerHTML = `<span class="label">Wrong</span>`;
+    wrongBtn.addEventListener('click', ()=>{
+      wrapper.querySelectorAll('.choice').forEach(x=>x.classList.add('disabled'));
+      if(item.a === false){
+        wrongBtn.classList.add('correct');
+        safePlay(SOUND.correct);
+        score += POINTS_PER_QUESTION;
+      } else {
+        wrongBtn.classList.add('wrong');
+        safePlay(SOUND.wrong);
+        correctBtn.classList.add('correct'); // show right answer
+      }
+      updateMeta();
+      advance();
+    }, {once:true});
+
+    wrapper.appendChild(correctBtn);
+    wrapper.appendChild(wrongBtn);
+    content.appendChild(wrapper);
+  }
+
+  /* ---------- FILL IN THE BLANK (Enter to submit) ---------- */
+  else if(item.type === 'fitb'){
+    safePlay(SOUND.click);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Type answer & press Enter';
+    input.className = 'fill-input';
+    input.style.width = '100%';
+    input.style.fontWeight = '700';
+    input.style.fontSize = '1.05rem';
+    content.appendChild(input);
+    input.focus();
+
+    function submitVal(){
+      const val = input.value.trim();
+      if(val === '') return;
+      input.disabled = true;
+      if(normalize(val) === normalize(item.a)){
+        setFeedback('Correct', true);
+        safePlay(SOUND.correct);
+        score += POINTS_PER_QUESTION;
+      } else {
+        setFeedback('Wrong — ' + item.a, false);
+        safePlay(SOUND.wrong);
+      }
+      updateMeta();
+      advance();
+    }
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') submitVal();
+    });
+  }
+
+  /* ---------- SENTENCE BUILDER (sb) ---------- */
+  else if(item.type === 'sb'){
+    safePlay(SOUND.click);
+    // shuffled tokens
+    const tokens = shuffleArray(item.words.slice());
+    const built = document.createElement('div'); built.className='built';
+    const bank = document.createElement('div'); bank.className='token-bank';
+    const ctrl = document.createElement('div');
+    ctrl.style.marginTop = '8px';
+    const undoBtn = document.createElement('button'); undoBtn.className='undo-btn'; undoBtn.textContent='Undo';
+    ctrl.appendChild(undoBtn);
+
+    let builtArr = [];
+
+    // render tokens in bank
+    tokens.forEach(t=>{
+      const el = document.createElement('div'); el.className='token'; el.textContent = t;
+      el.addEventListener('click', ()=>{
+        if(el.classList.contains('used')) return;
+        safePlay(SOUND.click);
+        el.classList.add('used');
+        builtArr.push(t);
+        renderBuilt();
+        // auto-evaluate when all tokens used
+        if(builtArr.length === tokens.length){
+          evaluateSB();
+        }
+      });
+      bank.appendChild(el);
+    });
+
+    function renderBuilt(){
+      built.innerHTML = builtArr.map(w=>`<div class="token">${escapeHtml(w)}</div>`).join('');
+    }
+
+    function evaluateSB(){
+      const candidate = builtArr.join(' ').replace(/\s([.,!?])/g,'$1');
+      if(normalize(candidate) === normalize(item.a)){
+        setFeedback('Correct', true);
+        safePlay(SOUND.correct);
+        score += POINTS_PER_QUESTION;
+      } else {
+        setFeedback('Wrong — ' + item.a, false);
+        safePlay(SOUND.wrong);
+      }
+      updateMeta();
+      // prevent further clicks
+      bank.querySelectorAll('.token').forEach(x=>x.classList.add('used'));
+      advance(450);
+    }
+
+    undoBtn.addEventListener('click', ()=>{
+      // remove last chosen token
+      const last = builtArr.pop();
+      if(!last) return;
+      // unmark corresponding bank token
+      const bankTokens = Array.from(bank.querySelectorAll('.token'));
+      const found = bankTokens.reverse().find(t=>t.textContent === last && t.classList.contains('used'));
+      if(found) found.classList.remove('used');
+      renderBuilt();
+    });
+
+    // Enter key: evaluate immediately if user pressed Enter (even if not all tokens used)
+    function handleEnterSB(e){
+      if(e.key === 'Enter'){
+        // only evaluate if there is at least one token chosen
+        if(builtArr.length === 0) return;
+        evaluateSB();
+        window.removeEventListener('keydown', handleEnterSB);
+      }
+    }
+    window.addEventListener('keydown', handleEnterSB);
+
+    content.appendChild(built);
+    content.appendChild(bank);
+    content.appendChild(ctrl);
+  }
+
+  /* ---------- MATCHING (formation) - give 5 points per correct item ---------- */
+  else if(item.type === 'match'){
+    safePlay(SOUND.click);
+    const lefts = item.pairs.map(p=>p[0]);
+    const rights = shuffleArray(item.pairs.map(p=>p[1]));
+    const wrap = document.createElement('div'); wrap.className='match-wrap';
+    const leftCol = document.createElement('div'); leftCol.className='match-col';
+    const rightCol = document.createElement('div'); rightCol.className='match-col';
+    leftCol.innerHTML = lefts.map((l,i)=>`<div class="match-item left" data-i="${i}">${escapeHtml(l)}</div>`).join('');
+    rights.forEach(r=> rightCol.appendChild(createMatchItem(r)));
+    wrap.appendChild(leftCol); wrap.appendChild(rightCol);
+    content.appendChild(wrap);
+
+    let selectedLeftIndex = null;
+    let correctMatches = 0;
+    // left click selects
+    leftCol.querySelectorAll('.left').forEach(li=>{
+      li.addEventListener('click', ()=>{
+        if(li.classList.contains('matched')) return;
+        selectedLeftIndex = Number(li.dataset.i);
+        leftCol.querySelectorAll('.left').forEach(x=>x.classList.remove('selected'));
+        li.classList.add('selected');
+        setFeedback('Now tap the matching right item', true);
+      });
+    });
+    // right items click
+    function createMatchItem(val){
+      const d = document.createElement('div');
+      d.className = 'match-item right';
+      d.textContent = val;
+      d.dataset.v = val;
+      d.addEventListener('click', ()=>{
+        if(selectedLeftIndex === null){ setFeedback('Select a left item first', false); return; }
+        const correctRight = item.pairs[selectedLeftIndex][1];
+        const leftEl = leftCol.querySelector(`[data-i="${selectedLeftIndex}"]`);
+        if(d.dataset.v === correctRight){
+          // correct
+          d.classList.add('matched');
+          leftEl.classList.add('matched');
+          safePlay(SOUND.correct);
+          correctMatches++;
+          score += POINTS_PER_QUESTION; // 5 points per match
+          updateMeta();
+          setFeedback('Correct', true);
+        } else {
+          // wrong
+          d.classList.add('wrong');
+          safePlay(SOUND.wrong);
+          setTimeout(()=> d.classList.remove('wrong'), 700);
+          setFeedback('Wrong — try again', false);
+        }
+        // clear selection
+        selectedLeftIndex = null;
+        leftCol.querySelectorAll('.left').forEach(x=>x.classList.remove('selected'));
+
+        // when all matched proceed
+        if(correctMatches >= item.pairs.length){
+          advance(900);
+        }
+      });
+      return d;
+    }
+  }
+
+  else {
+    // unknown type — skip
+    advance(100);
+  }
+}
+
+/* Final screen */
+function showFinal(){
+  updateMeta();
+  quizArea.innerHTML = '';
+  const box = document.createElement('div'); box.className='question-box';
+  box.innerHTML = `<div class="final-score">${score} / ${TOTAL_QUESTIONS * POINTS_PER_QUESTION}</div>
+    <div style="text-align:center;color:var(--muted)">Quiz complete</div>
+    <div class="final-actions"></div>`;
+  quizArea.appendChild(box);
+  const actions = box.querySelector('.final-actions');
+
+  if(score >= PASS_SCORE){
+    // play fireworks + sound
+    runFireworks();
+    safePlay(SOUND.fire);
+    actions.innerHTML = `
+      <button id="nextTopic" style="padding:10px 18px;border-radius:40px;border:none;background:var(--yellow);color:#001f2e;font-weight:800;cursor:pointer">Next Topic</button>
+      <button id="homeBtn" style="padding:10px 18px;border-radius:40px;border:none;background:rgba(255,255,255,0.08);color:#fff;font-weight:700;cursor:pointer">Home</button>
+    `;
+    document.getElementById('nextTopic').addEventListener('click', ()=> location.href = 'lesson11_video.html');
+    document.getElementById('homeBtn').addEventListener('click', ()=> location.href = 'index.html');
+  } else {
+    actions.innerHTML = `
+      <button id="tryAgain" style="padding:10px 18px;border-radius:40px;border:none;background:#ff6b6b;color:#fff;font-weight:800;cursor:pointer">Try Again</button>
+      <button id="homeBtn2" style="padding:10px 18px;border-radius:40px;border:none;background:rgba(255,255,255,0.08);color:#fff;font-weight:700;cursor:pointer">Home</button>
+    `;
+    document.getElementById('tryAgain').addEventListener('click', ()=> location.reload());
+    document.getElementById('homeBtn2').addEventListener('click', ()=> location.href = 'index.html');
+  }
+}
+
+/* =========================
+   Fireworks (canvas) — simple
+   ========================= */
+function runFireworks(){
+  const canvas = fwCanvas;
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+
+  function burst(x,y){
+    const colors = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    const count = 40 + Math.floor(Math.random()*40);
+    for(let i=0;i<count;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*(3+Math.random()*6),
+        vy:(Math.random()-0.8)*(4+Math.random()*6),
+        life:60 + Math.random()*60,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        size:2 + Math.random()*3
+      });
+    }
+  }
+  for(let i=0;i<6;i++){
+    burst(Math.random()*canvas.width, Math.random()*canvas.height*0.6);
+  }
+
+  function tick(){
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    if(particles.length>0) requestAnimationFrame(tick);
+    else setTimeout(()=>{ canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); }, 400);
+  }
+  tick();
+}
+
+/* =========================
+   Helpers
+   ========================= */
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+
+/* Initialize */
+updateMeta();
+render();
+
+/* Expose some for debugging in console */
+window.QUIZ = { QUESTIONS, render, runFireworks };
+</script>
+</body>
+</html>

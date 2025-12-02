@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Articles Quiz — Keynote Grammar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#081029; --bg2:#0b2b4a;
+  --accent:#ffd24d; --muted:#cfe9ff;
+  --ok:#2ecc71; --bad:#e74c3c;
+  --glass:rgba(255,255,255,0.06);
+  --card-bg:rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+  min-height:100vh;
+  padding:28px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  overflow-x:hidden;
+}
+
+/* Blobs */
+.bg-wrap{position:fixed;inset:0;z-index:-3;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.4;mix-blend-mode:screen;animation:blobMove 16s ease-in-out infinite}
+.blob.b1{width:450px;height:450px;left:-120px;top:-80px;background:#ff9f43;}
+.blob.b2{width:380px;height:380px;right:-100px;top:10px;background:#6bcff6;animation-duration:20s;}
+.blob.b3{width:330px;height:330px;left:22%;bottom:-120px;background:#a29bfe;animation-duration:22s;}
+@keyframes blobMove{0%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-60px) scale(1.05)}100%{transform:translate(0,0) scale(1)}}
+
+/* particles */
+.particles span{position:absolute;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 0 8px rgba(255,255,255,0.6)}
+
+/* Card layout */
+.container{width:100%;max-width:980px;margin:10px auto}
+.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.09);padding:24px;border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 18px 50px rgba(0,0,0,0.5)}
+
+/* Header */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:10px}
+.nav a{color:var(--accent);text-decoration:none;font-weight:600;margin-right:12px}
+
+/* Titles */
+h1{text-align:center;color:var(--accent);margin-bottom:8px;font-size:1.6rem}
+.lead{text-align:center;color:var(--muted);margin-bottom:14px}
+
+/* Meta */
+.meta{display:flex;justify-content:space-between;margin-bottom:14px}
+.score{background:rgba(0,0,0,0.25);padding:6px 12px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* Question box */
+.question-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);padding:18px;border-radius:12px;margin-bottom:14px}
+.qtext{margin-bottom:10px;font-size:1.1rem;color:#fff}
+
+/* Options */
+.options{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;cursor:pointer;font-weight:700;border:1px solid rgba(255,255,255,0.04);transition:0.2s}
+.opt:hover{transform:translateY(-2px)}
+.opt.correct{background:var(--ok);color:#012a12}
+.opt.wrong{background:var(--bad)}
+.opt.disabled{pointer-events:none;opacity:0.7}
+
+/* Input */
+input[type="text"]{width:100%;padding:12px;border-radius:10px;border:none;outline:none;background:rgba(255,255,255,0.06);color:#fff;font-size:1rem}
+
+/* Matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.03);cursor:pointer;font-weight:600}
+.match-item.selected{outline:3px solid rgba(255,210,77,0.14);background:rgba(255,210,77,0.06)}
+.match-item.matched{opacity:0.6;pointer-events:none;border-left:4px solid var(--accent);background:rgba(0,0,0,0.12)}
+
+/* Drag and Drop */
+.dd-wrap{display:flex;flex-direction:column;gap:12px}
+.blanks{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+.blank{display:inline-block;min-width:60px;padding:6px 8px;border-radius:6px;border:2px dashed rgba(255,255,255,0.12);margin:0 6px;vertical-align:middle;background:rgba(0,0,0,0.03)}
+.token-bank{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.token{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);cursor:grab}
+
+/* Builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.word{background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;cursor:pointer}
+.word.used{opacity:0.45;pointer-events:none}
+.built{min-height:44px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.built .word{background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:6px}
+
+/* Feedback */
+.feedback{min-height:24px;margin-top:8px;font-weight:700}
+.feedback.correct{color:var(--ok)}
+.feedback.wrong{color:var(--bad)}
+
+/* Buttons */
+.btn{padding:10px 18px;border-radius:999px;background:rgba(255,255,255,0.07);border:none;color:#fff;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--accent);color:#071225}
+
+/* Final */
+.final-score{text-align:center;font-size:2.4rem;color:var(--accent);margin-bottom:8px}
+
+@media (max-width:700px){
+  .match-wrap{flex-direction:column}
+  .blob.b1{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-wrap">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+    </div>
+
+    <h1>Articles — A / An / The (Quiz)</h1>
+    <p class="lead">4 Rounds · 100 points · MCQ, Matching, Drag-and-Drop, Sentence Builder</p>
+
+    <div class="meta">
+      <div id="roundLabel">Round 1 — MCQ (1/10)</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+  </div>
+</div>
+
+<!-- audio -->
+<audio id="sRight" src="rightclick.mp3"></audio>
+<audio id="sWrong" src="wrongclick.mp3"></audio>
+
+<script>
+/* ---------------- QUIZ DATA — EDIT ONLY THIS BLOCK ---------------- */
+
+/* Points allocation:
+   MCQ (10) = 40 points -> 4 points each
+   Matching (5 pairs) = 20 points -> 4 points each
+   Drag & Drop (6 blanks) = 20 points -> each blank ≈ 3 or 4 points; we assign 4/3 alternately to sum 20
+   Sentence Builder (5) = 20 points -> 4 points each
+*/
+
+const quizData = {
+  mcq: [
+    { q:"He bought ___ apple at the store.", opts:["a","an"], a:"an" },
+    { q:"She is ___ engineer.", opts:["a","an"], a:"an" },
+    { q:"I saw ___ elephant in the zoo.", opts:["a","an"], a:"an" },
+    { q:"He wants to be ___ artist.", opts:["a","an"], a:"an" },
+    { q:"She ate ___ banana after lunch.", opts:["a","an"], a:"a" },
+    { q:"He bought ___ umbrella yesterday.", opts:["a","an"], a:"an" },
+    { q:"She found ___ old coin in the garden.", opts:["a","an"], a:"an" },
+    { q:"I need ___ uniform for the event.", opts:["a","an"], a:"a" }, // 'a uniform' (yoo sound)
+    { q:"They adopted ___ orphan kitten.", opts:["a","an"], a:"an" },
+    { q:"I saw ___ owl sitting on the tree.", opts:["a","an"], a:"an" }
+  ],
+
+  /* matching pairs:
+     We'll present left and shuffled right; correct mapping provided below */
+  match: {
+    left: [
+      "Spanish ",
+      "Knife ",
+      "Penguin ",
+      "Avocado ",
+      "Butterfly "
+    ],
+    right: [
+      "is a language.",
+      "is a tool",
+      "is a bird.",
+      "is a fruit",
+      "is an insect."
+    ],
+    /* mapping of left index -> right string */
+    map: {
+      0: "is a language.",
+      1: "is a tool",
+      2: "is a bird.",
+      3: "is a fruit",
+      4: "is an insect."
+    }
+  },
+
+  /* Drag-and-drop paragraph with 6 blanks.
+     Provide the blanks order and tokens pool.
+     blanks will be replaced in the text where '___' appears.
+  */
+  drag: {
+    text: `David lives in ___ old house with his grandparents, uncle, and cousin Emily. ___ house has two bedrooms, a small kitchen, ___ bathroom, and a cozy living room. David's grandpa works in ___ factory, while his grandma takes care of the house. She spends a lot of time in ___ kitchen, cooking delicious meals. David and Emily have ___ garden. They both enjoy gardening.`,
+    blanksCount: 6,
+    /* correct answers in order for the six blanks */
+    answers: ["an","The","a","a","the","a"],
+    /* tokens: contains exactly the items that user must drag — include duplicates where needed */
+    tokens: ["a","an","the","a","the","an"]
+  },
+
+  /* sentence builder sets: each has scrambled words; user clicks to build
+     We will accept the normalised built sentence equal to 'target' (case-insensitive)
+  */
+  build: [
+    { words:["a","The boy","reading","is","book."], target:"The boy is reading a book." },
+    { words:["the","is","cat","on","sofa.","The"], target:"The cat is on the sofa." },
+    { words:["an","owl","in","I","saw","tree.","the"], target:"I saw an owl in the tree." },
+    { words:["The girl","is","eating","an","apple."], target:"The girl is eating an apple." },
+    { words:["an","idea.","interesting","had","She"], target:"She had an interesting idea" }
+  ]
+};
+
+/* ---------------- END QUIZ DATA ----------------------------------- */
+
+/* State & constants */
+let roundIdx = 0; // 0:mcq,1:match,2:drag,3:build
+let qIdx = 0;
+let score = 0;
+const rounds = ["mcq","match","drag","build"];
+const quizArea = document.getElementById("quizArea");
+const roundLabel = document.getElementById("roundLabel");
+const scoreLabel = document.getElementById("scoreLabel");
+const sRight = document.getElementById("sRight");
+const sWrong = document.getElementById("sWrong");
+
+/* Points */
+const POINTS = {
+  mcqEach: 4,      // 10 * 4 = 40
+  matchEach: 4,    // 5 * 4 = 20
+  dragTotal: 20,   // distributed across 6 blanks
+  buildEach: 4     // 5 *4 = 20
+};
+// distribute drag points across blanks: create array of per-blank points summing to dragTotal
+const dragPointsDistribution = (() => {
+  const n = quizData.drag.blanksCount;
+  const base = Math.floor(POINTS.dragTotal / n); // 3
+  const rem = POINTS.dragTotal - base * n; // remainder 2
+  const arr = new Array(n).fill(base);
+  for(let i=0;i<rem;i++) arr[i] += 1; // give extra 1 to first rem blanks
+  return arr; // e.g. [4,4,3,3,3,3] or similar
+})();
+
+/* Utility */
+function playRight(){ try{sRight.currentTime=0; sRight.play().catch(()=>{});}catch(e){} }
+function playWrong(){ try{sWrong.currentTime=0; sWrong.play().catch(()=>{});}catch(e){} }
+function updateMeta(){
+  const roundNames = ["Round 1 — MCQ","Round 2 — Matching","Round 3 — Fill (Drag)","Round 4 — Sentence Builder"];
+  const key = rounds[roundIdx];
+  let progressText="";
+  if(key==="mcq") progressText = `${qIdx+1}/${quizData.mcq.length}`;
+  else if(key==="match") progressText = `${qIdx+1}/${quizData.match.left.length}`; // for visual only (we keep one UI for all pairs)
+  else if(key==="drag") progressText = `1/1`;
+  else if(key==="build") progressText = `${qIdx+1}/${quizData.build.length}`;
+  roundLabel.textContent = `${roundNames[roundIdx]} (${progressText})`;
+  scoreLabel.textContent = `Score: ${score}`;
+}
+
+/* Render controller */
+function render(){
+  updateMeta();
+  quizArea.innerHTML = "";
+  if(rounds[roundIdx] === "mcq") renderMCQ();
+  else if(rounds[roundIdx] === "match") renderMatch();
+  else if(rounds[roundIdx] === "drag") renderDrag();
+  else if(rounds[roundIdx] === "build") renderBuild();
+}
+
+/* Advances to next question/round; ensures score <=100 */
+function nextStep(){
+  // if currently in mcq or build, advance qIdx; for match we will treat matching as single UI where we check all 5 pairs; for drag it's single with submit.
+  const current = rounds[roundIdx];
+  if(current === "mcq"){
+    qIdx++;
+    if(qIdx >= quizData.mcq.length){
+      roundIdx++; qIdx = 0;
+    }
+  } else if(current === "match"){
+    // after match UI set, advance to next round
+    roundIdx++; qIdx = 0;
+  } else if(current === "drag"){
+    roundIdx++; qIdx = 0;
+  } else if(current === "build"){
+    qIdx++;
+    if(qIdx >= quizData.build.length){
+      roundIdx++; qIdx = 0;
+    }
+  }
+
+  if(score > 100) score = 100;
+  if(roundIdx >= rounds.length){
+    showFinal();
+    return;
+  }
+  render();
+}
+
+/* Add points safely */
+function addPoints(n){
+  score += n;
+  if(score > 100) score = 100;
+  scoreLabel.textContent = `Score: ${score}`;
+}
+
+/* -------- ROUND 1: MCQ (10 questions) -------- */
+function renderMCQ(){
+  const q = quizData.mcq[qIdx];
+  const box = document.createElement("div"); box.className = "question-box";
+  const opts = shuffleArray(q.opts.slice());
+  box.innerHTML = `<div class="qtext">${escapeHtml(q.q)}</div>
+    <div class="options">${opts.map(o=>`<div class="opt" data-v="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('')}</div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  box.querySelectorAll(".opt").forEach(opt=>{
+    opt.addEventListener("click", ()=>{
+      box.querySelectorAll(".opt").forEach(x=>x.classList.add("disabled"));
+      const val = opt.dataset.v.trim().toLowerCase();
+      if(val === q.a.trim().toLowerCase()){
+        opt.classList.add("correct"); addPoints(POINTS.mcqEach); playRight(); showFeedback(box,"Correct",true);
+      } else {
+        opt.classList.add("wrong"); playWrong(); showFeedback(box,`Wrong — answer: ${q.a}`,false);
+        // highlight correct
+        [...box.querySelectorAll(".opt")].find(x=>x.dataset.v.trim().toLowerCase() === q.a.trim().toLowerCase())?.classList.add("correct");
+      }
+      setTimeout(nextStep,800);
+    }, {once:true});
+  });
+
+  function showFeedback(container,msg,ok){
+    const fb = container.querySelector(".feedback");
+    fb.textContent = msg;
+    fb.className = "feedback " + (ok ? "correct":"wrong");
+  }
+}
+
+/* -------- ROUND 2: Matching (5 pairs) --------
+   We will present left items and shuffled right items.
+   User clicks left then right to match; when all 5 matched we award points and advance.
+*/
+function renderMatch(){
+  const box = document.createElement("div"); box.className = "question-box";
+  // shuffle right for display
+  const rightShuffled = shuffleArray(quizData.match.right.slice());
+  box.innerHTML = `<div class="qtext">Match the sentence halves. Click left item then the correct right ending.</div>
+    <div class="match-wrap">
+      <div class="match-col" id="leftCol">${quizData.match.left.map((t,i)=>`<div class="match-item left-item" data-index="${i}">${escapeHtml(t)}</div>`).join('')}</div>
+      <div class="match-col" id="rightCol">${rightShuffled.map((t,i)=>`<div class="match-item right-item" data-val="${encodeURIComponent(t)}">${escapeHtml(t)}</div>`).join('')}</div>
+    </div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  const leftItems = [...box.querySelectorAll(".left-item")];
+  const rightItems = [...box.querySelectorAll(".right-item")];
+  let selectedLeft = null;
+  let matched = 0;
+  const matchedPairs = {}; // leftIndex -> matched right string
+
+  leftItems.forEach(li=>{
+    li.addEventListener("click", ()=>{
+      if(li.classList.contains("matched")) return;
+      leftItems.forEach(x=>x.classList.remove("selected"));
+      li.classList.add("selected");
+      selectedLeft = Number(li.dataset.index);
+      showFB("Choose a right-side ending.", true);
+    });
+  });
+
+  rightItems.forEach(ri=>{
+    ri.addEventListener("click", ()=>{
+      if(ri.classList.contains("matched")) return;
+      if(selectedLeft === null){ showFB("Select a left-side item first.", false); return; }
+      const chosen = decodeURIComponent(ri.dataset.val);
+      const correct = quizData.match.map[selectedLeft];
+      if(normalizeAnswer(chosen) === normalizeAnswer(correct)){
+        // mark both matched
+        const leftEl = leftItems.find(x => Number(x.dataset.index) === selectedLeft);
+        leftEl.classList.add("matched");
+        ri.classList.add("matched");
+        matched++;
+        matchedPairs[selectedLeft] = chosen;
+        addPoints(POINTS.matchEach);
+        playRight();
+        showFB("Correct pair!", true);
+      } else {
+        ri.classList.add("wrong");
+        playWrong();
+        showFB("Wrong pair — try again.", false);
+        setTimeout(()=>ri.classList.remove("wrong"),600);
+      }
+      selectedLeft = null; leftItems.forEach(x=>x.classList.remove("selected"));
+      if(matched >= quizData.match.left.length){
+        // all matched -> advance
+        setTimeout(nextStep,900);
+      }
+    });
+  });
+
+  function showFB(msg,ok){
+    const fb = box.querySelector(".feedback");
+    fb.textContent = msg; fb.className = "feedback " + (ok ? "correct":"wrong");
+  }
+}
+
+/* -------- ROUND 3: Drag and Drop Fill (Submit) -------- */
+function renderDrag() {
+  const box = document.createElement("div"); 
+  box.className = "question-box";
+
+  let displayText = quizData.drag.text;
+  let blankIndex = 0;
+  displayText = displayText.replace(/___/g, () => `{BLANK_${blankIndex++}}`);
+  const parts = displayText.split(/(\{BLANK_\d+\})/g);
+
+  box.innerHTML = `
+    <div class="qtext">Drag & drop the correct article (a / an / the) into each blank. When done, press <strong>Submit</strong>.</div>
+    <div class="dd-wrap">
+      <div class="blanks" id="blanksArea"></div>
+      <div style="font-size:0.95rem;margin-top:6px;color:var(--muted)">Drag tokens into blanks. You can change them before Submit.</div>
+      <div class="token-bank" id="tokenBank"></div>
+      <div style="margin-top:10px">
+        <button class="btn primary" id="ddSubmit">Submit</button>
+        <button class="btn" id="ddReset">Reset</button>
+      </div>
+      <div class="feedback"></div>
+    </div>`;
+  
+  quizArea.appendChild(box);
+
+  const blanksArea = box.querySelector("#blanksArea");
+  const tokenBank = box.querySelector("#tokenBank");
+  const feedback = box.querySelector(".feedback");
+
+  const blankEls = [];
+  const para = document.createElement("div");
+  para.style.marginBottom = "10px";
+
+  const blankTokenMap = {}; // tracks which token was placed in each blank
+
+  parts.forEach(part => {
+    const m = part.match(/\{BLANK_(\d+)\}/);
+    if (m) {
+      const bi = Number(m[1]);
+      const span = document.createElement("span");
+      span.className = "blank";
+      span.dataset.index = bi;
+      span.textContent = "___";
+
+      // dragover required for drop to work
+      span.addEventListener("dragover", ev => {
+        ev.preventDefault();
+        span.style.outline = "2px dashed rgba(255,255,255,0.25)";
+      });
+
+      span.addEventListener("dragleave", () => {
+        span.style.outline = "";
+      });
+
+      // drop handler
+      span.addEventListener("drop", ev => {
+        ev.preventDefault();
+        span.style.outline = "";
+
+        const token = ev.dataTransfer.getData("text/plain");
+        if (!token) return;
+
+        // if a token was already placed, restore it first
+        if (blankTokenMap[bi]) {
+          const oldToken = blankTokenMap[bi];
+          const oldEl = [...document.querySelectorAll(".token")].find(t => 
+            t.dataset.id === oldToken
+          );
+          if (oldEl) {
+            oldEl.classList.remove("used");
+            oldEl.style.opacity = "1";
+            oldEl.style.pointerEvents = "auto";
+            oldEl.style.filter = "none";
+          }
+        }
+
+        // fill new token
+        span.textContent = token;
+        span.dataset.value = token;
+
+        // remove token from bank
+        const tokenEl = [...document.querySelectorAll(".token")].find(t => 
+          t.dataset.id === token + "_id"
+        );
+
+        if (tokenEl) {
+          tokenEl.classList.add("used");
+          tokenEl.style.opacity = "0.35";
+          tokenEl.style.pointerEvents = "none";
+          tokenEl.style.filter = "grayscale(100%)";
+        }
+
+        blankTokenMap[bi] = token + "_id";
+      });
+
+      para.appendChild(span);
+      blankEls.push(span);
+
+    } else {
+      para.appendChild(document.createTextNode(part));
+    }
+  });
+
+  blanksArea.appendChild(para);
+
+  // tokens with unique IDs
+  const tokens = shuffleArray(quizData.drag.tokens.slice());
+  tokens.forEach((tok, i) => {
+    const t = document.createElement("div");
+    t.className = "token";
+    t.textContent = tok;
+    t.draggable = true;
+    t.dataset.id = tok + "_id"; // unique identification
+
+    t.addEventListener("dragstart", ev => {
+      ev.dataTransfer.setData("text/plain", tok);
+    });
+
+    tokenBank.appendChild(t);
+  });
+
+  // Reset button
+  box.querySelector("#ddReset").addEventListener("click", () => {
+    blankEls.forEach(b => {
+      b.textContent = "___";
+      delete b.dataset.value;
+      b.style.border = "2px dashed rgba(255,255,255,0.12)";
+    });
+
+    // reset token bank
+    document.querySelectorAll(".token").forEach(t => {
+      t.classList.remove("used");
+      t.style.opacity = "1";
+      t.style.pointerEvents = "auto";
+      t.style.filter = "none";
+    });
+
+    for (let key in blankTokenMap) delete blankTokenMap[key];
+
+    feedback.textContent = "";
+    feedback.className = "feedback";
+  });
+
+  // Submit
+  box.querySelector("#ddSubmit").addEventListener("click", () => {
+    let correct = 0;
+    let points = 0;
+
+    blankEls.forEach((b, i) => {
+      const userVal = (b.dataset.value || "").toLowerCase();
+      const expected = quizData.drag.answers[i].toLowerCase();
+
+      if (userVal === expected) {
+        correct++;
+        points += dragPointsDistribution[i];
+        b.style.border = "2px solid rgba(46,204,113,0.6)";
+      } else {
+        b.style.border = "2px solid rgba(231,76,60,0.6)";
+      }
+    });
+
+    if (points > 0) playRight(); else playWrong();
+    addPoints(points);
+
+    feedback.textContent = `You got ${correct} / ${blankEls.length} — +${points} points.`;
+    feedback.className = "feedback " + (points > 0 ? "correct" : "wrong");
+
+    setTimeout(nextStep, 1000);
+  });
+}
+
+
+/* -------- ROUND 4: Sentence Builder -------- */
+function renderBuild(){
+  const cur = quizData.build[qIdx];
+  const box = document.createElement("div"); box.className = "question-box";
+  // shuffle words for bank
+  const bank = shuffleArray(cur.words.slice());
+  box.innerHTML = `<div class="qtext">Build the sentence using the words below (click words in order).</div>
+    <div class="word-bank" id="wordBank">${bank.map(w=>`<div class="word" data-w="${escapeHtml(w)}">${escapeHtml(w)}</div>`).join('')}</div>
+    <div class="built" id="builtArea"></div>
+    <div style="margin-top:10px;"><button class="btn" id="undo">Undo</button> <button class="btn" id="clear">Clear</button></div>
+    <div class="feedback"></div>`;
+  quizArea.appendChild(box);
+
+  const built = [];
+  const bankEls = [...box.querySelectorAll(".word")];
+  const builtArea = box.querySelector("#builtArea");
+  const fb = box.querySelector(".feedback");
+  function refresh(){
+    // show words as blocks with visible spacing
+    builtArea.innerHTML = built.map(w=>`<div class="word used">${escapeHtml(w)}</div>`).join(' ');
+    if(built.length === cur.words.length){
+      const attempt = built.join(' ').replace(/\s+/g,' ').trim();
+      const got = normalizeAnswer(attempt);
+      const target = normalizeAnswer(cur.target);
+      if(got === target){
+        addPoints(POINTS.buildEach);
+        playRight();
+        fb.textContent = "Correct!";
+        fb.className = "feedback correct";
+      } else {
+        playWrong();
+        fb.textContent = "Wrong — expected: " + cur.target;
+        fb.className = "feedback wrong";
+      }
+      bankEls.forEach(b=>b.classList.add("used"));
+      setTimeout(nextStep,900);
+    }
+  }
+
+  bankEls.forEach(el=>{
+    el.addEventListener("click", ()=>{
+      if(el.classList.contains("used")) return;
+      built.push(el.dataset.w);
+      el.classList.add("used");
+      refresh();
+    });
+  });
+
+  box.querySelector("#undo").addEventListener("click", ()=>{
+    const last = built.pop();
+    if(last){
+      const btn = bankEls.find(b=>b.dataset.w === last && b.classList.contains("used"));
+      if(btn) btn.classList.remove("used");
+      refresh();
+    }
+  });
+  box.querySelector("#clear").addEventListener("click", ()=>{
+    built.length = 0;
+    bankEls.forEach(b=>b.classList.remove("used"));
+    refresh();
+  });
+}
+
+
+
+function runFireworks(){
+  const canvas = document.getElementById("fwCanvas");
+  const ctx = canvas.getContext("2d");
+  const sound = document.getElementById("fwSound");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = "block";
+
+  try { sound.currentTime = 0; sound.play(); } catch(e){}
+
+  const particles = [];
+  function burst(x, y){
+    for(let i=0;i<60;i++){
+      particles.push({
+        x, y,
+        vx:(Math.random()-0.5)*6,
+        vy:(Math.random()-0.5)*6,
+        life:80,
+        size:2+Math.random()*3,
+        color:`hsl(${Math.random()*360}, 90%, 60%)`
+      });
+    }
+  }
+
+  // create random bursts
+  for(let i=0;i<5;i++){
+    burst(
+      canvas.width*(0.2+Math.random()*0.6),
+      canvas.height*(0.2+Math.random()*0.6)
+    );
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach((p,i)=>{
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/80);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+
+      if(p.life <= 0){ particles.splice(i,1); }
+    });
+
+    if(particles.length > 0){
+      requestAnimationFrame(animate);
+    } else {
+      canvas.style.display = "none";
+    }
+  }
+  animate();
+}
+
+/* Final screen */
+function showFinal(){
+  quizArea.innerHTML = `
+    <div class="question-box">
+      <div class="final-score">${score} / 100</div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn primary" id="retryBtn">Try Again</button>
+        <a class="btn" href="lesson21_video.html">next topic</a>
+      </div>
+    </div>
+  `;
+
+  if(score >= 75){
+      runFireworks();   // ← FIREWORK TRIGGER HERE
+  }
+
+  document.getElementById("retryBtn").addEventListener("click",()=>location.reload());
+}
+
+
+/* Helpers */
+function shuffleArray(a){ const arr = a.slice(); for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
+function normalizeAnswer(s){ return String(s||'').trim().replace(/[.?!,;:]+$/,'').replace(/\s+/g,' ').toLowerCase(); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* Init */
+render();
+
+/* Expose updateMeta when needed */
+window.quizState = { getScore: ()=>score };
+</script>
+<!-- Fireworks -->
+<canvas id="fwCanvas" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:9999;"></canvas>
+<audio id="fwSound" src="fireworks.mp3" preload="auto"></audio>
+
+</body>
+</html>

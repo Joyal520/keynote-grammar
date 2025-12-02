@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Active & Passive Voice — Interactive Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#081029;
+  --bg2:#0b2b4a;
+  --accent:#ffd24d;
+  --muted:#cfe9ff;
+  --glass: rgba(255,255,255,0.04);
+  --card-bg: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+  min-height:100vh;
+  padding:28px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/*--- Animated background layers ---*/
+.bg-wrap{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
+.blob{
+  position:absolute;border-radius:50%;
+  filter:blur(60px);
+  opacity:0.45;
+  mix-blend-mode:screen;
+  animation:blobMove 14s ease-in-out infinite;
+}
+.blob.b1{width:420px;height:420px;left:-80px;top:-40px;background:#ff9f43;animation-duration:16s}
+.blob.b2{width:340px;height:340px;right:-60px;top:20px;background:#6bcff6;animation-duration:18s;animation-delay:2s}
+.blob.b3{width:260px;height:260px;left:20%;bottom:-80px;background:#a29bfe;animation-duration:20s;animation-delay:4s}
+
+@keyframes blobMove{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(40px,-60px) scale(1.05)}
+  100%{transform:translate(0,0) scale(1)}
+}
+
+/* subtle star particles */
+.particles{position:absolute;inset:0;pointer-events:none;opacity:0.18}
+.particles span{position:absolute;background:rgba(255,255,255,0.9);border-radius:50%;width:4px;height:4px;box-shadow:0 0 8px rgba(255,255,255,0.6);transform:translateZ(0);}
+
+/* Card */
+.container{width:100%;max-width:980px;margin:10px auto;z-index:2}
+.card{
+  background:var(--card-bg);
+  border:1px solid rgba(255,255,255,0.06);
+  padding:22px;border-radius:14px;backdrop-filter:blur(8px);
+  box-shadow:0 18px 50px rgba(0,0,0,0.5);
+}
+
+/* header */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.nav{background:var(--glass);padding:8px 12px;border-radius:10px}
+.nav a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:10px}
+
+/* title */
+h1{font-size:1.4rem;color:var(--accent);text-align:center;margin-bottom:6px}
+.lead{text-align:center;color:var(--muted);margin-bottom:12px}
+
+/* meta */
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.round{font-weight:700}
+.score{background:rgba(0,0,0,0.18);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:800}
+
+/* question box */
+.question-box{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px;
+}
+.qtext{font-size:1.05rem;margin-bottom:10px;color:#fff}
+
+/* MCQ options */
+.options{display:grid;gap:10px}
+.opt{
+  background:var(--accent);
+  color:#071225;
+  padding:12px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);
+  font-weight:700;cursor:pointer;text-align:left;transition:transform .12s ease, box-shadow .12s ease;
+}
+.opt:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.opt.disabled{pointer-events:none;opacity:0.6}
+.opt.correct{background:#2ecc71;color:#02280c}
+.opt.wrong{background:#e74c3c;color:#fff}
+
+/* text input */
+.fill-input input, .convert-input input{
+  width:100%;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.04);color:#fff;outline:none;
+}
+
+/* matching */
+.match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.03);cursor:pointer;font-weight:600}
+.match-item.selected{outline:3px solid rgba(255,210,77,0.14);background:rgba(255,210,77,0.06)}
+.match-item.matched{opacity:0.6;pointer-events:none;border-left:4px solid var(--accent);background:rgba(0,0,0,0.12)}
+
+/* word builder */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.word{background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;cursor:pointer}
+.word.used{opacity:0.4;pointer-events:none}
+.built{min-height:44px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* feedback */
+.feedback{height:28px;margin-top:8px;font-weight:700}
+.feedback.correct{color:#2ecc71}
+.feedback.wrong{color:#ff7675}
+
+/* actions */
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.05);border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:#071225}
+
+/* final screen */
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:800;text-align:center;margin-bottom:10px}
+
+/* responsive */
+@media (max-width:640px){
+  .match-wrap{flex-direction:column}
+}
+
+/* FIREWORKS VISUAL (kept minimal) */
+canvas#fw{position:fixed;left:0;top:0;z-index:9999;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- Background animations -->
+<div class="bg-wrap" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="topics.html">📚 Topics</a>
+      </nav>
+      <div><button id="skipBtn" class="btn" title="Skip question">Skip</button></div>
+    </div>
+
+    <h1>Active & Passive Voice — Interactive Quiz</h1>
+    <p class="lead">4 sections • Auto-advance • Sound + Fireworks on pass (≥75)</p>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Section 1 — MCQ (1/5)</div>
+      <div class="score" id="scoreLabel">Score: 0</div>
+    </div>
+
+    <div id="quizArea"></div>
+
+    <div class="note" style="text-align:center;margin-top:10px;color:var(--muted)">Tip: press Enter after typing answers. Use Skip to move on quickly.</div>
+  </div>
+</div>
+
+<!-- Fireworks canvas -->
+<canvas id="fw" style="display:none;"></canvas>
+
+<!-- SOUND FILES: ensure these files exist in same folder or adjust paths -->
+<audio id="snd-right" src="rightclick.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="snd-click" src="bubble.mp3" preload="auto"></audio>
+<audio id="snd-fireworks" src="fireworks.mp3" preload="auto"></audio>
+
+<script>
+/* ---------------- SOUND ENGINE ---------------- */
+function sRight(){ try{ const a=document.getElementById("snd-right"); a.currentTime=0; a.play().catch(()=>{}); }catch(e){} }
+function sWrong(){ try{ const a=document.getElementById("snd-wrong"); a.currentTime=0; a.play().catch(()=>{}); }catch(e){} }
+function sClick(){ try{ const a=document.getElementById("snd-click"); a.currentTime=0; a.play().catch(()=>{}); }catch(e){} }
+function sFire(){ try{ const a=document.getElementById("snd-fireworks"); a.currentTime=0; a.play().catch(()=>{}); }catch(e){} }
+
+/* Global click audio for buttons & links with .btn class */
+document.addEventListener("click", function(e){
+  const el = e.target.closest("button, a");
+  if(!el) return;
+  // Avoid playing click sound when the click itself triggers right/wrong immediately
+  // We keep it simple: always play click sound for UI interactions.
+  sClick();
+}, {capture:false, passive:true});
+</script>
+
+<script>
+/* ---------------- DATA ---------------- */
+
+const data = {
+  /* Section 0: MCQ (identify voice) */
+  mcq: [
+    { q: "The homework was completed by the students.", opts:["Active voice","Passive voice"], a:"Passive voice" },
+    { q: "Which is the correct passive form of: 'They clean the room every day.'", opts:["The room is cleaned every day.","The room was clean every day.","The room cleaned every day."], a:"The room is cleaned every day." },
+    { q: "Identify the correct active form of: 'The letter was posted by Sarah.'", opts:["Sarah posts the letter.","Sarah posted the letter.","Sarah posting the letter."], a:"Sarah posted the letter." },
+    { q: "Choose the correct passive form: 'They will announce the results tomorrow.'", opts:["The results announced tomorrow.","The results will be announced tomorrow.","The results are being announced tomorrow."], a:"The results will be announced tomorrow." },
+    { q: "'The match was won by our team.' Which option expresses the same meaning in active voice?", opts:["Our team wins the match.","Our team was winning the match.","Our team won the match."], a:"Our team won the match." }
+  ],
+
+  /* Section 1: Convert to Passive */
+  toPassive: [
+    {
+      prompt:"The teacher praised the student.",
+      answers:["The student was praised by the teacher","The student was praised by the teacher."]
+    },
+    {
+      prompt:"The boys cleaned the garden.",
+      answers:["The garden was cleaned by the boys","The garden was cleaned by the boys."]
+    },
+    {
+      prompt:"We prepared the meal.",
+      answers:["The meal was prepared by us","The meal was prepared by us."]
+    },
+    {
+      prompt:"Nolan directed the movie.",
+      answers:["The movie was directed by Nolan","The movie was directed by Nolan."]
+    },
+    {
+      prompt:"They will announce the results.",
+      answers:["The results will be announced by them","The results will be announced by them."]
+    }
+  ],
+
+  /* Section 2: Convert to Active */
+  toActive: [
+    {
+      prompt:"The letter was written by Sarah.",
+      answers:["Sarah wrote the letter","Sarah wrote the letter."]
+    },
+    {
+      prompt:"The game was won by our team.",
+      answers:["Our team won the game","Our team won the game."]
+    },
+    {
+      prompt:"The meal was prepared by the chef.",
+      answers:["The chef prepared the meal","The chef prepared the meal."]
+    },
+    {
+      prompt:"Cars are repaired by mechanic.",
+      answers:[
+        "The mechanic repairs cars",
+        "A mechanic repairs cars",
+        "Mechanic repairs cars",
+        "The mechanic repairs cars."
+      ]
+    },
+    {
+      prompt:"The project will be completed by the students.",
+      answers:[
+        "The students will complete the project",
+        "The students will complete the project."
+      ]
+    }
+  ],
+
+  /* Section 3: Sentence Builder */
+  builder: [
+    { chunks:["Dinner","was","cooked","by","the","chef","."], target:"Dinner was cooked by the chef ." },
+    { chunks:["A","new","rule","will","be","introduced","soon","."], target:"A new rule will be introduced soon ." },
+    { chunks:["The","car","was","repaired","by","them","."], target:"The car was repaired by them ." },
+    { chunks:["The","invitations","were","sent","yesterday","."], target:"The invitations were sent yesterday ." },
+    { chunks:["The","man","will","be","arrested","by","the","police","."], target:"The man will be arrested by the police ." }
+  ]
+};
+
+/* ---------------- STATE ---------------- */
+let state = {
+  sections:["mcq","toPassive","toActive","builder"],
+  sIndex:0, qIndex:0,
+  score:0,
+  perSection:[0,0,0,0]
+};
+
+/* DOM hooks */
+const quizArea = document.getElementById('quizArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const roundLabel = document.getElementById('roundLabel');
+const skipBtn = document.getElementById('skipBtn');
+const fwCanvas = document.getElementById('fw');
+
+/* ---------------- UTILS ---------------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function normalizeAnswer(str){
+  return String(str || "")
+    .trim()
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/\s+/g, " ")
+    .replace(/[.?!,;:]+$/,'')
+    .toLowerCase()
+    .replace(/^(a |the )/, "")
+    .replace(/\bby the\b/g, "by")
+    .replace(/\bby a\b/g, "by")
+    ;
+}
+
+/* ---------------- META ---------------- */
+function setMeta(){
+  const names = {
+    mcq: "Section 1 — MCQ",
+    toPassive: "Section 2 — Convert to Passive",
+    toActive: "Section 3 — Convert to Active",
+    builder: "Section 4 — Sentence Builder"
+  };
+  const key = state.sections[state.sIndex];
+  const total = 5;
+  roundLabel.textContent = `${names[key]} (${state.qIndex+1}/${total})`;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* ---------------- NAVIGATION ---------------- */
+function nextQuestion(delay=800){
+  setTimeout(()=>{
+    state.qIndex++;
+    if(state.qIndex >= 5){
+      state.sIndex++;
+      state.qIndex = 0;
+      if(state.sIndex >= state.sections.length){
+        return showFinal();
+      }
+    }
+    render();
+  },delay);
+}
+
+/* ---------------- FEEDBACK ---------------- */
+function showFeedback(msg, ok){
+  const fb = document.querySelector('.feedback');
+  if(!fb) return;
+  fb.textContent = msg;
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+}
+
+/* ---------------- RENDER CONTROLLER ---------------- */
+function render(){
+  setMeta();
+  quizArea.innerHTML = '';
+  const section = state.sections[state.sIndex];
+
+  if(section === 'mcq') renderMCQ();
+  else if(section === 'toPassive') renderToPassive();
+  else if(section === 'toActive') renderToActive();
+  else if(section === 'builder') renderBuilder();
+}
+
+/* ---------------- ESCAPE HTML UTILITY ---------------- */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];
+  });
+}
+
+/* ---------------- SECTION 1: MCQ ---------------- */
+function renderMCQ(){
+  const q = data.mcq[state.qIndex];
+  const box = document.createElement('div');
+  box.className = 'question-box';
+  const opts = shuffle([...q.opts]);
+
+  box.innerHTML = `
+    <div class="qtext">${escapeHtml(q.q)}</div>
+    <div class="options">
+      ${opts.map(o=>`<button class="opt" data-val="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  box.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const chosen = btn.dataset.val;
+      box.querySelectorAll('.opt').forEach(x=>x.classList.add('disabled'));
+      if(normalizeAnswer(chosen) === normalizeAnswer(q.a)){
+        btn.classList.add('correct');
+        sRight();
+        addScore(0);
+        showFeedback('Correct', true);
+      } else {
+        btn.classList.add('wrong');
+        sWrong();
+        // highlight correct
+        [...box.querySelectorAll('.opt')].find(x=> normalizeAnswer(x.dataset.val) === normalizeAnswer(q.a))
+          .classList.add('correct');
+        showFeedback('Wrong — '+q.a, false);
+      }
+      nextQuestion();
+    });
+  });
+}
+
+/* ---------------- SECTION 2: Convert to Passive ---------------- */
+function renderToPassive(){
+  const item = data.toPassive[state.qIndex];
+  const box = document.createElement('div');
+  box.className = 'question-box';
+
+  box.innerHTML = `
+    <div class="qtext">Convert to passive voice:<br><strong>${escapeHtml(item.prompt)}</strong></div>
+    <div class="convert-input">
+      <input id="convInput" placeholder="Type the sentence in passive voice & press Enter">
+    </div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+  const input = document.getElementById('convInput');
+  input.focus();
+
+  input.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      let val = normalizeAnswer(input.value);
+      if(val === '') return; // ignore empty
+
+      input.disabled = true;
+
+      const ok = item.answers.some(ans => normalizeAnswer(ans) === val);
+
+      if(ok){
+        sRight();
+        addScore(1);
+        showFeedback("Correct!", true);
+      } else {
+        sWrong();
+        showFeedback("Wrong — " + item.answers[0], false);
+      }
+
+      nextQuestion();
+    }
+  });
+}
+
+/* ---------------- SECTION 3: Convert to Active ---------------- */
+function renderToActive(){
+  const item = data.toActive[state.qIndex];
+  const box = document.createElement('div');
+  box.className = 'question-box';
+  box.innerHTML = `
+    <div class="qtext">Convert to active voice:<br><strong>${escapeHtml(item.prompt)}</strong></div>
+    <div class="convert-input"><input id="actInput" placeholder="Type the sentence in active voice and press Enter"></div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+  const input = document.getElementById('actInput');
+  input.focus();
+
+  input.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      const val = normalizeAnswer(input.value);
+      if(!val) return;
+      input.disabled = true;
+
+      const ok = item.answers.some(a => normalizeAnswer(a) === val);
+      if(ok){
+        sRight();
+        addScore(2);
+        showFeedback('Correct', true);
+      } else {
+        sWrong();
+        showFeedback('Wrong — expected: ' + item.answers[0], false);
+      }
+      nextQuestion();
+    }
+  });
+}
+
+/* ---------------- SECTION 4: Builder (reorder chunks) ---------------- */
+function renderBuilder(){
+  const q = data.builder[state.qIndex];
+  const chunks = shuffle([...q.chunks]);
+  const box = document.createElement('div');
+  box.className = 'question-box';
+  box.innerHTML = `
+    <div class="qtext">Rearrange the chunks to form the correct passive sentence:</div>
+    <div class="word-bank" id="wordBank">
+      ${chunks.map(c=>`<div class="word" data-c="${escapeHtml(c)}">${escapeHtml(c)}</div>`).join('')}
+    </div>
+    <div class="built" id="builtArea"></div>
+    <div style="margin-top:10px;">
+      <button id="undo" class="btn">Undo</button>
+      <button id="clear" class="btn">Clear</button>
+    </div>
+    <div class="feedback"></div>
+  `;
+  quizArea.appendChild(box);
+
+  const built = [];
+  const bankEls = [...box.querySelectorAll('.word')];
+  const builtArea = document.getElementById('builtArea');
+
+  function refresh(){
+    builtArea.innerHTML = built.map(x=>`<div class="word used">${escapeHtml(x)}</div>`).join(' ');
+    if(built.length === q.chunks.length){
+      const attempt = built.join(' ');
+      if(normalizeAnswer(attempt) === normalizeAnswer(q.target)){
+        sRight();
+        addScore(3);
+        showFeedback('Correct', true);
+      } else {
+        sWrong();
+        showFeedback('Wrong — ' + q.target, false);
+      }
+      bankEls.forEach(b=>b.classList.add('used'));
+      nextQuestion();
+    }
+  }
+
+  bankEls.forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if(el.classList.contains('used')) return;
+      const val = el.dataset.c;
+      built.push(val);
+      el.classList.add('used');
+      refresh();
+    });
+  });
+
+  document.getElementById('undo').addEventListener('click', ()=>{
+    const last = built.pop();
+    if(last){
+      const btn = bankEls.find(b => b.dataset.c === last && b.classList.contains('used'));
+      if(btn) btn.classList.remove('used');
+      refresh();
+    }
+  });
+
+  document.getElementById('clear').addEventListener('click', ()=>{
+    built.length = 0;
+    bankEls.forEach(b => b.classList.remove('used'));
+    refresh();
+  });
+}
+
+/* ---------------- SCORING ---------------- */
+function addScore(sectionIdx){
+  state.score += 5;
+  state.perSection[sectionIdx] = (state.perSection[sectionIdx] || 0) + 5;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* ---------------- FINAL SCREEN ---------------- */
+function showFinal(){
+  quizArea.innerHTML = '';
+  const box = document.createElement('div');
+  box.className = 'question-box final';
+  box.innerHTML = `
+    <div class="final-score">${state.score}/100</div>
+    <div style="text-align:center;margin-top:8px;color:var(--muted);">Review your results below</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px">
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">MCQ: ${state.perSection[0]||0}</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">To Passive: ${state.perSection[1]||0}</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">To Active: ${state.perSection[2]||0}</div>
+      <div style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px">Builder: ${state.perSection[3]||0}</div>
+    </div>
+    <div class="actions" style="margin-top:14px;" id="finalActions">
+      <button class="btn primary" id="retry">Try Again</button>
+      <a class="btn" href="index.html">Back to Home</a>
+      <a class="btn" href="topics.html">Back to Topics</a>
+    </div>
+  `;
+  quizArea.appendChild(box);
+
+  document.getElementById('retry').addEventListener('click', ()=>{
+    state = { sections:["mcq","toPassive","toActive","builder"], sIndex:0, qIndex:0, score:0, perSection:[0,0,0,0] };
+    render();
+  });
+
+  if(state.score >= 75){
+    // play fireworks sound and run visual fireworks
+    sFire();
+    runFireworks();
+    setTimeout(()=>{
+      const next = document.createElement('a');
+      next.textContent = 'Next Topic';
+      next.href = 'lesson_voice_video.html';
+      next.className = 'btn primary';
+      document.getElementById('finalActions').appendChild(next);
+    }, 1200);
+  }
+}
+
+/* ---------------- FIREWORKS VISUAL (uses canvas) ---------------- */
+function runFireworks(){
+  const canvas = fwCanvas;
+  canvas.style.display = 'block';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+
+  function spawn(x,y){
+    const colors = ['#ffd24d','#6fe7ff','#a58bff','#ff7fa3','#b6ff9c'];
+    for(let i=0;i<60;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-1.5)*8,
+        life:60 + Math.random()*40,
+        color: colors[(i)%colors.length],
+        size: 2 + Math.random()*3
+      });
+    }
+  }
+
+  for(let i=0;i<6;i++){
+    spawn(window.innerWidth*(0.3 + Math.random()*0.4), window.innerHeight*(0.2 + Math.random()*0.5));
+  }
+
+  function animate(){
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.life--;
+      ctx.globalAlpha = Math.max(0, p.life/100);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    }
+
+    if(particles.length > 0) requestAnimationFrame(animate);
+    else setTimeout(()=>{ canvas.style.display='none'; }, 400);
+  }
+  animate();
+}
+
+/* ---------------- SKIP BUTTON ---------------- */
+skipBtn.addEventListener('click', ()=> nextQuestion(50));
+
+/* ---------------- SMALL BACKGROUND PARTICLES INIT (decorative) ---------------- */
+(function initParticles(){
+  const pWrap = document.getElementById('particles');
+  const count = 30;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*100 + '%';
+    const size = 2 + Math.random()*4;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.opacity = 0.6*Math.random();
+    pWrap.appendChild(s);
+  }
+})();
+
+/* ---------------- INIT ---------------- */
+render();
+</script>
+</body>
+</html>

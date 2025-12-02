@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Simple Future — Interactive Quiz — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" relstylesheet>
+<style>
+:root{
+  --bg1:#001f3f; --bg2:#004d99;
+  --glass:rgba(255,255,255,0.06);
+  --accent:#ffcc33; --muted:#dbefff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+  min-height:100vh;
+  padding:36px 14px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.bg{position:fixed;inset:0;z-index:-2;overflow:hidden;}
+.bg .c{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,0.07);
+  animation:float 12s infinite ease-in-out;
+}
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-40px);}
+  100%{transform:translateY(0);}
+}
+
+.container{width:100%;max-width:980px;margin:8px auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.nav{
+  background:var(--glass);
+  padding:8px 12px;
+  border-radius:12px;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.nav a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:10px;}
+
+.card{
+  background:var(--glass);
+  padding:22px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+h1{text-align:center;color:var(--accent);margin-bottom:8px;}
+.lead{text-align:center;color:var(--muted);margin-bottom:14px;}
+
+.meta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;flex-wrap:wrap;gap:12px;
+}
+.meta .round{font-weight:700;}
+.meta .score{
+  background:rgba(0,0,0,0.15);
+  padding:6px 10px;border-radius:999px;
+  color:var(--accent);font-weight:700;
+}
+
+/* Skip button */
+#skipBtn{ margin-left:12px; padding:8px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:none; cursor:pointer; color:#fff; font-weight:700; }
+
+/* question area */
+.question-box{
+  background:rgba(255,255,255,0.04);
+  padding:16px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.04);
+  margin-bottom:12px;
+}
+.qtext{font-size:1.1rem;margin-bottom:10px;}
+
+/* MCQ - yellow buttons */
+.options{display:grid;gap:10px;}
+.opt{
+  background: var(--accent);
+  color:#001f3f !important;
+  padding:12px;border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  border:2px solid rgba(255,255,255,0.12);
+  transition:.15s;
+  text-align:left;
+}
+.opt:hover{transform:translateY(-2px); background:#ffd84d;}
+.opt.disabled{pointer-events:none;opacity:.6}
+.opt.correct{background:#2ecc71;color:#001f3f !important;}
+.opt.wrong{background:#e74c3c;color:#fff !important;}
+
+/* fill */
+.fill-input input{
+  width:100%;padding:10px;border-radius:10px;
+  border:none;
+  background:rgba(255,255,255,0.1);
+  color:white;outline:none;
+}
+
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.word{
+  background:rgba(255,255,255,0.08);
+  padding:8px 12px;border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+.word.used{opacity:.4;pointer-events:none;}
+.built{
+  min-height:40px;padding:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+
+.match-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;}
+.match-col{flex:1;min-width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);}
+.match-item{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.04);cursor:pointer;font-weight:600;border:1px solid transparent;}
+.match-item.selected{outline:3px solid rgba(255,204,51,0.18);background:rgba(255,204,51,0.06);}
+.match-item.matched{opacity:.5;pointer-events:none;background:rgba(0,0,0,0.15);border-left:4px solid var(--accent);}
+
+.feedback{
+  margin-top:8px;height:24px;font-weight:700;
+}
+.feedback.correct{color:#2ecc71;}
+.feedback.wrong{color:#e74c3c;}
+
+.final{text-align:center;padding:18px;}
+.final-score{font-size:2.6rem;color:var(--accent);font-weight:800;}
+.breakdown{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;}
+.pill{
+  background:rgba(255,255,255,0.05);
+  padding:8px 14px;border-radius:8px;
+}
+
+.actions{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.btn{
+  padding:10px 16px;border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  font-weight:700;color:#fff;
+  cursor:pointer;border:none;
+}
+.btn.primary{background:var(--accent);color:#001f3f;}
+
+.note{text-align:center;color:var(--muted);margin-top:12px;}
+
+canvas#fw{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;display:none}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+  <div class="c" style="width:140px;height:140px;left:5%;top:12%;animation-delay:0s"></div>
+  <div class="c" style="width:180px;height:180px;left:70%;top:5%;animation-delay:1s"></div>
+  <div class="c" style="width:120px;height:120px;left:50%;top:40%;animation-delay:2s"></div>
+  <div class="c" style="width:150px;height:150px;left:20%;top:70%;animation-delay:3s"></div>
+</div>
+
+<div class="container">
+
+  <div class="header">
+    <nav class="nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="topics.html">📚 Topics</a>
+    </nav>
+    <div>
+      <button id="skipBtn" title="Skip question">Skip</button>
+    </div>
+  </div>
+
+  <main class="card">
+
+    <h1>Simple Future — Interactive Quiz</h1>
+    <p class="lead">4 rounds × 5 questions • 100 points total • Auto-advance • Instant feedback</p>
+
+    <div class="meta">
+      <div class="round" id="roundLabel">Round 1 — MCQ (1/5)</div>
+      <div style="display:flex;align-items:center;">
+        <div class="score" id="scoreLabel">Score: 0</div>
+      </div>
+    </div>
+
+    <div id="quizArea"></div>
+    <div class="note">Press Enter for fill-in questions. Score ≥ 75 = fireworks + Next Topic.</div>
+
+  </main>
+</div>
+
+<!-- Fireworks canvas -->
+<canvas id="fw"></canvas>
+
+<!-- SOUND FILES: place these mp3 files beside this HTML OR adjust paths -->
+<audio id="snd-right" src="rightclick.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="wrongclick.mp3" preload="auto"></audio>
+<audio id="snd-click" src="bubble.mp3" preload="auto"></audio>
+<audio id="snd-fireworks" src="fireworks.mp3" preload="auto"></audio>
+
+<script>
+/* ---------------- SOUND ENGINE ---------------- */
+
+function sRight(){
+  try{
+    const a = document.getElementById('snd-right');
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+function sWrong(){
+  try{
+    const a = document.getElementById('snd-wrong');
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+function sClick(){
+  try{
+    const a = document.getElementById('snd-click');
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+function sFire(){
+  try{
+    const a = document.getElementById('snd-fireworks');
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+
+/* Global click sound for UI interactions (buttons & links) */
+document.addEventListener('click', function(e){
+  const el = e.target.closest('button, a, .opt, .word, .match-item, .btn');
+  if(!el) return;
+  // play UI click sound, but do not prevent other handlers
+  sClick();
+}, {capture:false, passive:true});
+</script>
+
+<script>
+/* ---------------- DATA ---------------- */
+
+const data = {
+  mcq:[
+    {q:"I think it ___ tomorrow.", opts:["rains","will rain","is raining"], a:"will rain"},
+    {q:"She ___ you as soon as she arrives.", opts:["will call","calls","calling"], a:"will call"},
+    {q:"They ___ the project next week.", opts:["will start","started","are starting"], a:"will start"},
+    {q:"He ___ his grandmother this evening.", opts:["will visit","visiting","visits"], a:"will visit"},
+    {q:"We ___ the results soon.", opts:["will know","knew","knowing"], a:"will know"}
+  ],
+  fill:[
+    {q:"I ___ (help) you with the homework.", a:"will help"},
+    {q:"She ___ (buy) a new phone next month.", a:"will buy"},
+    {q:"We ___ (meet) at the library at 5 p.m.", a:"will meet"},
+    {q:"They ___ (travel) to Kandy next weekend.", a:"will travel"},
+    {q:"He ___ (finish) the assignment by tonight.", a:"will finish"}
+  ],
+  reorder:[
+    {words:["He","will","open","the","shop","."], target:"He will open the shop ."},
+    {words:["I","will","not","eat","junk","food","."], target:"I will not eat junk food ."},
+    {words:["Will","they","join","the","trip","?"], target:"Will they join the trip ?"},
+    {words:["We","will","clean","the","classroom","."], target:"We will clean the classroom ."},
+    {words:["He","will","not","watch","TV","tonight","."], target:"He will not watch TV tonight ."}
+  ],
+  formation:[
+    { pairs:[
+        {left:"I will meet you", right:"at the coffee shop"},
+        {left:"She will bring", right:"some snacks"},
+        {left:"They will fix", right:"the car this afternoon"},
+        {left:"We will start", right:"the meeting at 10 a.m."},
+        {left:"He will join us", right:"for dinner tonight"}
+    ]}
+  ]
+};
+
+/* ---------------- STATE ---------------- */
+
+let state = {
+  roundKeys:["mcq","fill","formation","reorder"],
+  rIndex:0, qIndex:0,
+  score:0,
+  perRound:[0,0,0,0]
+};
+
+const quizArea=document.getElementById("quizArea");
+const scoreLabel=document.getElementById("scoreLabel");
+const roundLabel=document.getElementById("roundLabel");
+const skipBtn=document.getElementById("skipBtn");
+
+/* ---------------- UTILS ---------------- */
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+function escape(str){
+  return String(str).replace(/[&<>"]/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[s]));
+}
+
+/* ---------------- META ---------------- */
+
+function setMeta(){
+  const names={
+    mcq:"Round 1 — MCQ",
+    fill:"Round 2 — Fill",
+    formation:"Round 3 — Matching",
+    reorder:"Round 4 — Sentence Builder"
+  };
+  const key=state.roundKeys[state.rIndex];
+  const total = (key === "formation") ? 1 : 5;
+  roundLabel.textContent = `${names[key]} (${state.qIndex+1}/${total})`;
+  scoreLabel.textContent = `Score: ${state.score}`;
+}
+
+/* ---------------- NAVIGATION ---------------- */
+
+function nextQ(delay=700){
+  setTimeout(()=>{
+    state.qIndex++;
+    const key = state.roundKeys[state.rIndex];
+    const limit = (key === "formation") ? 1 : 5;
+
+    if(state.qIndex>=limit){
+      state.rIndex++;
+      state.qIndex=0;
+      if(state.rIndex>=state.roundKeys.length){
+        return showFinal();
+      }
+    }
+    render();
+  },delay);
+}
+
+/* ---------------- FEEDBACK ---------------- */
+
+function showFeedback(msg,ok){
+  const fb=document.querySelector(".feedback");
+  if(!fb)return;
+  fb.textContent=msg;
+  fb.className="feedback "+(ok?"correct":"wrong");
+}
+
+/* ---------------- RENDER CONTROLLER ---------------- */
+
+function render(){
+  setMeta();
+  quizArea.innerHTML="";
+  const key=state.roundKeys[state.rIndex];
+
+  if(key==="mcq") renderMCQ();
+  else if(key==="fill") renderFill();
+  else if(key==="formation") renderFormation();
+  else if(key==="reorder") renderReorder();
+}
+
+/* ------------ ROUND 1: MCQ (shuffled choices) ------------ */
+
+function renderMCQ(){
+  const q=data.mcq[state.qIndex];
+  const box=document.createElement("div");
+  box.className="question-box";
+
+  // copy and shuffle choices so original order and answer remain intact
+  const opts = shuffle([...q.opts]);
+
+  box.innerHTML=`
+    <div class="qtext">${escape(q.q)}</div>
+    <div class="options">
+      ${opts.map(o=>`<button class="opt" data-val="${escape(o)}">${escape(o)}</button>`).join("")}
+    </div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  box.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const chosen=btn.dataset.val.toLowerCase();
+      box.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
+
+      if(chosen===q.a.toLowerCase()){
+        btn.classList.add("correct");
+        sRight();
+        addScore(0);
+        showFeedback("Correct",true);
+      } else {
+        btn.classList.add("wrong");
+        sWrong();
+        [...box.querySelectorAll(".opt")].find(
+          x=>x.dataset.val.toLowerCase()===q.a.toLowerCase()
+        ).classList.add("correct");
+        showFeedback("Wrong — "+q.a,false);
+      }
+
+      nextQ();
+    });
+  });
+}
+
+/* ------------ ROUND 2: FILL ------------ */
+
+function renderFill(){
+  const q=data.fill[state.qIndex];
+  const box=document.createElement("div");
+  box.className="question-box";
+
+  box.innerHTML=`
+    <div class="qtext">${escape(q.q)}</div>
+    <div class="fill-input"><input id="fillInput" autocomplete="off" placeholder="Type answer & press Enter"></div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  const input=document.getElementById("fillInput");
+  input.focus();
+
+  input.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+      const val=input.value.trim().toLowerCase();
+      if(!val)return;
+      input.disabled=true;
+
+      if(val===q.a.toLowerCase()){
+        sRight();
+        addScore(1);
+        showFeedback("Correct",true);
+      } else {
+        sWrong();
+        showFeedback("Wrong — "+q.a,false);
+      }
+
+      nextQ();
+    }
+  });
+}
+
+/* ------------ ROUND 3: MATCHING (single set) ------------ */
+
+function renderFormation(){
+  const set = data.formation[state.qIndex].pairs.slice();
+  const box = document.createElement("div");
+  box.className = "question-box";
+
+  const lefts = set.map(p=>p.left);
+  const rights = shuffle(set.map(p=>p.right));
+
+  box.innerHTML = `
+    <div class="qtext">Match the sentence starter on the left with its correct ending on the right.</div>
+    <div class="match-wrap">
+      <div class="match-col" id="leftCol">
+        ${lefts.map((l, i)=>`<div class="match-item left-item" data-index="${i}">${escape(l)}</div>`).join("")}
+      </div>
+      <div class="match-col" id="rightCol">
+        ${rights.map((r, i)=>`<div class="match-item right-item" data-val="${escape(r)}">${escape(r)}</div>`).join("")}
+      </div>
+    </div>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  const leftItems=[...box.querySelectorAll(".left-item")];
+  const rightItems=[...box.querySelectorAll(".right-item")];
+
+  let selectedLeft=null;
+  let correctCount=0;
+
+  leftItems.forEach(li=>{
+    li.addEventListener("click",()=>{
+      if(li.classList.contains("matched")) return;
+      leftItems.forEach(x=>x.classList.remove("selected"));
+      li.classList.add("selected");
+      selectedLeft=Number(li.dataset.index);
+      showFeedback("Select the matching right-side part.",true);
+    });
+  });
+
+  rightItems.forEach(ri=>{
+    ri.addEventListener("click",()=>{
+      if(ri.classList.contains("matched")) return;
+      if(selectedLeft===null){
+        showFeedback("Choose a left part first.",false);
+        return;
+      }
+
+      const correctRight = set[selectedLeft].right;
+      const chosen = ri.dataset.val;
+
+      if(chosen===correctRight){
+        const leftEl = leftItems.find(x=>Number(x.dataset.index)===selectedLeft);
+        leftEl.classList.add("matched");
+        ri.classList.add("matched");
+        correctCount++;
+        sRight();
+        addScore(2); // each pair contributes; we still use +5 points per correct via addScore implementation
+        showFeedback("Correct!",true);
+      } else {
+        ri.classList.add("wrong");
+        sWrong();
+        showFeedback("Wrong. Try again.",false);
+        setTimeout(()=>ri.classList.remove("wrong"),600);
+      }
+
+      leftItems.forEach(x=>x.classList.remove("selected"));
+      selectedLeft=null;
+
+      if(correctCount>=set.length){
+        nextQ();
+      }
+    });
+  });
+}
+
+/* ------------ ROUND 4: SENTENCE BUILDER (reorder words) ------------ */
+
+function renderReorder(){
+  const q=data.reorder[state.qIndex];
+  // treat each array item as a chunk (no splitting on spaces)
+  const chunks = shuffle(q.words.slice());
+  const box=document.createElement("div");
+  box.className="question-box";
+
+  box.innerHTML=`
+    <div class="qtext">Build the correct sentence:</div>
+    <div class="word-bank">
+      ${chunks.map(w=>`<div class="word" data-w="${escape(w)}">${escape(w)}</div>`).join("")}
+    </div>
+    <div class="built"></div>
+    <button class="btn" id="undo">Undo</button>
+    <button class="btn" id="clear">Clear</button>
+    <div class="feedback"></div>
+  `;
+
+  quizArea.appendChild(box);
+
+  const built=[];
+  const builtArea=box.querySelector(".built");
+  const bank=[...box.querySelectorAll(".word")];
+
+  function update(){
+    builtArea.innerHTML=built.map(w=>`<div class="word used">${escape(w)}</div>`).join("");
+
+    if(built.length===q.words.length){
+      const result=built.join(" ");
+      if(result===q.target){
+        sRight();
+        addScore(3);
+        showFeedback("Correct!",true);
+      } else {
+        sWrong();
+        showFeedback("Wrong — "+q.target,false);
+      }
+      bank.forEach(b=>b.classList.add("used"));
+      nextQ();
+    }
+  }
+
+  bank.forEach(w=>{
+    w.addEventListener("click",()=>{
+      if(w.classList.contains("used"))return;
+      built.push(w.dataset.w);
+      w.classList.add("used");
+      update();
+    });
+  });
+
+  box.querySelector("#undo").addEventListener("click",()=>{
+    const last=built.pop();
+    if(last){
+      const btn=bank.find(x=>x.dataset.w===last&&x.classList.contains("used"));
+      if(btn)btn.classList.remove("used");
+    }
+    update();
+  });
+
+  box.querySelector("#clear").addEventListener("click",()=>{
+    built.length=0;
+    bank.forEach(b=>b.classList.remove("used"));
+    update();
+  });
+}
+
+/* ---------------- SCORE + FINAL ---------------- */
+
+function addScore(roundIdx){
+  state.score+=5;
+  if(typeof roundIdx==="number")
+    state.perRound[roundIdx]=(state.perRound[roundIdx]||0)+5;
+  scoreLabel.textContent=`Score: ${state.score}`;
+}
+
+function showFinal(){
+  quizArea.innerHTML="";
+  roundLabel.textContent="Quiz Complete";
+
+  const box=document.createElement("div");
+  box.className="question-box final";
+
+  box.innerHTML=`
+    <div class="final-score">${state.score}/100</div>
+    <div class="breakdown">
+      <div class="pill">MCQ: ${state.perRound[0]||0}</div>
+      <div class="pill">Fill: ${state.perRound[1]||0}</div>
+      <div class="pill">Matching: ${state.perRound[2]||0}</div>
+      <div class="pill">Builder: ${state.perRound[3]||0}</div>
+    </div>
+    <div class="actions" id="fBtns">
+      <button class="btn primary" id="retry">Try Again</button>
+      <a class="btn" href="index.html">Back to Home</a>
+      <a class="btn" href="topics.html">Back to Topics</a>
+    </div>
+  `;
+
+  quizArea.appendChild(box);
+
+  document.getElementById("retry").addEventListener("click",()=>{
+    state={roundKeys:["mcq","fill","formation","reorder"],rIndex:0,qIndex:0,score:0,perRound:[0,0,0,0]};
+    render();
+  });
+
+  if(state.score>=75){
+    sFire();
+    runFireworks();
+    setTimeout(()=>{
+      const next=document.createElement("a");
+      next.textContent="Next Topic";
+      next.href="lesson_simple_future_video.html";
+      next.className="btn primary";
+      document.getElementById("fBtns").appendChild(next);
+    },1400);
+  }
+}
+
+/* ---------------- FIREWORKS ---------------- */
+
+function runFireworks(){
+  const canvas=document.getElementById("fw");
+  canvas.style.display="block";
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const ctx=canvas.getContext("2d");
+  const parts=[];
+
+  function burst(x,y){
+    const colors=["#ffcc33","#7bed9f","#70a1ff","#f78fb3","#ffd166"];
+    for(let i=0;i<40;i++){
+      parts.push({
+        x,y,
+        vx:Math.cos(Math.random()*6.28)*Math.random()*6,
+        vy:Math.sin(Math.random()*6.28)*Math.random()*6,
+        life:60+Math.random()*40,
+        color:colors[Math.floor(Math.random()*colors.length)]
+      });
+    }
+  }
+
+  let frame=0;
+  function tick(){
+    frame++;
+    ctx.fillStyle="rgba(0,0,0,0.18)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.04;
+      p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/100);
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3,0,6.28);
+      ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+
+    if(frame%18===0) burst(Math.random()*canvas.width, Math.random()*canvas.height/2);
+
+    if(frame<260) requestAnimationFrame(tick);
+    else setTimeout(()=>canvas.style.display="none",500);
+  }
+  tick();
+}
+
+/* ---------------- SKIP BUTTON ---------------- */
+
+skipBtn.addEventListener("click",()=>nextQ(50));
+
+/* ---------------- INIT ---------------- */
+
+render();
+
+</script>
+
+</body>
+</html>
