@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TEST ENGINE — Level 1</title>
+<style>
+body{font-family:Arial;background:#0d111f;color:#fff;padding:20px}
+button{padding:10px 18px;font-size:18px;margin-top:10px;cursor:pointer}
+.zone{border:1px solid #445;padding:10px;min-height:60px;margin-top:10px}
+.word{display:inline-block;background:#223;padding:8px 12px;margin:5px;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<h2>Level 1 Test Build</h2>
+
+<!-- HOME SCREEN -->
+<div id="homeScreen">
+  <p>Press Start Level to begin.</p>
+  <button id="startLevelBtn">Start Level 1</button>
+</div>
+
+<!-- INTRO -->
+<div id="introScreen" style="display:none">
+  <h3>Sub-level <span id="subNum">1</span></h3>
+  <button id="startSubBtn">Start Sub-level</button>
+  <button onclick="goHome()">Home</button>
+</div>
+
+<!-- PLAY AREA -->
+<div id="playArea" style="display:none">
+  <p id="progress"></p>
+
+  <div class="zone" id="wordBank"></div>
+  <div class="zone" id="answerZone"></div>
+
+  <button id="undoBtn">Undo</button>
+  <button id="submitBtn">Submit</button>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+// ---------- LEVEL 1 QUESTION BANK ----------
+const SUB_LEVELS = [
+  [ {scrambled:["i","eat","rice"], answer:"i eat rice"} ],
+  [ {scrambled:["are","you","ready"], answer:"are you ready"} ],
+  [ {scrambled:["who","are","you"], answer:"who are you"} ],
+];
+
+// ---------- STATE ----------
+let currentSub = 0;
+let qIndex = 0;
+let questions = [];
+let moveStack = [];
+
+// ---------- ELEMENTS ----------
+const homeScreen = document.getElementById("homeScreen");
+const introScreen = document.getElementById("introScreen");
+const playArea = document.getElementById("playArea");
+
+const startLevelBtn = document.getElementById("startLevelBtn");
+const startSubBtn = document.getElementById("startSubBtn");
+
+const wordBank = document.getElementById("wordBank");
+const answerZone = document.getElementById("answerZone");
+const msg = document.getElementById("msg");
+const progress = document.getElementById("progress");
+
+// ---------- BUTTON EVENTS ----------
+startLevelBtn.onclick = () => {
+  console.log("Start Level CLICKED");     // DEBUG
+  currentSub = 0;
+  showIntro();
+};
+
+startSubBtn.onclick = () => {
+  console.log("Start Sub-level CLICKED"); // DEBUG
+  startSubLevel();
+};
+
+document.getElementById("undoBtn").onclick = undo;
+document.getElementById("submitBtn").onclick = submit;
+
+// ---------- SCREEN SWITCHING ----------
+function goHome(){
+  homeScreen.style.display = "block";
+  introScreen.style.display = "none";
+  playArea.style.display = "none";
+}
+
+function showIntro(){
+  homeScreen.style.display = "none";
+  introScreen.style.display = "block";
+  playArea.style.display = "none";
+  document.getElementById("subNum").textContent = currentSub + 1;
+}
+
+// ---------- START SUB-LEVEL ----------
+function startSubLevel(){
+  introScreen.style.display = "none";
+  playArea.style.display = "block";
+
+  questions = [...SUB_LEVELS[currentSub]];
+  qIndex = 0;
+  loadQuestion();
+}
+
+// ---------- LOAD QUESTION ----------
+function loadQuestion(){
+  msg.textContent = "";
+  answerZone.innerHTML = "";
+  wordBank.innerHTML = "";
+
+  const q = questions[qIndex];
+  let scrambled = shuffle([...q.scrambled]);
+
+  progress.textContent = `Question ${qIndex+1}`;
+
+  scrambled.forEach(word=>{
+    let div = document.createElement("div");
+    div.className = "word";
+    div.textContent = word;
+    div.onclick = () => moveWord(div);
+    wordBank.appendChild(div);
+  });
+}
+
+// ---------- MOVE WORD ----------
+function moveWord(tile){
+  answerZone.appendChild(tile);
+  moveStack.push(tile);
+}
+
+// ---------- UNDO ----------
+function undo(){
+  if(moveStack.length === 0) return;
+  let last = moveStack.pop();
+  wordBank.appendChild(last);
+}
+
+// ---------- SUBMIT ----------
+function submit(){
+  const user = Array.from(answerZone.children).map(x=>x.textContent).join(" ");
+  const correct = questions[qIndex].answer;
+
+  if(user === correct){
+    msg.textContent = "Correct";
+  } else {
+    msg.textContent = "Wrong (correct: " + correct + ")";
+  }
+}
+
+// ---------- SHUFFLE ----------
+function shuffle(arr){
+  return arr.sort(()=>Math.random()-0.5);
+}
+</script>
+
+</body>
+</html>

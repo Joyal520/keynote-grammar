@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson 13: Present Continuous Tense - Keynote Grammar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* RESET + THEME */
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+    :root{
+      --header-h:64px;
+      --footer-h:56px;
+      --max-w:1000px;
+      --bg1:#001f3f; --bg2:#003c8f; --bg3:#004d99;
+      --accent:#ffcc33;
+      --soft-white-1: rgba(255,255,255,0.45);
+      --soft-white-2: rgba(255,255,255,0.22);
+      --glass: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.05);
+    }
+
+    html,body{height:100%;width:100%}
+    body{
+      background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      color:#fff;
+      padding-top:calc(var(--header-h) + 18px);
+      padding-bottom:calc(var(--footer-h) + 140px);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      display:block;
+    }
+
+    /* BLOBS + BUBBLES */
+    .blobs{position:fixed;inset:0;z-index:-3;pointer-events:none}
+    .blob{position:absolute;width:380px;height:380px;border-radius:40%;filter:blur(70px);opacity:0.32;mix-blend-mode:screen;animation:blobMove 14s infinite alternate ease-in-out}
+    .blob.b1{background:#ff6b6b;left:-6%;top:10%}
+    .blob.b2{background:#70a1ff;left:60%;top:28%;animation-duration:16s}
+    .blob.b3{background:#ffd166;left:22%;top:66%;animation-duration:18s}
+    @keyframes blobMove{0%{transform:translateY(0)}100%{transform:translateY(-40px)}}
+
+    .bubbles{position:fixed;inset:0;z-index:-2;pointer-events:none}
+    .bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);filter:blur(18px);animation:floaty 14s infinite ease-in-out}
+    @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-30px)}100%{transform:translateY(0)}}
+
+    /* HEADER */
+    header{
+      position:fixed;top:0;left:0;width:100%;height:var(--header-h);
+      display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+      background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);
+      z-index:1200;
+    }
+    header h1{font-size:1.05rem;font-weight:600;color:#fff}
+    header nav{display:flex;gap:12px}
+    header nav a{color:#fff;text-decoration:none;font-weight:600;padding:6px 8px;border-radius:6px}
+    header nav a:hover{color:var(--accent)}
+
+    /* FOOTER */
+    footer{
+      position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);
+      display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.32);
+      backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.06);
+      color:#fff;font-size:0.9rem;z-index:1200;padding:0 10px;
+    }
+
+    /* MAIN (no hover / no glow) */
+    .container{
+      width:100%;max-width:var(--max-w);margin:28px auto;
+      background:var(--glass);padding:28px 28px 100px;border-radius:16px;
+      border:1px solid rgba(255,255,255,0.12);box-shadow:0 10px 30px rgba(0,0,0,0.45);backdrop-filter:blur(10px);
+    }
+
+    .page-title{text-align:center;color:var(--accent);margin-bottom:10px;font-size:1.6rem}
+    .intro{text-align:center;color:#d9e7ff;margin-bottom:18px}
+
+    h2{color:var(--accent);margin-top:18px;margin-bottom:8px;font-size:1.15rem}
+    p,li{color:#e7f0ff;line-height:1.7;font-size:1rem}
+    ul{margin-left:18px;margin-top:8px}
+
+    /* AUDIO BOX (wrapped in snake-wrap for snake effect) */
+    .snake-wrap{padding:12px;border-radius:16px;position:relative;background:transparent;margin-bottom:18px}
+    .audio-box{
+      background:rgba(255,255,255,0.10);
+      border-radius:12px;border:1px solid rgba(255,255,255,0.18);
+      padding:16px;
+    }
+    .audio-title{color:var(--accent);font-weight:700;margin-bottom:8px}
+    .lang-select{display:flex;gap:10px;margin-bottom:10px}
+    .lang-btn{
+      flex:1;padding:8px;border-radius:8px;border:none;cursor:pointer;
+      background:rgba(255,255,255,0.14);color:#fff;font-weight:700;
+    }
+    .lang-btn.active{background:var(--accent);color:#000}
+
+    /* SECTION BOX (cards) */
+    .section-box{
+      display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;
+      background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);
+      margin-top:20px;
+    }
+    .section-text{flex:1 1 60%;min-width:280px}
+    .img-box{flex:1 1 35%;min-width:250px;height:280px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center}
+    .img-box img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+
+    /* table wrappers (make them snake-target) */
+    .table-wrap{margin-top:12px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.03)}
+    table{width:100%;border-collapse:collapse;background:transparent}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.10);color:#eef5ff;text-align:left}
+    th{background:rgba(255,255,255,0.08);color:#ffeb99;font-weight:600}
+
+    /* BUTTONS */
+    .btns{text-align:center;margin-top:26px}
+    .btn{display:inline-block;margin:6px;padding:10px 20px;border-radius:50px;background:rgba(255,255,255,0.12);color:white;text-decoration:none;font-weight:600;transition:.18s}
+    .btn:hover{transform:translateY(-3px)}
+
+    /* SNAKE + WHITE GLOW (on elements that need it) */
+    .snake-target{position:relative;transition:all .22s ease;cursor:pointer}
+    .snake-target .snake-svg{position:absolute;top:-8px;left:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .22s ease}
+    .snake-target .snake-svg polyline{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:80 600;stroke-dashoffset:80;transition:stroke-dashoffset .85s ease}
+
+    /* Hover behaviour for snake-targets (white glow + black text) */
+    .snake-target:hover{
+      background:#fff !important;
+      color:#000 !important;
+      box-shadow:0 8px 30px rgba(0,0,0,0.35), 0 0 28px rgba(255,255,255,0.18);
+      transform:translateY(-4px);
+    }
+    .snake-target:hover *{ color:#000 !important }
+    .snake-target:hover .snake-svg{opacity:1}
+    .snake-target:hover .snake-svg polyline{stroke-dashoffset:-600}
+
+    /* Row highlight inside tables when their wrapper is hovered */
+    .table-wrap.snake-target table tr:hover td{ background:#ffe84d !important; color:#000 !important }
+
+    /* Responsive */
+    @media(max-width:820px){
+      .section-box{flex-direction:column}
+      .img-box{width:100%;height:200px}
+      .container{margin:18px 12px 200px;padding:20px}
+    }
+    @media(max-width:480px){
+      th,td{font-size:.95rem}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- BACKGROUND -->
+  <div class="blobs" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="bubbles" aria-hidden="true">
+    <div class="bubble" style="width:120px;height:120px;left:5%;top:15%"></div>
+    <div class="bubble" style="width:160px;height:160px;left:70%;top:5%"></div>
+    <div class="bubble" style="width:100px;height:100px;left:85%;top:45%"></div>
+    <div class="bubble" style="width:150px;height:150px;left:30%;top:70%"></div>
+  </div>
+
+  <!-- HOVER SOUND -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <!-- HEADER -->
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+          </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container" role="main" aria-labelledby="lesson-title">
+    <h1 id="lesson-title" class="page-title">Lesson 13: Present Continuous Tense</h1>
+
+    <!-- AUDIO BOX (placed immediately under title) -->
+    <!-- This wrapper and the inner audio-box both have snake-target behavior per your request -->
+    <div class="snake-wrap snake-target" aria-hidden="false">
+      <div class="audio-box" data-en="presentcontinuous_english.mp3" data-ta="presentcontinuous_tamil.mp3" aria-label="Audio explanation (English / Tamil)">
+        <!-- JS will inject audio controls and language buttons -->
+      </div>
+    </div>
+
+    <p class="intro">Use the present continuous for actions happening right now.</p>
+
+    <!-- USE -->
+    <section class="section-box snake-target" aria-labelledby="use">
+      <div class="section-text">
+        <h2 id="use">1. Use</h2>
+        <p>We use the <strong>present continuous</strong> for actions happening <strong>right now</strong>.</p>
+        <ul>
+          <li>I’m watching TV.</li>
+          <li>She’s reading a book.</li>
+          <li>They’re playing football.</li>
+          <li>He’s cooking dinner.</li>
+          <li>The dog is chasing its tail.</li>
+        </ul>
+      </div>
+
+      <div class="img-box snake-target" aria-hidden="true">
+        <img src="dogchasing.gif" alt="Dog chasing tail">
+      </div>
+    </section>
+
+    <!-- FORMULATION -->
+    <section class="section-box snake-target" aria-labelledby="formulation">
+      <div class="section-text">
+        <h2 id="formulation">2. Formulation</h2>
+        <p><strong>Subject + am/is/are + verb-ing</strong></p>
+
+        <div class="table-wrap snake-target" aria-hidden="false">
+          <table aria-label="Formulation table">
+            <thead>
+              <tr><th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>I</td><td>am</td><td>verb + ing</td><td>I am reading.</td></tr>
+              <tr><td>He / She / It</td><td>is</td><td>verb + ing</td><td>She is cooking.</td></tr>
+              <tr><td>You / We / They</td><td>are</td><td>verb + ing</td><td>They are playing.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top:10px"><strong>Contractions:</strong> I’m, You’re, He’s, She’s, It’s, We’re, They’re</p>
+      </div>
+    </section>
+
+    <!-- ING rules -->
+    <section class="section-box snake-target" aria-labelledby="ing-rules">
+      <div class="section-text">
+        <h2 id="ing-rules">3. Forming the –ing</h2>
+
+        <div class="table-wrap snake-target" aria-hidden="false">
+          <table aria-label="ing rules table">
+            <thead>
+              <tr><th>Base Form</th><th>Rule</th><th>–ing Form</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>dance</td><td>drop “e”</td><td>dancing</td></tr>
+              <tr><td>run</td><td>double final consonant</td><td>running</td></tr>
+              <tr><td>die</td><td>ie → y</td><td>dying</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Questions -->
+    <section class="section-box snake-target" aria-labelledby="questions">
+      <div class="img-box snake-target" aria-hidden="true">
+        <img src="baby.gif" alt="Question example">
+      </div>
+
+      <div class="section-text">
+        <h2 id="questions">4. Questions</h2>
+        <p><strong>Am / Is / Are + subject + verb-ing?</strong></p>
+
+        <div class="table-wrap snake-target" aria-hidden="false">
+          <table aria-label="questions table">
+            <thead>
+              <tr><th>Helping Verb</th><th>Subject</th><th>Verb Form</th><th>Example Question</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Am</td><td>I</td><td>verb + ing</td><td>Am I reading?</td></tr>
+              <tr><td>Is</td><td>He / She / It</td><td>verb + ing</td><td>Is she studying?</td></tr>
+              <tr><td>Are</td><td>You / We / They<td>verb + ing</td><td>Are they playing?</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Negative -->
+    <section class="section-box snake-target" aria-labelledby="negative">
+      <div class="section-text">
+        <h2 id="negative">5. Negative</h2>
+        <p><strong>Subject + am/is/are + not + verb-ing</strong></p>
+
+        <div class="table-wrap snake-target" aria-hidden="false">
+          <table aria-label="negative table">
+            <thead>
+              <tr><th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>I</td><td>am not</td><td>verb + ing</td><td>I am not reading.</td></tr>
+              <tr><td>He / She / It</td><td>is not</td><td>verb + ing</td><td>He is not laughing.</td></tr>
+              <tr><td>You / We / They</td><td>are not</td><td>verb + ing</td><td>They are not playing.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buttons (snake-target) -->
+    <div class="btns">
+      <a href="lesson13_video.html" class="btn snake-target">🎬 Watch Video</a>
+      <a href="png13.html" class="btn snake-target">🧩 Next</a>
+      <a href="topics.html" class="btn snake-target">🏠 Back to Topics</a>
+    </div>
+
+  </main>
+
+  <footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+
+      /* Hover sound */
+      const hover = document.getElementById('hoverSound');
+      function playHover(){ try{ hover.currentTime = 0; hover.play().catch(()=>{}); } catch(e){} }
+
+      /* Inject snake SVG into .snake-target elements (but not the main container) */
+      function injectSnake(target){
+        if(!target || target.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('viewBox','0 0 260 60');
+        svg.setAttribute('preserveAspectRatio','none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        if(getComputedStyle(target).position === 'static') target.style.position = 'relative';
+        target.insertBefore(svg, target.firstChild);
+      }
+
+      // target list: everything with .snake-target
+      const targets = Array.from(document.querySelectorAll('.snake-target'));
+      targets.forEach(el=>{
+        injectSnake(el);
+        el.addEventListener('pointerenter', playHover);
+        el.addEventListener('focus', playHover, {passive:true});
+        if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      });
+
+      // nav hover sound
+      document.querySelectorAll('header nav a').forEach(a => a.addEventListener('pointerenter', playHover));
+
+      /* Build audio box (EN/TA) */
+      document.querySelectorAll('.audio-box').forEach(box=>{
+        const en = box.dataset.en || 'presentcontinuous_english.mp3';
+        const ta = box.dataset.ta || 'presentcontinuous_tamil.mp3';
+
+        box.innerHTML = `
+          <div class="audio-title">Audio Explanation</div>
+          <div class="lang-select" role="tablist" aria-label="Audio language selector">
+            <button class="lang-btn active" data-lang="en" aria-pressed="true">English</button>
+            <button class="lang-btn" data-lang="ta" aria-pressed="false">Tamil</button>
+          </div>
+          <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+            <source src="${en}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+
+        box.querySelectorAll('.lang-btn').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            box.querySelectorAll('.lang-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+            btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+            src.src = btn.dataset.lang === 'en' ? en : ta;
+            audio.load();
+            audio.play().catch(()=>{});
+          });
+        });
+      });
+
+      // small mobile safety
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+
+    });
+  </script>
+</body>
+</html>

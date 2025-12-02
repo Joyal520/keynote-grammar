@@ -1,0 +1,411 @@
+<!--
+Flappy-style game (single-file)
+Copyright (c) 2025 Joy (provided by assistant)
+
+Licensed under the MIT License:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+... (full MIT text omitted for brevity; include full text if required)
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Flappy-style — Bird Runner</title>
+<style>
+  :root{
+    --bg1:#70c5ce; --bg2:#5dc7e8; --pipe:#2ea24a;
+    --ui:#ffffff; --accent:#ffd54a;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+  canvas{display:block;width:100vw;height:100vh;}
+  .ui {
+    position:fixed; left:0; right:0; top:14px; display:flex; justify-content:center; gap:12px; z-index:40; pointer-events:none;
+  }
+  .badge{pointer-events:auto;background:rgba(0,0,0,0.18);color:var(--ui);padding:8px 12px;border-radius:10px;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,0.25);}
+  #overlayCenter{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;pointer-events:none}
+  .panel{pointer-events:auto;background:rgba(255,255,255,0.06);padding:22px;border-radius:14px;color:var(--ui);text-align:center;backdrop-filter:blur(6px);box-shadow:0 30px 80px rgba(0,0,0,0.4)}
+  .btn{background:var(--accent);border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;margin-top:12px}
+  .muted{color:rgba(255,255,255,0.9)}
+  .small{font-size:13px;opacity:0.9}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="ui">
+  <div id="scoreBadge" class="badge">Score: 0</div>
+  <div id="bestBadge" class="badge">Best: 0</div>
+</div>
+
+<div id="overlayCenter">
+  <div id="startPanel" class="panel">
+    <h2>Bird Runner — 60s Survival</h2>
+    <p class="muted small">Hold / tap to fly. Avoid pipes and edges. Survive 60 seconds to win. Three lives.</p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+      <button id="startBtn" class="btn">Start</button>
+      <button id="howBtn" class="btn" style="background:#9ecbff">How to play</button>
+    </div>
+  </div>
+</div>
+
+<!-- Optional audio (place in same folder or change path): bg.mp3, hit.wav, win.wav -->
+<audio id="bg" loop preload="auto" src="bg-music.mp3"></audio>
+<audio id="hit" preload="auto" src="hit.wav"></audio>
+<audio id="win" preload="auto" src="win.wav"></audio>
+
+<script>
+/* -------------------------
+  ASSET NOTES
+  - No copyrighted art included.
+  - Replace bg-music.mp3, hit.wav, win.wav with your licensed files if desired.
+--------------------------*/
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d', {alpha:false});
+let W = innerWidth, H = innerHeight;
+function fit(){ W = innerWidth; H = innerHeight; canvas.width = W; canvas.height = H; }
+fit(); addEventListener('resize', fit);
+
+// audio elements (optional)
+const bgAudio = document.getElementById('bg');
+const hitSfx = document.getElementById('hit');
+const winSfx = document.getElementById('win');
+
+function safePlay(a){
+  try{ a.currentTime = 0; a.play().catch(()=>{}); }catch(e){}
+}
+function safePause(a){ try{ a.pause(); }catch(e){} }
+
+// GAME CONFIG
+const FPS = 60;
+const MS_PER_FRAME = 1000/ FPS;
+const GAME_SECONDS = 60;
+const GRAVITY = 0.12;   // gentle gravity
+const LIFT = -3.5;      // lift on hold
+const MAX_V = 4;
+const PIPE_W = Math.round(Math.min(120, W * 0.12));
+const PIPE_GAP = Math.round(Math.min(220, H * 0.28));
+const PIPE_INTERVAL = 1500; // ms
+const BIRD_SIZE = Math.round(Math.min(64, W*0.08));
+
+// STATE
+let running = false;
+let lastPipeAt = 0;
+let pipes = []; // {x, hTop, gap}
+let score = 0;
+let best = Number(localStorage.getItem('flappyBest') || 0);
+let lives = 3;
+let startTime = 0;
+let elapsed = 0;
+let pressing = false;
+
+// bird
+let bird = {
+  x: Math.round(W * 0.25),
+  y: Math.round(H * 0.5),
+  vy: 0,
+  r: BIRD_SIZE / 2
+};
+
+// UI refs
+const scoreBadge = document.getElementById('scoreBadge');
+const bestBadge  = document.getElementById('bestBadge');
+bestBadge.textContent = 'Best: ' + best;
+
+// input
+function down(){ pressing = true; }
+function up(){ pressing = false; }
+addEventListener('mousedown', down);
+addEventListener('mouseup', up);
+addEventListener('touchstart', (e)=>{ e.preventDefault(); down(); }, {passive:false});
+addEventListener('touchend', (e)=>{ e.preventDefault(); up(); }, {passive:false});
+addEventListener('keydown', e=>{ if([' ','ArrowUp','w','W'].includes(e.key)) down();});
+addEventListener('keyup', e=>{ if([' ','ArrowUp','w','W'].includes(e.key)) up();});
+
+// helpers
+function rand(a,b){ return Math.floor(a + Math.random() * (b-a+1)); }
+function resetGame(){
+  pipes = [];
+  score = 0;
+  lives = 3;
+  bird.x = Math.round(W*0.25);
+  bird.y = Math.round(H*0.5);
+  bird.vy = 0;
+  lastPipeAt = performance.now();
+  startTime = performance.now();
+  elapsed = 0;
+  running = true;
+  scoreBadge.textContent = 'Score: ' + score;
+  bestBadge.textContent = 'Best: ' + best;
+  safePlay(bgAudio);
+}
+function stopGame(){
+  running = false;
+  safePause(bgAudio);
+  if(score > best){ best = score; localStorage.setItem('flappyBest', best); bestBadge.textContent = 'Best: ' + best; }
+}
+
+// pipes
+function spawnPipe(){
+  const hTop = rand(50, Math.max(80, H - PIPE_GAP - 150));
+  pipes.push({ x: W + 40, hTop, gap: PIPE_GAP, passed:false });
+}
+
+// collision helpers
+function rectsOverlap(ax,ay,aw,ah, bx,by,bw,bh){
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+}
+
+// rendering
+function drawBg(){
+  // simple parallax sky stripes
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, '#a0e9ff');
+  g.addColorStop(1, '#57c2ff');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+}
+
+function drawBird(){
+  // body
+  ctx.save();
+  ctx.translate(bird.x, bird.y);
+  const rot = Math.max(-0.6, Math.min(0.6, bird.vy * 0.15));
+  ctx.rotate(rot);
+  // wing + body simple vector art (no external assets)
+  const r = bird.r;
+  // body
+  ctx.fillStyle = '#ff4d4d';
+  roundRect(ctx, -r, -r*0.7, r*2, r*1.4, r*0.6, true, false);
+  // belly
+  ctx.fillStyle = '#ffd54a';
+  ctx.beginPath();
+  ctx.ellipse(0, r*0.2, r*0.7, r*0.5, 0, 0, Math.PI*2);
+  ctx.fill();
+  // eye
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(r*0.32, -r*0.32, r*0.18,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(r*0.32, -r*0.32, r*0.08,0,Math.PI*2); ctx.fill();
+  // beak
+  ctx.fillStyle = '#ff8c00'; ctx.beginPath();
+  ctx.moveTo(r*0.7, -r*0.05); ctx.lineTo(r*1.15, r*0.05); ctx.lineTo(r*0.7, r*0.22); ctx.closePath(); ctx.fill();
+  // wing (simple)
+  ctx.fillStyle = '#e84242';
+  ctx.beginPath();
+  ctx.ellipse(-r*0.05, -r*0.05, r*0.6, r*0.45, -0.5, 0.2, Math.PI+0.4);
+  ctx.fill();
+  ctx.restore();
+}
+
+function roundRect(ctx,x,y,w,h,r, fill, stroke){
+  if (typeof r === 'number') r = {tl:r,tr:r,br:r,bl:r};
+  ctx.beginPath();
+  ctx.moveTo(x + r.tl, y);
+  ctx.lineTo(x + w - r.tr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+  ctx.lineTo(x + w, y + h - r.br);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+  ctx.lineTo(x + r.bl, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+  ctx.lineTo(x, y + r.tl);
+  ctx.quadraticCurveTo(x, y, x + r.tl, y);
+  ctx.closePath();
+  if(fill){ ctx.fill(); }
+  if(stroke){ ctx.stroke(); }
+}
+
+function drawPipes(){
+  ctx.fillStyle = '#225522';
+  pipes.forEach(p=>{
+    // top
+    roundRect(ctx, p.x, 0, PIPE_W, p.hTop, 6, true, false);
+    // bottom
+    roundRect(ctx, p.x, p.hTop + p.gap, PIPE_W, H - (p.hTop + p.gap), 6, true, false);
+    // cap (simple)
+    ctx.fillStyle = '#1b4d1b';
+    ctx.fillRect(p.x - 6, p.hTop - 10, PIPE_W + 12, 10);
+    ctx.fillRect(p.x - 6, p.hTop + p.gap, PIPE_W + 12, 10);
+    ctx.fillStyle = '#225522';
+  });
+}
+
+function drawGround(){
+  // simple ground strip
+  ctx.fillStyle = 'rgba(0,0,0,0.08)';
+  ctx.fillRect(0, H - 24, W, 24);
+}
+
+// main loop
+let last = performance.now();
+function loop(now){
+  const dt = now - last;
+  last = now;
+  if(!running){ requestAnimationFrame(loop); return; }
+
+  // update
+  elapsed = (now - startTime) / 1000;
+  const remain = Math.max(0, GAME_SECONDS - Math.floor(elapsed));
+  document.getElementById('scoreBadge').textContent = 'Score: ' + score;
+  document.getElementById('bestBadge').textContent = 'Best: ' + best;
+
+  // bird physics
+  if(pressing){
+    bird.vy += LIFT * (dt / MS_PER_FRAME);
+  }
+  bird.vy += GRAVITY * (dt / MS_PER_FRAME);
+  bird.vy = Math.max(-MAX_V, Math.min(MAX_V, bird.vy));
+  bird.y += bird.vy * (dt / MS_PER_FRAME) * 12;
+
+  // spawn pipes periodically
+  if(now - lastPipeAt > PIPE_INTERVAL){
+    spawnPipe();
+    lastPipeAt = now;
+  }
+
+  // move pipes left
+  for(let i = pipes.length - 1; i >=0; i--){
+    pipes[i].x -= ( (W * 0.0025) * (dt) ) + 2; // speed tuned for device size
+    const p = pipes[i];
+    // check passed
+    if(!p.passed && p.x + PIPE_W < bird.x){
+      p.passed = true;
+      score++;
+      document.getElementById('scoreBadge').textContent = 'Score: ' + score;
+    }
+    // collision test: bird bounding box
+    const bx = bird.x - bird.r, by = bird.y - bird.r, bw = bird.r*2, bh = bird.r*2;
+    // top pipe
+    if(rectsOverlap(bx,by,bw,bh, p.x, 0, PIPE_W, p.hTop) ||
+       rectsOverlap(bx,by,bw,bh, p.x, p.hTop + p.gap, PIPE_W, H - (p.hTop + p.gap))){
+      // hit
+      hit();
+      // remove pipe to avoid multiple hits
+      pipes.splice(i,1);
+      continue;
+    }
+    // offscreen
+    if(p.x + PIPE_W < -100) pipes.splice(i,1);
+  }
+
+  // check top/bottom bounds
+  if(bird.y - bird.r <= 0 || bird.y + bird.r >= H){
+    hit();
+  }
+
+  // win?
+  if(elapsed >= GAME_SECONDS){
+    // win
+    safePause(bgAudio);
+    safePlay(winSfx);
+    stopGame();
+    showEnd(true);
+    return;
+  }
+
+  // render
+  ctx.clearRect(0,0,W,H);
+  drawBg();
+  drawPipes();
+  drawGround();
+  drawBird();
+
+  requestAnimationFrame(loop);
+}
+
+// hits and lives
+function hit(){
+  safePlay(hitSfx);
+  lives--;
+  if(lives <= 0){
+    safePause(bgAudio);
+    stopGame();
+    showEnd(false);
+  } else {
+    // reset bird, let game continue
+    bird.y = Math.round(H*0.5);
+    bird.vy = 0;
+    // small flash to signal hit
+    gsapEffectFlash();
+  }
+}
+
+// visuals
+function gsapEffectFlash(){
+  // minimal animation using CSS canvas opacity
+  const el = canvas;
+  el.style.transition = 'opacity .14s ease';
+  el.style.opacity = '0.5';
+  setTimeout(()=> el.style.opacity = '1', 140);
+}
+
+// UI / start / end
+const startPanel = document.getElementById('startPanel');
+const overlay = document.getElementById('overlayCenter');
+const startBtn = document.getElementById('startBtn');
+const howBtn  = document.getElementById('howBtn');
+const endShown = false;
+
+startBtn.onclick = () => {
+  overlay.style.display = 'none';
+  resetGame();
+  startTime = performance.now();
+  last = performance.now();
+  lastPipeAt = performance.now();
+  requestAnimationFrame(loop);
+  safePlay(bgAudio);
+};
+howBtn.onclick = ()=> alert('Hold / tap to fly up. Avoid pipes and edges. Three lives. Survive 60 seconds.');
+
+function showEnd(win){
+  overlay.style.display = 'flex';
+  startPanel.innerHTML = ''; // reuse panel for end
+  const title = document.createElement('h2');
+  title.textContent = win ? 'YOU SURVIVED!' : 'GAME OVER';
+  title.style.marginBottom = '6px';
+  const p = document.createElement('p');
+  p.className = 'muted small';
+  p.textContent = win ? `You lasted ${GAME_SECONDS} seconds! Score: ${score}` : `Score: ${score}`;
+  const retry = document.createElement('button');
+  retry.className = 'btn'; retry.textContent = 'Retry'; retry.onclick = ()=> location.reload();
+  const quit = document.createElement('button');
+  quit.className = 'btn'; quit.style.background='#9ecbff'; quit.textContent = 'Quit';
+  quit.onclick = ()=> {
+    // default navigating back or close parent modal if embedded
+    try{ if(window.parent && window.parent !== window) window.parent.postMessage({type:'close-game-modal'}, '*'); else window.location.href = 'playoptions.html'; }catch(e){ window.location.href = 'playoptions.html'; }
+  };
+  startPanel.appendChild(title);
+  startPanel.appendChild(p);
+  const wrapper = document.createElement('div'); wrapper.style.marginTop='12px'; wrapper.appendChild(retry); wrapper.appendChild(quit);
+  startPanel.appendChild(wrapper);
+  // stop background audio
+  safePause(bgAudio);
+  // update best
+  if(score > best){ best = score; localStorage.setItem('flappyBest', best); }
+}
+
+// spawn helper
+function spawnPipe(){ const margin = 60; const topMin = 40; const topMax = H - PIPE_GAP - margin; const hTop = rand(topMin, Math.max(topMin, topMax)); pipes.push({ x: W + 40, hTop, gap: PIPE_GAP, passed:false }); }
+
+// start utilities
+function init(){
+  bird.x = Math.round(W * 0.25);
+  bird.y = Math.round(H * 0.5);
+  bird.vy = 0;
+  document.getElementById('scoreBadge').textContent = 'Score: 0';
+  document.getElementById('bestBadge').textContent = 'Best: ' + best;
+}
+init();
+
+</script>
+<!-- minimal GSAP used only for a small flash if gsap isn't available, the function will still work -->
+<script>
+  // small fallback for gsapEffectFlash; not required
+  window.gsap = window.gsap || {};
+</script>
+</body>
+</html>

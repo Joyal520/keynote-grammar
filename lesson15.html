@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Past Continuous Tense — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET & VARIABLES */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+:root{
+  --header-h:64px;
+  --footer-h:56px;
+  --bg1:#001f3f;
+  --bg2:#003c8f;
+  --bg3:#004d99;
+  --soft-white-1: rgba(255,255,255,0.45);
+  --soft-white-2: rgba(255,255,255,0.22);
+  --glass: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.12);
+  --accent: #ffcc33;
+  --max-w: 1000px;
+}
+
+html,body{height:auto;min-height:100%}
+body{
+  background: linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  color:#fff;
+  padding-top: calc(var(--header-h) + 18px);
+  padding-bottom: calc(var(--footer-h) + 120px);
+  overflow-x:hidden;
+}
+
+/* BACKGROUND BLOBS */
+.bg-blobs{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.blob{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,0.06);
+  filter:blur(26px);
+  opacity:0.6;
+  animation:float 12s infinite ease-in-out;
+}
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-40px)}
+  100%{transform:translateY(0)}
+}
+
+/* HEADER */
+header{
+  position:fixed;top:0;left:0;width:100%;
+  height:var(--header-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;
+  background:rgba(0,0,0,0.36);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);
+  z-index:1200;
+}
+header h1{font-size:1rem;color:#fff}
+nav{display:flex;gap:12px}
+nav a{
+  color:#fff;text-decoration:none;
+  font-weight:600;padding:6px 8px;
+  border-radius:6px;
+}
+nav a:hover{color:var(--accent)}
+
+/* FOOTER */
+footer{
+  position:fixed;bottom:0;left:0;width:100%;
+  height:var(--footer-h);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.34);
+  border-top:1px solid rgba(255,255,255,0.06);
+  color:#fff;font-size:0.9rem;
+  backdrop-filter:blur(8px);
+  z-index:1200;
+}
+
+/* MAIN WRAPPER */
+.wrap{width:100%;max-width:var(--max-w);margin:22px auto 40px;padding:0 14px}
+.container{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:26px;
+  box-shadow:0 12px 36px rgba(0,0,0,0.45);
+  backdrop-filter:blur(8px);
+}
+
+/* HEADINGS */
+h1{text-align:center;color:var(--accent);margin-bottom:12px;font-size:1.6rem}
+.lead{text-align:center;color:#e6f4ff;margin-bottom:12px}
+
+/* SNAKE TARGET (hover white glow) */
+.snake-target{
+  position:relative;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.snake-target:hover{
+  background:#fff !important;
+  color:#000 !important;
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:0 6px 20px var(--soft-white-2),0 0 30px var(--soft-white-1);
+  border-color:#000 !important;
+}
+.snake-target:hover *{color:#000 !important}
+
+/* AUDIO BOX */
+.audio-box{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:12px;border-radius:12px;
+  margin:14px auto 18px;
+  max-width:780px;
+}
+.audio-title{color:var(--accent);font-weight:700;margin-bottom:8px}
+.lang-select{display:flex;gap:8px;margin-bottom:8px}
+.lang-btn{
+  flex:1;padding:8px;border-radius:8px;
+  background:rgba(255,255,255,0.06);
+  border:none;color:#fff;font-weight:700;
+  cursor:pointer;
+}
+.lang-btn.active{background:var(--accent);color:#000}
+
+/* SECTION BOX */
+.section-box{
+  display:flex;gap:18px;flex-wrap:wrap;
+  background:rgba(255,255,255,0.04);
+  padding:16px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
+  margin-top:18px;
+}
+.section-text{flex:1 1 60%;min-width:220px;color:#eaf3ff}
+
+/* IMAGE BOX */
+.img-box{
+  flex:1 1 36%;
+  min-width:180px;height:200px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.img-box img{width:100%;height:100%;object-fit:cover}
+
+/* TABLE */
+.table-wrap{margin-top:12px;border-radius:10px}
+table{
+  width:100%;border-collapse:collapse;
+  background:rgba(255,255,255,0.04);
+}
+th,td{
+  padding:10px;border-bottom:1px solid rgba(255,255,255,0.08);
+  text-align:left;color:#eaf3ff;
+}
+th{
+  background:rgba(255,255,255,0.06);
+  color:#ffeb99;font-weight:600;
+}
+
+/* BUTTONS */
+.btns{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.btn{
+  display:inline-block;padding:10px 18px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.12);
+  color:#fff;text-decoration:none;font-weight:700;
+  transition:all .18s ease;
+  min-width:150px;text-align:center;
+}
+.btn:hover{
+  background:#fff;color:#000;
+  box-shadow:0 6px 20px var(--soft-white-2);
+  transform:translateY(-4px);
+}
+.btn.primary{background:var(--accent);color:#001f3f}
+.btn.primary:hover{background:#fff;color:#000}
+
+/* SNAKE SVG */
+.snake-svg{
+  position:absolute;top:-6px;left:-6px;
+  width:calc(100% + 12px);height:calc(100% + 12px);
+  pointer-events:none;opacity:0;
+  transition:opacity .18s ease;
+}
+.snake-svg polyline{
+  fill:none;stroke:#fff;stroke-width:3;
+  stroke-dasharray:40 460;stroke-dashoffset:40;
+  transition:stroke-dashoffset .75s ease-in-out;
+}
+.snake-target:hover .snake-svg{opacity:1}
+.snake-target:hover .snake-svg polyline{stroke-dashoffset:-460}
+
+/* RESPONSIVE */
+@media(max-width:880px){
+  .section-box{flex-direction:column}
+  .img-box{height:180px}
+}
+@media(max-width:520px){
+  .img-box{height:160px}
+  .btn{min-width:120px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND BLOBS -->
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob" style="width:160px;height:160px;left:6%;top:70%"></div>
+  <div class="blob" style="width:220px;height:220px;left:70%;top:10%"></div>
+  <div class="blob" style="width:120px;height:120px;left:40%;top:80%"></div>
+</div>
+
+<!-- HOVER SOUND -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<!-- HEADER -->
+<header>
+  <h1>Grammar With Joy</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+  </nav>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="wrap">
+  <div class="container">
+
+    <h1>Past Continuous Tense</h1>
+    <p class="lead">We use the past continuous for actions that were happening at a specific moment in the past.</p>
+
+    <!-- AUDIO BOX -->
+    <div class="audio-box snake-target"
+         data-en="pastcontinuous_english.mp3"
+         data-ta="pastcontinuous_tamil.mp3">
+    </div>
+
+    <!-- USE SECTION -->
+    <section class="section-box snake-target">
+      <div class="section-text">
+        <h2>1. Use</h2>
+        <p>We use the <strong>past continuous tense</strong> for actions happening at a <strong>specific moment</strong> in the past.</p>
+        <ul>
+          <li>I was watching TV.</li>
+          <li>She was reading a book.</li>
+          <li>We were watching a movie last night.</li>
+        </ul>
+      </div>
+
+      <div class="img-box snake-target">
+        <img src="watchingtv.gif" alt="Watching TV">
+      </div>
+    </section>
+
+    <!-- FORMULATION -->
+    <h2 style="margin-top:18px">2. Formulation</h2>
+    <div class="table-wrap snake-target">
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>I / He / She / It</td><td>was</td><td>verb + ing</td><td>She was cooking.</td>
+          </tr>
+          <tr>
+            <td>You / We / They</td><td>were</td><td>verb + ing</td><td>They were playing.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- QUESTIONS -->
+    <section class="section-box snake-target">
+      <div class="section-text">
+        <h2>3. Questions</h2>
+        <p><strong>Was / Were + subject + verb-ing?</strong></p>
+
+        <div class="table-wrap snake-target">
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example Question</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I / He / She / It</td><td>Was</td><td>verb + ing</td><td>Was she cooking?</td>
+              </tr>
+              <tr>
+                <td>You / We / They</td><td>Were</td><td>verb + ing</td><td>Were they playing?</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEGATIVE -->
+    <section class="section-box snake-target">
+      <div class="section-text">
+        <h2>4. Negative</h2>
+        <p><strong>Subject + was/were + not + verb-ing</strong></p>
+
+        <div class="table-wrap snake-target">
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I / He / She / It</td><td>was not</td><td>verb + ing</td><td>She was not cooking.</td>
+              </tr>
+              <tr>
+                <td>You / We / They</td><td>were not</td><td>verb + ing</td><td>They were not playing.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <div class="btns">
+      <a class="btn primary snake-target" href="lesson15_video.html">🎬 Watch Video</a>
+      <a class="btn snake-target" href="png15.html">🧩 Next</a>
+      <a class="btn snake-target" href="topics.html">🏠 Back to Topics</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+<!-- SCRIPT (WITH AUDIO HOVER SOUND ENABLED) -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const hoverSound = document.getElementById('hoverSound');
+
+  function playHover() {
+    if (!hoverSound) return;
+    try {
+      hoverSound.currentTime = 0;
+      hoverSound.play().catch(()=>{});
+    } catch(e){}
+  }
+
+  /* BUILD AUDIO BOX */
+  document.querySelectorAll('.audio-box').forEach(box => {
+    const en = box.dataset.en || 'pastcontinuous_english.mp3';
+    const ta = box.dataset.ta || 'pastcontinuous_tamil.mp3';
+
+    box.innerHTML = `
+      <div class="audio-title">Audio explanation</div>
+      <div class="lang-select">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ta">Tamil</button>
+      </div>
+      <audio class="audioPlayer" controls preload="none">
+        <source src="${en}" type="audio/mpeg">
+      </audio>
+    `;
+
+    const audio = box.querySelector('.audioPlayer');
+    const src = audio.querySelector('source');
+    const buttons = box.querySelectorAll('.lang-btn');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        src.src = (btn.dataset.lang === 'en') ? en : ta;
+        audio.load();
+        audio.play().catch(()=>{});
+      });
+    });
+  });
+
+  /* SNAKE EFFECT + HOVER SOUND */
+  function injectSnake(el){
+    if (el.querySelector('.snake-svg')) return;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','snake-svg');
+    svg.setAttribute('viewBox','0 0 260 60');
+    svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+    if (getComputedStyle(el).position === 'static') el.style.position='relative';
+    el.insertBefore(svg, el.firstChild);
+  }
+
+  document.querySelectorAll('.snake-target').forEach(el => {
+    injectSnake(el);
+    el.addEventListener('pointerenter', playHover);
+  });
+
+  /* NAV SOUND */
+  document.querySelectorAll('nav a').forEach(a => {
+    a.addEventListener('pointerenter', playHover);
+  });
+
+  /* TABLE SOUND */
+  document.querySelectorAll('.table-wrap').forEach(t => {
+    t.addEventListener('pointerenter', playHover);
+  });
+
+  /* AUDIO BOX HOVER SOUND */
+  document.querySelectorAll('.audio-box, .lang-btn, .audioPlayer')
+    .forEach(el => el.addEventListener('pointerenter', playHover));
+
+});
+</script>
+
+</body>
+</html>

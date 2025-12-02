@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Simple Present – Questions & Negatives | Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET + VARIABLES */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+:root{
+  --header-h:64px;
+  --footer-h:56px;
+  --bg1:#001f3f; --bg2:#003c8f; --bg3:#004d99;
+  --accent:#ffcc33;
+  --soft-white-1:rgba(255,255,255,0.45);
+  --soft-white-2:rgba(255,255,255,0.22);
+  --glass:rgba(255,255,255,0.08);
+  --card:rgba(255,255,255,0.06);
+}
+
+/* BODY */
+html,body{height:100%;width:100%}
+body{
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  color:#fff;
+  padding-top:calc(var(--header-h) + 18px);
+  padding-bottom:calc(var(--footer-h) + 180px);
+  overflow-x:hidden;
+}
+
+/* BLOBS */
+.blobs{position:fixed;inset:0;z-index:-3;pointer-events:none}
+.blob{
+  position:absolute;width:380px;height:380px;border-radius:40%;
+  filter:blur(70px);opacity:0.32;mix-blend-mode:screen;
+  animation:blobMove 14s infinite alternate ease-in-out;
+}
+.blob.b1{background:#ff6b6b;left:-6%;top:10%}
+.blob.b2{background:#70a1ff;left:60%;top:28%;animation-duration:16s}
+.blob.b3{background:#ffd166;left:22%;top:66%;animation-duration:18s}
+@keyframes blobMove{0%{transform:translateY(0)}100%{transform:translateY(-40px)}}
+
+/* BUBBLES */
+.bubbles{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.bubble{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,.06);
+  animation:float 14s infinite ease-in-out;
+}
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-28px)}
+  100%{transform:translateY(0)}
+}
+
+/* HEADER */
+header{
+  position:fixed;top:0;left:0;width:100%;height:var(--header-h);
+  background:rgba(0,0,0,.35);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;z-index:1100;
+}
+header nav{display:flex;gap:12px}
+header nav a{color:#fff;text-decoration:none;font-weight:600}
+header nav a:hover{color:var(--accent)}
+
+/* FOOTER */
+footer{
+  position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);
+  background:rgba(0,0,0,.32);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;color:white;
+  z-index:1100;font-size:.9rem;
+}
+
+/* MAIN CONTAINER — NO HOVER EFFECT */
+.container{
+  width:100%;max-width:1000px;margin:28px auto;
+  background:var(--glass);border-radius:16px;
+  padding:30px;padding-bottom:140px;
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+/* TITLES */
+.page-title{text-align:center;color:var(--accent);margin-bottom:10px;font-size:1.6rem}
+.intro{text-align:center;color:#d9e7ff;margin-bottom:25px;font-size:1rem}
+
+/* AUDIO BOX (NO GLOW, CLEAN BOX) */
+.audio-box{
+  background:rgba(255,255,255,0.10);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.20);
+  padding:18px;
+  margin:0 auto 25px;
+}
+.audio-title{color:var(--accent);font-weight:700;margin-bottom:8px}
+.lang-select{display:flex;gap:10px;margin-bottom:10px}
+.lang-btn{
+  flex:1;padding:8px;border:none;border-radius:8px;
+  background:rgba(255,255,255,0.15);color:white;font-weight:600;
+}
+.lang-btn.active{background:var(--accent);color:#000}
+
+/* WRAPPER FOR SNAKE EFFECT */
+.snake-wrap{
+  padding:12px;border-radius:16px;position:relative;background:transparent;
+}
+
+/* CONTENT CARDS */
+.use-section,
+.summary,
+.table-wrap,
+.img-wrap {
+  background:var(--card);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
+  padding:18px;
+  margin-top:22px;
+}
+
+/* TABLE */
+table{
+  width:100%;border-collapse:collapse;
+  background:rgba(255,255,255,0.03);border-radius:10px;overflow:hidden;
+}
+th,td{
+  padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.10);
+  color:#eaf4ff;
+}
+th{background:rgba(255,255,255,0.08);color:#ffeb99}
+
+/* BUTTONS */
+.btns{text-align:center;margin-top:30px}
+.btn{
+  display:inline-block;margin:6px;padding:10px 22px;border-radius:50px;
+  background:rgba(255,255,255,0.12);color:white;text-decoration:none;
+  font-weight:600;transition:.2s;
+}
+.btn:hover{transform:translateY(-3px)}
+
+/* SNAKE EFFECT */
+.snake-target{position:relative;transition:.25s}
+.snake-target:hover{
+  background:#fff !important;color:#000 !important;
+  box-shadow:0 0 18px var(--soft-white-1),0 0 38px var(--soft-white-2);
+  transform:scale(1.02);
+}
+.snake-target:hover *{color:#000 !important}
+.snake-svg{
+  position:absolute;top:-8px;left:-8px;
+  width:calc(100% + 16px);height:calc(100% + 16px);
+  pointer-events:none;opacity:0;transition:.25s;
+}
+.snake-svg polyline{
+  fill:none;stroke:#fff;stroke-width:3;
+  stroke-dasharray:80 600;stroke-dashoffset:80;
+  transition:stroke-dashoffset .85s ease;
+}
+.snake-target:hover .snake-svg{opacity:1}
+.snake-target:hover .snake-svg polyline{stroke-dashoffset:-600}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .container{margin:18px 12px 240px}
+}
+</style>
+</head>
+<body>
+
+<!-- BLOBS -->
+<div class="blobs">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<!-- BUBBLES -->
+<div class="bubbles">
+  <div class="bubble" style="width:120px;height:120px;left:8%;top:20%"></div>
+  <div class="bubble" style="width:160px;height:160px;left:60%;top:10%"></div>
+  <div class="bubble" style="width:100px;height:100px;left:80%;top:50%"></div>
+  <div class="bubble" style="width:140px;height:140px;left:35%;top:70%"></div>
+</div>
+
+<!-- SOUND -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<header>
+  <h1>Grammar With Joy</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+    <a href="quiz.html">Quizzes</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <h1 class="page-title">Simple Present – Questions & Negatives</h1>
+
+  <!-- AUDIO BOX WRAPPED -->
+  
+  <p class="intro">Learn how to form questions and negatives in the simple present tense.</p>
+
+<div class="snake-wrap snake-target">
+    <div class="audio-box" data-en="simplepresentqn_english.mp3" data-ta="simplepresentqn_tamil.mp3"></div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div class="snake-wrap snake-target">
+    <section class="use-section">
+      <h2>1️⃣ Questions</h2>
+
+      <p>To make questions in the simple present tense, use this structure:</p>
+      <p><strong>Do / Does + Subject + Base Verb</strong></p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Subject</th><th>Do / Does</th><th>Example</th></tr>
+          <tr><td>I</td><td>Do</td><td>Do I go to the gym?</td></tr>
+          <tr><td>We</td><td>Do</td><td>Do we eat early?</td></tr>
+          <tr><td>You</td><td>Do</td><td>Do you play football?</td></tr>
+          <tr><td>They</td><td>Do</td><td>Do they like chocolate?</td></tr>
+          <tr><td>He</td><td>Does</td><td>Does he speak Spanish?</td></tr>
+          <tr><td>She</td><td>Does</td><td>Does she watch TV?</td></tr>
+          <tr><td>It</td><td>Does</td><td>Does it snow in summer?</td></tr>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- NEGATIVES -->
+  <div class="snake-wrap snake-target">
+    <section class="use-section">
+      <h2>2️⃣ Negatives</h2>
+
+      <p>Negatives follow this structure:</p>
+      <p><strong>Subject + do/does + not + Base Verb</strong></p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Subject</th><th>Negative</th><th>Example</th></tr>
+          <tr><td>I</td><td>do not</td><td>I do not go to the gym.</td></tr>
+          <tr><td>We</td><td>do not</td><td>We do not eat meat.</td></tr>
+          <tr><td>You</td><td>do not</td><td>You do not watch TV.</td></tr>
+          <tr><td>They</td><td>do not</td><td>They do not play football.</td></tr>
+          <tr><td>He</td><td>does not</td><td>He does not like vegetables.</td></tr>
+          <tr><td>She</td><td>does not</td><td>She does
+              not like coffee.</td></tr>
+          <tr><td>It</td><td>does not</td><td>It does not snow in summer.</td></tr>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="btns">
+    <a class="btn snake-target" href="lesson_simple_present_video.html">🎬 Watch Video</a>
+    <a class="btn snake-target" href="png12.html">🧩 Next</a>
+    <a class="btn snake-target" href="topics.html">🏠 Back to Topics</a>
+  </div>
+
+</main>
+
+<footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+<script>
+/* JS SNAKE EFFECT + AUDIO BOX + SOUND */
+document.addEventListener("DOMContentLoaded", ()=> {
+
+  /* Hover sound */
+  const hover = document.getElementById("hoverSound");
+  function playHover(){ hover.currentTime=0; hover.play().catch(()=>{}); }
+
+  /* Inject snake */
+  function addSnake(el){
+    if(el.querySelector(".snake-svg")) return;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.classList.add("snake-svg");
+    svg.setAttribute("viewBox","0 0 260 60");
+    svg.innerHTML = `<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>`;
+    if(getComputedStyle(el).position === "static") el.style.position="relative";
+    el.insertBefore(svg, el.firstChild);
+  }
+
+  document.querySelectorAll(".snake-target").forEach(el=>{
+    addSnake(el);
+    el.addEventListener("pointerenter", playHover);
+  });
+
+  /* Audio box */
+  document.querySelectorAll(".audio-box").forEach(box=>{
+    const en = box.dataset.en;
+    const ta = box.dataset.ta;
+
+    box.innerHTML = `
+      <div class="audio-title">Audio Explanation</div>
+      <div class="lang-select">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ta">Tamil</button>
+      </div>
+      <audio controls class="audioPlayer"><source src="${en}" type="audio/mpeg"></audio>
+    `;
+
+    const audio = box.querySelector(".audioPlayer");
+    const src = audio.querySelector("source");
+
+    box.querySelectorAll(".lang-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        box.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        src.src = btn.dataset.lang === "en" ? en : ta;
+        audio.load(); audio.play().catch(()=>{});
+      });
+    });
+  });
+
+});
+</script>
+
+</body>
+</html>

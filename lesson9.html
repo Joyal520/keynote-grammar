@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Have / Had / Will Have — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+
+/* GLOBAL */
+:root{
+  --header-h:64px;
+  --footer-h:56px;
+  --gold:#ffd24d;
+  --white:#ffffff;
+  --glass:rgba(255,255,255,0.07);
+  --glass-border:rgba(255,255,255,0.12);
+
+  /* Soft white glow */
+  --glow-1: rgba(255,255,255,0.45);
+  --glow-2: rgba(255,255,255,0.25);
+}
+
+html, body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  --header-h: 64px;   /* make sure this matches your header height variable */
+  --footer-h: 56px;   /* make sure this matches your footer height variable */
+
+  background: linear-gradient(135deg,#001f3f,#003c8f,#004d99);
+  color: #fff;
+
+  padding-top: calc(var(--header-h) + 18px);
+
+  /* REAL FIX → pushes content above fixed footer so bottom buttons are reachable */
+  padding-bottom: calc(var(--footer-h) + 120px) !important;
+
+  display: block; /* remove flex layout so document flows naturally and can scroll */
+}
+.wrap {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;          /* CENTER THE CARD */
+  display: block;
+}
+.card {
+  margin: 0 auto;
+}
+
+/* Soft white glow for cards/boxes */
+.soft-white-glow:hover {
+  background: #ffffff !important;
+  color: #000 !important;
+
+  /* soft glow */
+  box-shadow:
+    0 0 12px rgba(255,255,255,0.45),
+    0 0 28px rgba(255,255,255,0.25);
+
+  transform: scale(1.02);
+}
+
+/* Make all text inside turn black */
+.soft-white-glow:hover * {
+  color: #000 !important;
+}
+
+/* Keep snake visible on hover */
+.soft-white-glow:hover .snake-svg {
+  opacity: 1;
+}
+
+.soft-white-glow:hover .snake-svg polyline {
+  stroke-dashoffset: -650;
+}
+
+
+/* FLOATING DOTS */
+.bg-anim{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.dot{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  filter:blur(26px);
+  animation:float 12s infinite ease-in-out;
+}
+@keyframes float{
+ 0%{transform:translateY(0) scale(1)}
+ 50%{transform:translateY(-40px) scale(1.15)}
+ 100%{transform:translateY(0) scale(1)}
+}
+
+/* HEADER */
+header{
+  position:fixed;inset:0 0 auto 0;height:var(--header-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);
+  z-index:1200;
+}
+header nav{display:flex;gap:14px}
+header nav a{color:#fff;text-decoration:none;font-weight:600}
+header nav a:hover{color:var(--gold)}
+
+/* FOOTER */
+footer{
+  position:fixed;inset:auto 0 0 0;height:var(--footer-h);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(255,255,255,0.08);
+  font-size:0.9rem;z-index:1200;
+}
+
+/* LAYOUT */
+.wrap{width:100%;max-width:980px;margin-bottom:60px}
+.card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+/* TITLE */
+.title{text-align:center}
+.title h1{
+  color:var(--gold);
+  font-size:1.8rem;
+  margin-bottom:6px;
+}
+
+/* AUDIO BOX */
+.audio-box{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  padding:14px;border-radius:14px;
+  margin:18px auto;
+  max-width:720px;
+  position:relative;
+  transition:transform .22s ease;
+}
+.audio-title{color:var(--gold);font-weight:700;margin-bottom:8px}
+.lang-select{display:flex;gap:10px;margin-bottom:8px}
+.lang-btn{
+  flex:1;padding:8px;border-radius:8px;
+  background:rgba(255,255,255,0.08);border:none;
+  color:white;font-weight:700;cursor:pointer;
+}
+.lang-btn.active{background:var(--gold);color:#000}
+
+/* SECTION BLOCKS (unified glow area) */
+.section{
+  display:flex;gap:18px;align-items:center;
+  margin-top:22px;
+  padding:16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.10);
+  position:relative;
+  transition:transform .22s ease;
+}
+
+/* IMAGE */
+.section img{
+  width:240px;height:160px;
+  object-fit:cover;
+  border-radius:12px;
+  border:2px solid rgba(255,255,255,0.15);
+}
+@media(max-width:820px){
+  .section{flex-direction:column;align-items:flex-start}
+  .section img{width:100%;height:220px}
+}
+
+/* SOFT WHITE GLOW ON HOVER */
+.snake-target:hover{
+  transform:scale(1.02);
+  border-color:#000 !important;
+  box-shadow:
+    0 0 14px var(--glow-1),
+    0 0 35px var(--glow-2);
+}
+.snake-target:hover *{
+  color:#000 !important;
+}
+
+/* SNAKE SVG */
+.snake-svg{
+  position:absolute;top:-8px;left:-8px;
+  width:calc(100% + 16px);height:calc(100% + 16px);
+  pointer-events:none;opacity:0;transition:opacity .25s ease;
+}
+.snake-svg polyline{
+  fill:none;stroke:white;stroke-width:4;
+  stroke-dasharray:90 650;stroke-dashoffset:90;
+  transition:stroke-dashoffset .85s ease;
+}
+.snake-target:hover .snake-svg{opacity:1}
+.snake-target:hover .snake-svg polyline{stroke-dashoffset:-650}
+
+/* Action buttons */
+.actions{
+  display:flex;gap:12px;justify-content:center;
+  flex-wrap:wrap;margin-top:40px;margin-bottom:10px;
+}
+.btn{
+  padding:12px 26px;border-radius:999px;
+  background:rgba(255,255,255,0.15);
+  color:#fff;text-decoration:none;font-weight:600;
+  position:relative;transition:0.25s;
+}
+.btn:hover{
+  background:white;color:black;
+  box-shadow:0 0 35px white;transform:scale(1.04);
+}
+.btn.primary{background:var(--gold);color:#002244}
+.btn.primary:hover{background:white;color:black}
+
+/* SAFETY */
+img,.card{max-width:100%}
+</style>
+</head>
+
+<body>
+
+<!-- BG DOTS -->
+<div class="bg-anim">
+  <div class="dot" style="width:120px;height:120px;left:6%;top:70%;animation-delay:0s"></div>
+  <div class="dot" style="width:180px;height:180px;left:65%;top:80%;animation-delay:2s"></div>
+  <div class="dot" style="width:90px;height:90px;left:40%;top:75%;animation-delay:4s"></div>
+</div>
+
+<!-- SOUND -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<header>
+  <h1 style="font-size:1.1rem">Grammar With Joy</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+  </nav>
+</header>
+
+<div style="height:40px;"></div>
+
+<div class="wrap">
+<main class="card">
+
+  <div class="title">
+    <h1>Have / Had / Will Have</h1>
+    <p class="lead">Learn how to talk about what people own in the present, past, and future.</p>
+  </div>
+
+  <!-- AUDIO BOX -->
+  <div class="audio-box snake-target"
+       data-en="have_english.mp3"
+       data-ta="have_tamil.mp3"></div>
+
+  <!-- HAVE -->
+ <section class="section snake-target soft-white-glow">
+
+    <div class="content">
+      <h2>Have (present)</h2>
+      <p>We use <strong>have</strong> (or <strong>has</strong>) to talk about ownership in the present.</p>
+      <ul style="margin-top:6px;line-height:1.7">
+        <li>I <strong>have</strong> a dog. It is fluffy.</li>
+        <li>We <strong>have</strong> a garden.</li>
+        <li>Geckos <strong>have</strong> tails.</li>
+        <li>He <strong>has</strong> a guitar.</li>
+        <li>His house <strong>has</strong> three bedrooms.</li>
+      </ul>
+    </div>
+
+    <img src="imageshave.png" alt="Have example">
+  </section>
+
+  <!-- HAD -->
+ <section class="section snake-target soft-white-glow">
+
+    <img src="imageshad.png" alt="Had example">
+
+    <div class="content">
+      <h2>Had (past)</h2>
+      <p>We use <strong>had</strong> to talk about ownership in the past.</p>
+      <ul style="margin-top:6px;line-height:1.7">
+        <li>I <strong>had</strong> a dog.</li>
+        <li>The gecko <strong>had</strong> a tail.</li>
+        <li>He <strong>had</strong> a guitar.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WILL HAVE -->
+  <section class="section snake-target soft-white-glow">
+
+    <div class="content">
+      <h2>Will Have (future)</h2>
+      <p>We use <strong>will have</strong> to talk about what people will own in the future.</p>
+      <ul style="margin-top:6px;line-height:1.7">
+        <li>I <strong>will have</strong> a new dog.</li>
+        <li>We <strong>will have</strong> a garden.</li>
+        <li>He <strong>will have</strong> a new guitar.</li>
+        <li>The gecko <strong>will have</strong> a new tail.</li>
+      </ul>
+    </div>
+
+    <img src="imageswill-have.png" alt="Will have example">
+  </section>
+
+  <!-- BUTTONS -->
+  <div class="actions">
+    <a href="lesson9_video.html" class="btn primary snake-target">🎬 Watch Video</a>
+    <a href="png9.html" class="btn snake-target">🧩 Next</a>
+    <a class="btn snake-target" href="topics.html" aria-label="Back to topics">🏠 Back to Topics</a>
+
+   
+  </div>
+
+</main>
+</div>
+
+<footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+<script>
+/* AUDIO + SNAKE + SOUND */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* Hover sound */
+  const hover = document.getElementById('hoverSound');
+  function playHover(){
+    try{ hover.currentTime = 0; hover.play().catch(()=>{});}catch(e){}
+  }
+
+  /* Build audio boxes */
+  document.querySelectorAll('.audio-box').forEach(box=>{
+    const en = box.dataset.en;
+    const ta = box.dataset.ta;
+
+    box.innerHTML = `
+      <div class="audio-title">Audio Explanation</div>
+      <div class="lang-select">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ta">Tamil</button>
+      </div>
+      <audio class="audioPlayer" controls>
+        <source src="${en}" type="audio/mpeg">
+      </audio>
+    `;
+
+    const audio = box.querySelector(".audioPlayer");
+    const src = audio.querySelector("source");
+
+    box.querySelectorAll(".lang-btn").forEach(btn=>{
+      btn.onclick = ()=>{
+        box.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        src.src = (btn.dataset.lang === "en") ? en : ta;
+        audio.load();
+      };
+    });
+  });
+
+  /* Inject snake */
+  function injectSnake(target){
+    if(target.querySelector('.snake-svg')) return;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.classList.add('snake-svg');
+    svg.setAttribute('viewBox','0 0 260 60');
+    svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+
+    const cs = getComputedStyle(target);
+    if(cs.position === 'static') target.style.position='relative';
+
+    target.insertBefore(svg,target.firstChild);
+  }
+
+  document.querySelectorAll('.snake-target').forEach(el=>{
+    injectSnake(el);
+    el.addEventListener("pointerenter", playHover);
+  });
+
+  document.querySelectorAll("header nav a").forEach(a=>{
+    a.addEventListener("pointerenter", playHover);
+  });
+});
+</script>
+
+</body>
+</html>

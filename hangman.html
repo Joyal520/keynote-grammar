@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RoboLex — Hangman (Full)</title>
+<style>
+  /* ===========================
+     THEME & PAGE LAYOUT
+     =========================== */
+  :root{
+    --page-bg-dark: linear-gradient(180deg,#2b2350,#151025);
+    --page-bg-light: linear-gradient(180deg,#e9eefc,#eef3ff);
+
+    --card-bg:#ffffff;
+    --card-radius:14px;
+
+    --accent:#5b6bff;
+    --accent-2:#3ad1c7;
+
+    --muted:#6b7280;
+    --danger:#ff5f6d;
+    --success:#28c76f;
+
+    --glass: rgba(255,255,255,0.06);
+    --text-dark:#020617;
+
+    /* Robot vars */
+    --robot-body-light:#eef3ff;
+    --robot-face-light:#ffffff;
+    --robot-outline-light:#c4c9ff;
+    --robot-body-dark:#ffffff;
+    --robot-face-dark:#ffffff;
+    --robot-outline-dark:rgba(255,255,255,0.28);
+    --robot-eye:#0ea89b;
+  }
+
+  [data-theme="dark"]{
+    --page-bg: var(--page-bg-dark);
+    --card-bg:#0b0b14;
+    --card-color:#e8eef8;
+    --muted:#9aa3b2;
+  }
+  [data-theme="light"]{
+    --page-bg: var(--page-bg-light);
+    --card-bg:#ffffff;
+    --card-color:var(--text-dark);
+    --muted:#6b7280;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter,system-ui,Arial,sans-serif;
+    background:var(--page-bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--card-color);
+    -webkit-font-smoothing:antialiased;
+  }
+  .app-wrap{
+    width:100%;
+    max-width:1200px;
+    padding:20px;
+    box-sizing:border-box;
+  }
+
+  /* Screen system */
+  .screen{display:none;width:100%;height:100%;align-items:center;justify-content:center}
+  .screen.active{display:flex}
+
+  /* Buttons */
+  .btn{
+    padding:10px 14px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:white;
+    box-shadow:0 8px 20px rgba(91,107,255,0.14);
+  }
+  .btn-ghost{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.08);
+    color:var(--card-color);
+  }
+  .small{font-size:13px;color:var(--muted)}
+
+  /* --------------------------
+     HOME SCREEN
+     -------------------------- */
+  #homeScreen {flex-direction:column;gap:18px;padding:28px}
+  .home-card{
+    background:var(--card-bg);
+    color:var(--card-color);
+    padding:28px;
+    border-radius:12px;
+    box-shadow:0 16px 46px rgba(2,6,23,0.45);
+    min-width:360px;
+    text-align:center;
+  }
+
+  /* --------------------------
+     SETTINGS PANEL / Word Editor
+     -------------------------- */
+  .panel{
+    background:var(--card-bg);
+    color:var(--card-color);
+    padding:12px;
+    border-radius:10px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.18);
+  }
+  .textarea{
+    width:520px;
+    height:240px;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,0.06);
+    resize:vertical;
+    background:transparent;
+    color:var(--card-color);
+  }
+
+  /* --------------------------
+     GAME SCREEN (screenshot layout)
+     -------------------------- */
+  .game-card{
+    width:100%;
+    background:var(--card-bg);
+    border-radius:14px;
+    box-shadow:0 18px 60px rgba(11,9,26,0.45);
+    overflow:hidden;
+    display:flex;
+  }
+  .left{
+    width:46%;
+    padding:40px;
+    position:relative;
+    background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .right{
+    width:54%;
+    padding:36px 48px;
+  }
+  .robot-bg{
+    position:absolute;
+    left:20px;
+    top:32px;
+    width:44%;
+    height:72%;
+    border-radius:28px;
+    background:radial-gradient(circle at 30% 30%, rgba(91,111,255,0.12), transparent 35%);
+    filter:blur(18px);
+    pointer-events:none;
+  }
+  .energy{
+    width:74%;
+    height:12px;
+    background:var(--glass);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .energy > b{
+    height:100%;
+    display:block;
+    width:100%;
+    background:linear-gradient(90deg,var(--accent),#6b8cff);
+    transition:width .35s ease;
+  }
+  .robot{
+    width:260px;
+    height:260px;
+    transition:transform .28s ease;
+  }
+  .title-row{display:flex;justify-content:flex-end;align-items:center}
+  .level-ind{font-weight:700;color:var(--muted)}
+
+  .word-area{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:14px;
+  }
+  .word-display{
+    font-size:36px;
+    letter-spacing:8px;
+    font-weight:700;
+    color:var(--card-color);
+  }
+  .hint{font-size:14px;color:var(--muted)}
+  .incorrect{font-size:14px;color:var(--muted)}
+  .definition{font-size:13px;color:var(--muted);min-height:26px}
+
+  /* keyboard */
+  .keyboard{
+    margin-top:20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:flex-end;
+  }
+  .key{
+    width:44px;
+    height:44px;
+    border-radius:8px;
+    background:linear-gradient(180deg,#eef2ff,#e6eaff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    cursor:pointer;
+    user-select:none;
+    box-shadow:0 6px 0 rgba(0,0,0,0.06);
+    transition:transform .12s,box-shadow .12s,background-color .18s;
+  }
+  .key:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 24px rgba(91,111,255,0.12);
+  }
+  .key.disabled{
+    opacity:.36;
+    cursor:default;
+    transform:none;
+  }
+  .key.correct{
+    box-shadow:0 16px 28px rgba(40,199,111,0.18);
+    background:linear-gradient(180deg,rgba(40,199,111,0.12),#e8fff3);
+    border:1px solid rgba(40,199,111,0.15);
+  }
+  .key.wrong{
+    box-shadow:0 16px 28px rgba(255,95,109,0.18);
+    background:linear-gradient(180deg,rgba(255,95,109,0.08),#fff0f2);
+    border:1px solid rgba(255,95,109,0.12);
+  }
+
+  /* footer */
+  .card-footer{
+    background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.04));
+    padding:12px 20px;
+    text-align:center;
+    color:var(--muted);
+  }
+
+  /* popup / overlays */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(6,6,10,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:120;
+  }
+  .modal{
+    width:520px;
+    max-width:92%;
+    background:#0b0711;
+    color:#fff;
+    border-radius:14px;
+    padding:26px;
+    text-align:center;
+    box-shadow:0 18px 50px rgba(0,0,0,0.6);
+    transform:scale(0.9);
+    opacity:0;
+  }
+  .modal.show{
+    animation:pop 420ms cubic-bezier(.2,.9,.3,1) forwards;
+  }
+  @keyframes pop{
+    0%{transform:scale(.86);opacity:0}
+    70%{transform:scale(1.03);opacity:1}
+    100%{transform:scale(1);opacity:1}
+  }
+
+  .pause-menu{display:flex;flex-direction:column;gap:10px}
+
+  /* confetti-lite */
+  .confetti-wrap{
+    position:absolute;
+    pointer-events:none;
+    inset:0;
+    overflow:hidden;
+    z-index:140;
+  }
+
+  /* ROBOT STYLE + ANIMATION */
+  #robotSVG .robot-shell{
+    fill:var(--robot-body-dark);
+    stroke:var(--robot-outline-dark);
+    stroke-width:1.4;
+  }
+  #robotSVG .robot-screen{
+    fill:var(--robot-face-dark);
+  }
+  #robotSVG .robot-eye{
+    fill:var(--robot-eye);
+  }
+  #robotSVG .robot-mouth{
+    fill:var(--robot-eye);
+  }
+  #robotSVG .robot-base{
+    fill:#dfe7ff;
+  }
+  #robotSVG .robot-glow{
+    fill:rgba(91,111,255,0.08);
+  }
+  #robotSVG .antenna{
+    fill:#5b6bff;
+  }
+
+  [data-theme="light"] #robotSVG .robot-shell{
+    fill:var(--robot-body-light) !important;
+    stroke:var(--robot-outline-light) !important;
+  }
+  [data-theme="light"] #robotSVG .robot-screen{
+    fill:var(--robot-face-light) !important;
+  }
+
+  /* blinking eyes */
+  #robotSVG #eyes{
+    transform-origin:50% 50%;
+    animation:blink 4.2s infinite;
+  }
+  @keyframes blink{
+    0%,89%,100%{transform:scaleY(1)}
+    91%,93%{transform:scaleY(0.1)}
+    95%{transform:scaleY(1)}
+  }
+
+  /* panic / shutdown overrides */
+  #robotRoot.panic #eyes .robot-eye{
+    fill:#ff9b9b !important;
+  }
+  #robotRoot.shutdown #eyes .robot-eye{
+    fill:#111 !important;
+  }
+
+  /* responsive */
+  @media (max-width:920px){
+    .game-card{flex-direction:column}
+    .left,.right{width:100%;padding:18px}
+    .robot{width:200px;height:200px}
+    .robot-bg{display:none}
+    .keyboard{justify-content:center}
+    .word-display{font-size:28px}
+  }
+
+  [data-theme="light"] .key {
+  background: linear-gradient(180deg,#eef2ff,#e6eaff);
+  color: #020617; /* dark letters */
+}
+[data-theme="dark"] .key {
+  background: linear-gradient(180deg,#222834,#1a1f2a);
+  color: #ffffff; /* bright letters */
+  border: 1px solid rgba(255,255,255,0.15);
+}
+[data-theme="dark"] .key:hover {
+  box-shadow: 0 12px 24px rgba(91,111,255,0.25);
+}
+
+[data-theme="dark"] .key.correct {
+  background: linear-gradient(180deg,rgba(40,199,111,0.18),rgba(40,199,111,0.08));
+  border: 1px solid rgba(40,199,111,0.25);
+  color: #fff;
+}
+
+[data-theme="dark"] .key.wrong {
+  background: linear-gradient(180deg,rgba(255,95,109,0.18),rgba(255,95,109,0.08));
+  border: 1px solid rgba(255,95,109,0.25);
+  color: #fff;
+}
+/* UNIVERSAL BUTTON HOVER EFFECT */
+.btn {
+  transition: 
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+/* More intense highlight for primary buttons */
+.btn-primary:hover {
+  box-shadow: 0 16px 36px rgba(91,107,255,0.35);
+  filter: brightness(1.08);
+}
+
+/* ============================================
+   ADVANCED BUTTON INTERACTIONS
+   ============================================ */
+
+/* Base transition */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.32s ease,
+    background 0.4s ease,
+    border-color 0.25s ease;
+}
+
+/* Ripple effect container */
+.btn::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.45s ease, opacity 0.45s ease;
+}
+
+/* Glow outline on hover */
+.btn:hover {
+  box-shadow: 0 0 14px rgba(91,107,255,0.45), 
+              0 0 28px rgba(91,107,255,0.18);
+}
+
+/* Soft gradient shift on hover (primary buttons only) */
+.btn-primary:hover {
+  background: linear-gradient(90deg, #6d7aff, #4f5dff);
+  filter: brightness(1.12);
+}
+
+/* Ghost button with hover glow */
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+
+/* Light mode adjustments */
+[data-theme="light"] .btn-ghost:hover {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.15);
+}
+
+/* Magnetic attraction effect */
+.btn.magnetic {
+  transition: transform 0.15s ease-out;
+}
+
+
+</style>
+</head>
+<body data-theme="dark">
+  <div class="app-wrap">
+
+    <!-- HOME SCREEN -->
+    <div id="homeScreen" class="screen active" aria-hidden="false">
+      <div class="home-card">
+        <h1 style="margin:0 0 6px">RoboLex — Hangman</h1>
+        <p class="small" style="margin:0 0 18px">
+          Modern hangman with RoboLex — use your own word bank or the default 50 words.
+        </p>
+
+        <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:12px">
+          <label class="small" style="margin-right:6px">Difficulty</label>
+          <select id="homeDifficulty" style="padding:8px;border-radius:8px">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:center;margin-bottom:12px">
+          <button id="startBtn" class="btn btn-primary">Start Game</button>
+          <button id="openEditor" class="btn btn-ghost">Edit words</button>
+          <button id="homeQuit" class="btn btn-ghost">Quit</button>
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:center">
+          <button id="showLeaderboard" class="btn btn-ghost">Leaderboard</button>
+          <button id="showAchievements" class="btn btn-ghost">Achievements</button>
+          <button id="toggleTheme" class="btn btn-ghost">Toggle Theme</button>
+          <button id="toggleSound" class="btn btn-ghost">Sound: On</button>
+        </div>
+
+        <div style="margin-top:14px" class="small">
+          Tip: Paste words as <code>word|meaning</code> (one per line) in the editor.
+        </div>
+      </div>
+
+      <!-- Word Editor Panel -->
+      <div style="margin-top:16px;width:100%;display:flex;justify-content:center">
+        <div style="max-width:860px;width:100%;display:flex;gap:12px;align-items:flex-start">
+          <div style="flex:1" class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Word Editor (50)</strong>
+              <div class="small">Format: <code>word|meaning</code></div>
+            </div>
+            <textarea id="wordEditor" class="textarea" style="width:100%;height:220px;margin-top:8px"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+              <button id="loadDefaults" class="btn btn-ghost">Load Defaults</button>
+              <button id="saveWords" class="btn btn-primary">Save Words</button>
+            </div>
+            <div id="editorMessage" class="small" style="margin-top:8px;color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen" aria-hidden="true">
+      <div class="game-card" role="application" aria-label="RoboLex game">
+        <div class="left" id="leftPanel">
+          <div class="robot-bg" id="robotBg"></div>
+          <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:16px">
+            <div class="energy" title="Energy"><b id="energyFill"></b></div>
+
+            <!-- Robot -->
+            <svg class="robot" id="robotSVG" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g id="robotRoot" transform="translate(10,8)">
+                <!-- Background shell -->
+                <rect x="6" y="36" width="88" height="58" rx="10" class="robot-shell robot-glow"></rect>
+                <rect x="12" y="42" width="76" height="50" rx="8" class="robot-shell"></rect>
+
+                <!-- Head -->
+                <rect x="26" y="10" width="48" height="28" rx="10" class="robot-shell"></rect>
+
+                <!-- Face -->
+                <g id="face" transform="translate(26,14)">
+                  <rect x="0" y="0" rx="6" width="48" height="20" class="robot-screen"></rect>
+                  <g id="eyes">
+                    <circle cx="12" cy="10" r="4" class="robot-eye"></circle>
+                    <circle cx="36" cy="10" r="4" class="robot-eye"></circle>
+                  </g>
+                  <rect x="14" y="14" width="20" height="2" rx="1" class="robot-mouth"></rect>
+                </g>
+
+                <!-- Antenna -->
+                <rect x="40" y="2" width="4" height="8" rx="2" class="antenna"></rect>
+                <circle cx="42" cy="-2" r="2.6" class="antenna"></circle>
+
+                <!-- Feet -->
+                <rect x="30" y="98" width="12" height="6" rx="3" class="robot-base"></rect>
+                <rect x="66" y="98" width="12" height="6" rx="3" class="robot-base"></rect>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="right" id="rightPanel">
+          <div class="title-row">
+            <div class="level-ind">
+              Level <strong id="levelNumber">1</strong>/<span id="totalLevels">50</span>
+            </div>
+          </div>
+
+          <div class="word-area">
+            <div class="word-display" id="wordDisplay">_ _ _</div>
+            <div class="hint" id="hintText">Hint: —</div>
+            <div class="incorrect" id="incorrectText">
+              Incorrect guesses: <span id="wrongCount">0</span>/<span id="maxWrong">8</span>
+            </div>
+            <div class="definition" id="definition"></div>
+
+            <div class="keyboard" id="keyboard" aria-label="On-screen keyboard"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="small">Press <strong>Esc</strong> to Pause • Click letters or use your keyboard</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="pauseBtn" class="btn btn-ghost">Pause</button>
+            <button id="quitToHome" class="btn btn-ghost">Quit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="confetti-wrap" id="confettiWrap"></div>
+    </div>
+
+    <!-- OVERLAY: Pause / Game over -->
+    <div class="overlay" id="overlay">
+      <div class="modal" id="pauseModal" aria-hidden="true">
+        <h3 style="margin:0 0 8px">Paused</h3>
+        <div class="pause-menu">
+          <button id="resumeBtn" class="btn btn-primary">Resume</button>
+          <button id="restartLevel" class="btn btn-ghost">Restart level</button>
+          <button id="quitHomeFromPause" class="btn btn-ghost">Quit to Home</button>
+        </div>
+      </div>
+
+      <div class="modal" id="gameOverModal" aria-hidden="true">
+        <h1 style="margin:0;color:var(--danger)">GAME OVER</h1>
+        <p id="gameOverMsg" style="margin:8px 0 16px">
+          RoboLex has shut down — you used all lives.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button id="goRetry" class="btn btn-primary">Retry</button>
+          <button id="goHome" class="btn btn-ghost">Quit</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Audio files (place in same folder) -->
+  <audio id="bgm" loop src="glass-gardens-loop-371924.mp3"></audio>
+  <audio id="sfxRight" src="rightclick.mp3"></audio>
+  <audio id="sfxWrong" src="wrongclick.mp3"></audio>
+
+<script>
+/* ============================================================================
+   RoboLex — Full game engine (single-file)
+   ============================================================================ */
+(() => {
+  /* ========= CONFIG ========= */
+  const HOMEPAGE_URL = "../index.html"; // change this to your real site home
+
+  /* ========= ELEMENTS ========= */
+  const homeScreen = document.getElementById('homeScreen');
+  const gameScreen = document.getElementById('gameScreen');
+  const overlay = document.getElementById('overlay');
+  const pauseModal = document.getElementById('pauseModal');
+  const gameOverModal = document.getElementById('gameOverModal');
+  const wordEditor = document.getElementById('wordEditor');
+  const editorMessage = document.getElementById('editorMessage');
+
+  const startBtn = document.getElementById('startBtn');
+  const openEditorBtn = document.getElementById('openEditor');
+  const saveWordsBtn = document.getElementById('saveWords');
+  const loadDefaultsBtn = document.getElementById('loadDefaults');
+  const homeDifficulty = document.getElementById('homeDifficulty');
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  const toggleSoundBtn = document.getElementById('toggleSound');
+  const showLeaderboardBtn = document.getElementById('showLeaderboard');
+  const showAchievementsBtn = document.getElementById('showAchievements');
+  const homeQuitBtn = document.getElementById('homeQuit');
+
+  // Game elements
+  const levelNumberEl = document.getElementById('levelNumber');
+  const totalLevelsEl = document.getElementById('totalLevels');
+  const energyFill = document.getElementById('energyFill');
+  const wordDisplay = document.getElementById('wordDisplay');
+  const hintText = document.getElementById('hintText');
+  const wrongCount = document.getElementById('wrongCount');
+  const maxWrong = document.getElementById('maxWrong');
+  const definitionEl = document.getElementById('definition');
+  const keyboardEl = document.getElementById('keyboard');
+  const confettiWrap = document.getElementById('confettiWrap');
+  const robotBg = document.getElementById('robotBg');
+
+  const pauseBtn = document.getElementById('pauseBtn');
+  const quitToHomeBtn = document.getElementById('quitToHome');
+
+  const resumeBtn = document.getElementById('resumeBtn');
+  const restartLevelBtn = document.getElementById('restartLevel');
+  const quitHomeFromPauseBtn = document.getElementById('quitHomeFromPause');
+
+  const goRetryBtn = document.getElementById('goRetry');
+  const goHomeBtn = document.getElementById('goHome');
+
+  // Audio
+  const bgm = document.getElementById('bgm');
+  const sfxRight = document.getElementById('sfxRight');
+  const sfxWrong = document.getElementById('sfxWrong');
+
+  /* ========= THEME & SOUND ========= */
+  let theme = localStorage.getItem('robolex_theme') || 'dark';
+  document.body.setAttribute('data-theme', theme);
+
+  function updateThemeButtonLabel(){
+    toggleThemeBtn.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  updateThemeButtonLabel();
+
+  let soundOn = (localStorage.getItem('robolex_sound') !== 'off');
+  toggleSoundBtn.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
+
+  function setTheme(t){
+    theme = t === 'light' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('robolex_theme', theme);
+    updateThemeButtonLabel();
+  }
+
+  function setSound(on){
+    soundOn = !!on;
+    toggleSoundBtn.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
+    localStorage.setItem('robolex_sound', soundOn ? 'on' : 'off');
+    if(!soundOn) stopBGM();
+  }
+
+  function startBGM(){
+    if(!soundOn) return;
+    try{
+      bgm.volume = 0.28;
+      bgm.play().catch(()=>{});
+    }catch(e){}
+  }
+  function stopBGM(){
+    try{
+      bgm.pause();
+      bgm.currentTime = 0;
+    }catch(e){}
+  }
+
+  function playSfx(kind){
+    if(!soundOn) return;
+    try{
+      if(kind==='right'){
+        sfxRight.currentTime=0;
+        sfxRight.play().catch(()=>{});
+      }else if(kind==='wrong'){
+        sfxWrong.currentTime=0;
+        sfxWrong.play().catch(()=>{});
+      }
+    }catch(e){}
+  }
+
+  /* ========= WORDS ========= */
+  const DEFAULT_WORD_LINES = [
+    'cat|A small domestic animal',
+    'rain|Water that falls from clouds',
+    'boat|A small vessel for water travel',
+    'jump|To spring off the ground',
+    'table|A piece of furniture with a flat top',
+    'purple|A colour between red and blue',
+    'market|A place where people buy and sell goods',
+    'forest|Large area covered with trees',
+    'planet|A celestial body orbiting a star',
+    'teacher|A person who teaches students',
+    'pattern|A repeated decorative design',
+    'student|Someone who studies at school or college',
+    'chapter|A main division of a book',
+    'fiction|Literature created from imagination',
+    'grammar|The system of a language',
+    'library|A place where books are kept',
+    'biology|Study of living organisms',
+    'picture|A drawing or photograph',
+    'diamond|A precious stone',
+    'festival|A special celebration',
+    'sentence|A set of words expressing a full thought',
+    'computer|An electronic device for processing data',
+    'headline|Title of an article',
+    'building|A structure used for shelter or work',
+    'resource|A supply or source of help',
+    'elephant|A very large herbivorous mammal',
+    'software|Programs used by computers',
+    'language|System of communication by speech or writing',
+    'hospital|A medical institution',
+    'triangle|A three-sided polygon',
+    'revolution|A forcible overthrow or great change',
+    'photograph|An image captured by a camera',
+    'constellation|A group of stars forming a pattern',
+    'encyclopedia|A book giving information on many subjects',
+    'architecture|The art and science of designing buildings',
+    'circumstance|A fact or condition connected to an event',
+    'communication|Sharing information between people',
+    'congratulate|To praise someone for an achievement',
+    'transportation|The movement of people or goods',
+    'responsibility|Being accountable for something',
+    'extraordinary|Very unusual or remarkable',
+    'international|Between or among nations',
+    'mathematics|Study of numbers and shapes',
+    'psychology|Study of mind and behaviour',
+    'congratulation|An expression of praise for an achievement',
+    'publisher|A company that produces books or media',
+    'adventure|An unusual and exciting experience',
+    'confident|Feeling sure of oneself',
+    'creative|Having the ability to create new ideas',
+    'strategy|A plan to achieve a goal'
+  ];
+
+  const TOTAL_LEVELS = 50;
+  let WORDS = [];
+
+  function saveWordsToStorage(){
+    localStorage.setItem('robolex_words', JSON.stringify(WORDS));
+  }
+  function loadWordsFromStorage(){
+    const raw = localStorage.getItem('robolex_words');
+    if(raw){
+      try{
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length === TOTAL_LEVELS){
+          WORDS = parsed;
+          return;
+        }
+      }catch(e){}
+    }
+    WORDS = DEFAULT_WORD_LINES.slice(0,TOTAL_LEVELS).map(line=>{
+      const [word, def=''] = line.split('|').map(s=>s.trim());
+      return {w:(word||'placeholder').toLowerCase(), d:def||''};
+    });
+    saveWordsToStorage();
+  }
+
+  function populateEditor(){
+    wordEditor.value = WORDS.map(o => `${o.w}|${o.d || ''}`).join('\n');
+  }
+
+  loadWordsFromStorage();
+  totalLevelsEl.textContent = TOTAL_LEVELS;
+  populateEditor();
+
+  /* ========= STATE ========= */
+  let state = {
+    level: 0,
+    lives: 8,
+    guessed: new Set(),
+    wrong: new Set(),
+    running: false,
+    paused: false,
+    levelStartTime: null
+  };
+
+  const achievements = new Set(JSON.parse(localStorage.getItem('robolex_ach') || '[]'));
+
+  function saveAchievements(){
+    localStorage.setItem('robolex_ach', JSON.stringify(Array.from(achievements)));
+  }
+
+  /* ========= UI HELPERS ========= */
+  function showScreen(name){
+    homeScreen.classList.toggle('active', name === 'home');
+    gameScreen.classList.toggle('active', name === 'game');
+    overlay.style.display = 'none';
+    pauseModal.classList.remove('show');
+    gameOverModal.classList.remove('show');
+  }
+
+  function difficultyLivesForLevel(idx){
+    // baseline by level blocks; homeDifficulty can be used later if you want
+    if(idx < 10) return 8;
+    if(idx < 30) return 7;
+    return 6;
+  }
+
+  function updateRobotBg(){
+    if(state.level < 10){
+      robotBg.style.background = 'radial-gradient(circle at 30% 30%, rgba(91,111,255,0.12), transparent 35%)';
+    }else if(state.level < 30){
+      robotBg.style.background = 'radial-gradient(circle at 30% 30%, rgba(58,209,199,0.12), transparent 35%)';
+    }else{
+      robotBg.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,134,121,0.10), transparent 35%)';
+    }
+  }
+
+  function updateUI(){
+    levelNumberEl.textContent = state.level + 1;
+
+    const livesTotal = difficultyLivesForLevel(state.level);
+    const pct = Math.max(6, Math.round((state.lives / livesTotal) * 100));
+    energyFill.style.width = pct + '%';
+
+    wrongCount.textContent = state.wrong.size;
+    maxWrong.textContent = livesTotal;
+
+    const entry = WORDS[state.level];
+    const def = entry ? entry.d || '' : '';
+    // HIDE ANSWER: only show hint; definition field stays blank during play
+    hintText.textContent = def ? `Hint: ${def}` : 'Hint: —';
+    definitionEl.textContent = '';
+
+    updateRobotBg();
+  }
+
+  function renderWord(){
+    const entry = WORDS[state.level];
+    const word = entry ? entry.w : '';
+    const out = Array.from(word).map(ch=>{
+      if(ch === ' ') return ' ';
+      return state.guessed.has(ch) ? ch.toUpperCase() : '_';
+    });
+    wordDisplay.textContent = out.join(' ');
+  }
+
+  function preRevealLetters(){
+    const entry = WORDS[state.level];
+    if(!entry) return;
+    const letters = [...new Set(entry.w.replace(/\s+/g,'').split(''))];
+    let toReveal = 0;
+    if(state.level < 10) toReveal = Math.min(2, Math.max(1, Math.floor(letters.length * 0.2)));
+    else if(state.level < 30) toReveal = 1;
+    else toReveal = 1;
+
+    for(let i=0;i<toReveal;i++){
+      const candidates = letters.filter(c => !state.guessed.has(c));
+      if(!candidates.length) break;
+      const pick = candidates[Math.floor(Math.random()*candidates.length)];
+      state.guessed.add(pick);
+    }
+  }
+
+  function generateKeyboard(){
+    keyboardEl.innerHTML = '';
+    const alpha = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    for(const letter of alpha){
+      const btn = document.createElement('div');
+      btn.className = 'key';
+      btn.textContent = letter.toUpperCase();
+      btn.dataset.letter = letter;
+      btn.addEventListener('click', ()=> onKeyClick(letter, btn));
+      keyboardEl.appendChild(btn);
+    }
+    updateKeyboard();
+  }
+
+  function updateKeyboard(){
+    const keys = keyboardEl.querySelectorAll('.key');
+    keys.forEach(k=>{
+      const l = k.dataset.letter;
+      const disabled = state.guessed.has(l) || state.wrong.has(l) || state.paused || !state.running;
+      k.classList.toggle('disabled', disabled);
+    });
+  }
+
+  function flashBtnCorrect(btn){
+    btn.classList.add('correct');
+    setTimeout(()=>btn.classList.remove('correct'),700);
+  }
+  function flashBtnWrong(btn){
+    btn.classList.add('wrong');
+    setTimeout(()=>btn.classList.remove('wrong'),700);
+  }
+
+  function animateRobotCorrect(){
+    const svg = document.getElementById('robotSVG');
+    svg.style.transform = 'translateY(-8px)';
+    setTimeout(()=> svg.style.transform = '', 300);
+  }
+
+  function animateRobotWrong(){
+    const root = document.getElementById('robotRoot');
+    root.classList.add('panic');
+    setTimeout(()=>{
+      root.classList.remove('panic');
+    },450);
+  }
+
+  function spawnConfetti(){
+    const wrap = confettiWrap;
+    for(let i=0;i<16;i++){
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.left = (20 + Math.random()*60) + '%';
+      el.style.top = (10 + Math.random()*60) + '%';
+      el.style.width = '8px';
+      el.style.height = '12px';
+      el.style.background = Math.random()>0.5 ? 'rgba(91,107,255,0.9)' : 'rgba(40,199,111,0.9)';
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      el.style.borderRadius = '2px';
+      el.style.opacity = '0.95';
+      el.style.transition = 'transform 900ms ease-out, opacity 900ms ease-out';
+      wrap.appendChild(el);
+      setTimeout(()=> {
+        el.style.transform = `translateY(${160 + Math.random()*80}px) rotate(${Math.random()*360}deg)`;
+        el.style.opacity = '0';
+      },10);
+      setTimeout(()=> wrap.removeChild(el),1000);
+    }
+  }
+
+  function checkWinCondition(){
+    const entry = WORDS[state.level];
+    if(!entry) return;
+    const letters = entry.w.replace(/\s+/g,'').split('');
+    const solved = letters.every(ch => state.guessed.has(ch));
+    if(solved){
+      const elapsed = Date.now() - state.levelStartTime;
+      if(state.wrong.size === 0) achievements.add('perfect_level');
+      if(elapsed < 10000) achievements.add('fast_solve');
+      saveAchievements();
+
+      spawnConfetti();
+      playSfx('right');
+
+      setTimeout(()=>{
+        if(state.level < TOTAL_LEVELS - 1){
+          resetStateForLevel(state.level + 1);
+        }else{
+          // completed all levels: treat as "game over win"
+          onGameOver(true);
+        }
+      },700);
+    }
+  }
+
+  function onGameOver(isWin=false){
+    state.running = false;
+    state.paused = false;
+    stopBGM();
+
+    const root = document.getElementById('robotRoot');
+    root.classList.add('shutdown');
+
+    overlay.style.display = 'flex';
+    gameOverModal.classList.add('show');
+    pauseModal.classList.remove('show');
+
+    const entry = WORDS[state.level];
+    const answer = entry ? entry.w.toUpperCase() : '';
+    gameOverModal.querySelector('#gameOverMsg').textContent =
+      isWin
+      ? `Well done! You completed all levels.`
+      : `You used all lives. The word was: ${answer}`;
+  }
+
+  function resetRobotEyes(){
+    const root = document.getElementById('robotRoot');
+    root.classList.remove('panic');
+    root.classList.remove('shutdown');
+  }
+
+  function resetStateForLevel(idx){
+    state.level = idx;
+    state.lives = difficultyLivesForLevel(idx);
+    state.guessed = new Set();
+    state.wrong = new Set();
+    state.paused = false;
+    state.running = true;
+    state.levelStartTime = Date.now();
+
+    resetRobotEyes();
+    generateKeyboard();
+    preRevealLetters();
+    renderWord();
+    updateUI();
+    startBGM();
+  }
+
+  function openPause(){
+    if(!state.running) return;
+    state.paused = true;
+    overlay.style.display = 'flex';
+    pauseModal.classList.add('show');
+    gameOverModal.classList.remove('show');
+    stopBGM();
+    updateKeyboard();
+  }
+
+  function resume(){
+    if(!state.running) return;
+    state.paused = false;
+    overlay.style.display = 'none';
+    pauseModal.classList.remove('show');
+    startBGM();
+    updateKeyboard();
+  }
+
+  function quitToHome(){
+    state.running = false;
+    state.paused = false;
+    stopBGM();
+    resetRobotEyes();
+    overlay.style.display = 'none';
+    pauseModal.classList.remove('show');
+    gameOverModal.classList.remove('show');
+    showScreen('home');
+  }
+
+  function goHomePage(){
+    // navigate out to site home
+    window.location.href = HOMEPAGE_URL;
+  }
+
+  /* ========= INPUT HANDLERS ========= */
+  function onKeyClick(letter, btn){
+    if(state.paused || !state.running) return;
+    const entry = WORDS[state.level];
+    const word = entry ? entry.w : '';
+    if(!word) return;
+
+    if(state.guessed.has(letter) || state.wrong.has(letter)) return;
+
+    if(word.includes(letter)){
+      state.guessed.add(letter);
+      flashBtnCorrect(btn);
+      animateRobotCorrect();
+      playSfx('right');
+      renderWord();
+      updateKeyboard();
+      checkWinCondition();
+    }else{
+      state.wrong.add(letter);
+      state.lives = Math.max(0, state.lives - 1);
+      flashBtnWrong(btn);
+      animateRobotWrong();
+      playSfx('wrong');
+      updateUI();
+      updateKeyboard();
+      renderWord();
+      if(state.lives <= 0){
+        onGameOver(false);
+      }
+    }
+  }
+
+  window.addEventListener('keydown',(e)=>{
+    const key = e.key.toLowerCase();
+    if(key === 'escape'){
+      if(state.paused) resume();
+      else openPause();
+      return;
+    }
+    if(!/^[a-z]$/.test(key)) return;
+    const node = Array.from(keyboardEl.children).find(n=>n.dataset.letter === key);
+    if(node) node.click();
+  });
+
+  /* ========= EDITOR EVENTS ========= */
+  loadDefaultsBtn.addEventListener('click',()=>{
+    wordEditor.value = DEFAULT_WORD_LINES.join('\n');
+  });
+
+  saveWordsBtn.addEventListener('click',()=>{
+    const lines = wordEditor.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    const parsed = [];
+    for(let i=0;i<lines.length && parsed.length<TOTAL_LEVELS;i++){
+      const [word, def=''] = lines[i].split('|').map(s=>s.trim());
+      if(!word) continue;
+      parsed.push({w:word.toLowerCase(), d:def||''});
+    }
+    let idx = 0;
+    while(parsed.length < TOTAL_LEVELS){
+      const [word, def=''] = DEFAULT_WORD_LINES[idx % DEFAULT_WORD_LINES.length].split('|').map(s=>s.trim());
+      parsed.push({w:word.toLowerCase(), d:def||''});
+      idx++;
+    }
+    WORDS = parsed.slice(0,TOTAL_LEVELS);
+    saveWordsToStorage();
+    editorMessage.textContent = 'Saved your word list.';
+    setTimeout(()=>editorMessage.textContent = '',2200);
+  });
+
+  openEditorBtn.addEventListener('click',()=>{
+    window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  });
+
+  /* ========= START / BUTTON WIRING ========= */
+  function startGameFromHome(){
+    showScreen('game');
+    resetStateForLevel(0);
+  }
+
+  startBtn.addEventListener('click', startGameFromHome);
+
+  homeQuitBtn.addEventListener('click', goHomePage);
+
+  toggleThemeBtn.addEventListener('click',()=>{
+    const newTheme = (theme === 'dark') ? 'light' : 'dark';
+    setTheme(newTheme);
+  });
+
+  toggleSoundBtn.addEventListener('click',()=>{
+    setSound(!soundOn);
+  });
+
+  pauseBtn.addEventListener('click', openPause);
+  resumeBtn.addEventListener('click', resume);
+
+  restartLevelBtn.addEventListener('click',()=>{
+    pauseModal.classList.remove('show');
+    overlay.style.display='none';
+    resetStateForLevel(state.level);
+  });
+
+  quitHomeFromPauseBtn.addEventListener('click', quitToHome);
+  quitToHomeBtn.addEventListener('click', quitToHome);
+
+  goRetryBtn.addEventListener('click',()=>{
+    gameOverModal.classList.remove('show');
+    overlay.style.display='none';
+    resetStateForLevel(state.level);
+  });
+  goHomeBtn.addEventListener('click',()=>{
+    quitToHome();
+  });
+
+  showLeaderboardBtn.addEventListener('click',()=>{
+    alert('Leaderboard (local) — panel not implemented yet.');
+  });
+
+  showAchievementsBtn.addEventListener('click',()=>{
+    const list = Array.from(achievements);
+    alert(list.length ? 'Achievements: ' + list.join(', ') : 'No achievements yet.');
+  });
+
+  // Ensure bgm only after first user gesture
+  document.addEventListener('click',()=>{
+    if(soundOn && bgm.paused && state.running) startBGM();
+  }, {once:false});
+
+  // Expose debug
+  window.RoboLex = {WORDS, state, resetStateForLevel, quitToHome};
+
+})();
+/* ============================================
+   RIPPLE EFFECT ON CLICK
+   ============================================ */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const ripple = document.createElement('span');
+    ripple.style.position = "absolute";
+    ripple.style.left = x + "px";
+    ripple.style.top = y + "px";
+    ripple.style.width = ripple.style.height = "20px";
+    ripple.style.background = "rgba(255,255,255,0.35)";
+    ripple.style.borderRadius = "50%";
+    ripple.style.transform = "scale(0)";
+    ripple.style.opacity = "0.9";
+    ripple.style.pointerEvents = "none";
+    ripple.style.transition = "transform 0.55s ease, opacity 0.55s ease";
+
+    this.appendChild(ripple);
+
+    requestAnimationFrame(() => {
+      ripple.style.transform = "scale(18)";
+      ripple.style.opacity = "0";
+    });
+
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+/* ============================================
+   MAGNETIC BUTTON EFFECT
+   (Add class 'magnetic' to any .btn)
+   ============================================ */
+document.querySelectorAll('.btn.magnetic').forEach(button => {
+  const strength = 22; // how strong the pull is
+
+  button.addEventListener('mousemove', function(e) {
+    const rect = this.getBoundingClientRect();
+    const offsetX = e.clientX - (rect.left + rect.width / 2);
+    const offsetY = e.clientY - (rect.top + rect.height / 2);
+
+    this.style.transform = `translate(${offsetX / strength}px, ${offsetY / strength}px)`;
+  });
+
+  button.addEventListener('mouseleave', function() {
+    this.style.transform = "translate(0, 0)";
+  });
+});
+
+</script>
+</body>
+</html>

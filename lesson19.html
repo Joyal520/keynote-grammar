@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson: Adverbs — Keynote Grammar</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+  /* RESET & VARIABLES */
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+  :root{
+    --header-h:64px;
+    --footer-h:56px;
+    --bg1:#001f3f; --bg2:#003c8f; --bg3:#004d99;
+    --accent:#ffcc33;
+    --soft-white-1: rgba(255,255,255,0.45);
+    --soft-white-2: rgba(255,255,255,0.22);
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.12);
+  }
+
+  /* PAGE FLOW & SCROLL FIX */
+  html,body{height:100%;width:100%}
+  body{
+    min-height:100%;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    color:#fff;
+
+    /* header offset */
+    padding-top: calc(var(--header-h) + 18px);
+
+    /* bottom space ABOVE fixed footer so buttons are reachable */
+    padding-bottom: calc(var(--footer-h) + 200px);
+
+    display:block; /* normal document flow so scroll works */
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* BACKGROUND BLOBS & BUBBLES */
+  .blobs{position:fixed;inset:0;z-index:-3;pointer-events:none}
+  .blob{position:absolute;width:380px;height:380px;border-radius:40%;filter:blur(70px);opacity:0.32;mix-blend-mode:screen;animation:blobMove 14s infinite alternate ease-in-out}
+  .blob.b1{background:#ff6b6b;left:-6%;top:10%}
+  .blob.b2{background:#70a1ff;left:60%;top:32%;animation-duration:16s}
+  .blob.b3{background:#ffd166;left:22%;top:66%;animation-duration:18s}
+  @keyframes blobMove{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-40px) scale(1.06)}}
+
+  .bubbles{position:fixed;inset:0;z-index:-2}
+  .bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);filter:blur(18px);animation:floaty 14s infinite ease-in-out}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-30px)}100%{transform:translateY(0)}}
+
+  /* HEADER / FOOTER (fixed) */
+  header{
+    position:fixed;top:0;left:0;width:100%;height:var(--header-h);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);z-index:1200;
+  }
+  header h1{font-size:1.05rem;font-weight:600;color:#fff}
+  header nav{display:flex;gap:12px}
+  header nav a{color:#fff;text-decoration:none;font-weight:600;padding:6px 8px;border-radius:6px;transition:color .18s}
+  header nav a:hover{color:var(--accent)}
+
+  footer{
+    position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);
+    display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.32);
+    backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.06);
+    color:#fff;font-size:0.9rem;z-index:1200;padding:0 10px;
+  }
+
+  /* MAIN CONTAINER */
+  .container{
+    width:100%;
+    max-width:1000px;
+    margin:28px auto;
+    background:rgba(255,255,255,0.08);
+     padding-bottom:180px; /* real space */
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);backdrop-filter:blur(10px);
+  }
+.container{
+  padding:30px;
+  padding-bottom:140px; /* FIX */
+}
+
+  h1{text-align:center;color:var(--accent);margin-bottom:16px}
+  .lead{color:#d9e7ff;text-align:center;margin-bottom:18px}
+
+  /* AUDIO BOX (under title) */
+  .audio-box{
+    max-width:760px;margin:12px auto 20px;padding:12px;border-radius:12px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);
+    position:relative;overflow:visible;transition:transform .18s;
+  }
+  .audio-title{color:var(--accent);font-weight:700;margin-bottom:8px}
+  .lang-select{display:flex;gap:10px;margin-bottom:8px}
+  .lang-btn{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+  .lang-btn.active{background:var(--accent);color:#000}
+
+  /* SECTION BOX (these are 'small boxes' that glow) */
+  .section{
+    display:flex;gap:18px;align-items:center;padding:18px;border-radius:12px;
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);
+    margin-top:18px;flex-wrap:wrap;transition:transform .18s,box-shadow .18s;
+  }
+  .section .text{flex:1 1 60%;min-width:260px}
+  .img-box{
+    flex:1 1 35%;min-width:220px;height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);
+    display:flex;align-items:center;justify-content:center;background:#0c1a2b;
+  }
+.img-box{
+  flex:1 1 35%;
+  min-width:220px;
+  height:auto;
+  border-radius:12px;
+  overflow:visible;
+  border:none !important;          /* Remove the annoying box */
+  background:transparent !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:none !important;
+}
+
+.img-box img{
+  width:100%;                /* keeps image inside box */
+  height:200%;
+  object-fit:contain;        /* DOES NOT stretch; keeps natural proportions */
+  display:block;
+}
+
+
+  /* TABLES (small box) - no scrollbars */
+  table{
+    width:100%;margin-top:12px;border-collapse:collapse;background:rgba(255,255,255,0.05);
+    border-radius:10px;overflow:visible;transition:background .18s,color .18s;
+  }
+  th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.10);color:#eef7ff;text-align:left}
+  th{background:rgba(255,255,255,0.15);color:#ffeb99;font-weight:600}
+
+  /* BUTTONS */
+  .btns{text-align:center;margin-top:30px}
+  .btn{
+    display:inline-block;padding:10px 20px;border-radius:50px;background:rgba(255,255,255,0.15);
+    color:white;text-decoration:none;font-weight:600;margin:6px;transition:all .18s;
+  }
+  .btn:hover{transform:translateY(-3px)}
+
+  /* SOFT WHITE GLOW (applies only to small boxes) */
+  .snake-target{
+    position:relative;overflow:visible;transition:all .20s ease;
+  }
+  .snake-target:hover{
+    background:#fff !important;
+    color:#000 !important;
+    transform:scale(1.02);
+    border-color:#000 !important;
+    box-shadow:
+      0 0 18px var(--soft-white-1),
+      0 0 38px var(--soft-white-2);
+  }
+  .snake-target:hover *{color:#000 !important}
+
+  /* SNAKE (white thick outline) */
+  .snake-svg{position:absolute;top:-8px;left:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .22s ease}
+  .snake-svg polyline{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:80 600;stroke-dashoffset:80;transition:stroke-dashoffset .85s ease}
+  .snake-target:hover .snake-svg{opacity:1}
+  .snake-target:hover .snake-svg polyline{stroke-dashoffset:-600}
+
+  /* make tables also snake-targets without changing table layout */
+  .table-wrap{position:relative}
+  .table-wrap .snake-svg{pointer-events:none}
+
+  /* Buttons glow as well (user requested) */
+  .btn.snake-target:hover{
+    background:#fff !important;
+    color:#000 !important;
+    box-shadow: 0 0 30px rgba(255,255,255,0.95), 0 0 48px rgba(255,255,255,0.6);
+    transform:scale(1.03);
+  }
+
+  /* keep outer container from glowing */
+  .container:hover{transform:none}
+
+  /* Responsive */
+  @media(max-width:820px){
+    .section{flex-direction:column;align-items:flex-start}
+    .img-box{width:100%;height:200px}
+    .container{margin:18px 12px 260px}
+  }
+  </style>
+</head>
+<body>
+
+  <!-- background visuals -->
+  <div class="blobs">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+  <div class="bubbles">
+    <div class="bubble" style="width:120px;height:120px;left:10%;top:20%"></div>
+    <div class="bubble" style="width:160px;height:160px;left:75%;top:8%"></div>
+    <div class="bubble" style="width:100px;height:100px;left:50%;top:58%"></div>
+  </div>
+
+  <!-- hover sound -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <!-- header -->
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+           <a href="topics.html">Topics</a>
+    </nav>
+  </header>
+
+  <main class="container" role="main" aria-labelledby="page-title">
+    <h1 id="page-title">Adverbs</h1>
+    <p class="lead">An adverb modifies a verb, adjective, or another adverb. Learn formation, types and examples.</p>
+
+    <!-- AUDIO BOX under title (EN / TA) -->
+    <div class="audio-box snake-target" data-en="adverbs_english.mp3" data-ta="adverbs_tamil.mp3" aria-label="Audio explanation (English/Tamil)"></div>
+
+    <!-- SECTION 1 (glowing box) -->
+    <section class="section snake-target" aria-labelledby="what-title">
+      <div class="text">
+        <h2 id="what-title" style="color:var(--accent)">1. What is an Adverb?</h2>
+        <p>An adverb is a word that modifies a <strong>verb</strong>, an <strong>adjective</strong>, or another <strong>adverb</strong>.</p>
+        <ul>
+          <li><strong>Modify a verb:</strong> Snails move slowly.</li>
+          <li><strong>Modify an adjective:</strong> The movie was very interesting.</li>
+          <li><strong>Modify another adverb:</strong> He drove too quickly.</li>
+        </ul>
+      </div>
+
+      <div class="img-box snake-target" aria-hidden="true">
+        <img src="snail.gif" alt="Snail moving slowly">
+      </div>
+    </section>
+
+    <!-- FORMATION OF ADVERBS (table is snake-target) -->
+    <h2 style="margin-top:20px;color:var(--accent)">2. Formation of Adverbs</h2>
+    <div class="table-wrap snake-target" aria-hidden="false">
+      <table>
+        <tr><th>Adjective</th><th>Adverb (-ly)</th><th>Example Sentence</th></tr>
+        <tr><td>quick</td><td>quickly</td><td>She finished the task quickly.</td></tr>
+        <tr><td>slow</td><td>slowly</td><td>The turtle moved slowly.</td></tr>
+        <tr><td>careful</td><td>carefully</td><td>He checked the answers carefully.</td></tr>
+        <tr><td>happy</td><td>happily</td><td>The children played happily.</td></tr>
+        <tr><td>loud</td><td>loudly</td><td>The baby cried loudly.</td></tr>
+        <tr><td>sudden</td><td>suddenly</td><td>The lights went out suddenly.</td></tr>
+        <tr><td>quiet</td><td>quietly</td><td>They entered the room quietly.</td></tr>
+        <tr><td>easy</td><td>easily</td><td>She solved the puzzle easily.</td></tr>
+        <tr><td>gentle</td><td>gently</td><td>He touched the puppy gently.</td></tr>
+        <tr><td>brave</td><td>bravely</td><td>The firefighter acted bravely.</td></tr>
+      </table>
+    </div>
+
+    <!-- NON-LY ADVERBS -->
+    <h2 style="margin-top:22px;color:var(--accent)">3. Adverbs that Do NOT End in -ly</h2>
+    <section class="section snake-target" aria-labelledby="nonly-title">
+      <div class="text">
+        <h3 id="nonly-title" style="color:#ffd166">Common examples</h3>
+        <p>Some adverbs keep the same form as the adjective or change completely.</p>
+
+        <div class="table-wrap snake-target" aria-hidden="false">
+          <table>
+            <tr><th>Word</th><th>Note</th><th>Example Sentence</th></tr>
+            <tr><td>fast</td><td>adjective/adverb</td><td>He runs fast.</td></tr>
+            <tr><td>hard</td><td>adjective/adverb</td><td>She works hard.</td></tr>
+            <tr><td>late</td><td>adjective/adverb</td><td>They arrived late.</td></tr>
+            <tr><td>well</td><td>adverb of “good”</td><td>She sings well.</td></tr>
+            <tr><td>very</td><td>degree adverb</td><td>It is very hot.</td></tr>
+            <tr><td>soon</td><td>time adverb</td><td>The bus will come soon.</td></tr>
+            <tr><td>often</td><td>frequency adverb</td><td>He often visits us.</td></tr>
+            <tr><td>quite</td><td>degree adverb</td><td>The room is quite clean.</td></tr>
+            <tr><td>here</td><td>place adverb</td><td>Come here.</td></tr>
+            <tr><td>there</td><td>place adverb</td><td>They waited there.</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="img-box snake-target" aria-hidden="true">
+        <img src="run1.gif" alt="Adverb examples">
+      </div>
+    </section>
+
+    <!-- Buttons (glow enabled) -->
+    <div class="btns">
+      <a href="lesson_adverbs_video.html" class="btn snake-target" aria-label="Watch video">🎬 Watch Video</a>
+      <a href="png19.html" class="btn snake-target" aria-label="Take quiz">🧩 Next</a>
+      <a href="topics.html" class="btn snake-target" aria-label="Back to topics">🏠 Back to Topics</a>
+    </div>
+
+  </main>
+
+  <footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+  <!-- SCRIPTS: audio builder, snake injection, hover sound -->
+  <script>
+  (function(){
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* ---------- HOVER SOUND ---------- */
+      const hover = document.getElementById('hoverSound');
+      function playHover() {
+        if (!hover) return;
+        try { hover.currentTime = 0; hover.play().catch(()=>{}); } catch(e) {}
+      }
+
+      /* ---------- AUDIO BOX ---------- */
+      document.querySelectorAll('.audio-box').forEach(box => {
+        const en = box.dataset.en || 'adverbs_english.mp3';
+        const ta = box.dataset.ta || 'adverbs_tamil.mp3';
+        box.innerHTML = `
+          <div class="audio-title">Audio explanation</div>
+          <div class="lang-select" role="tablist" aria-label="Audio language selector">
+            <button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>
+            <button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>
+          </div>
+          <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+            <source src="${en}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+        box.querySelectorAll('.lang-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            box.querySelectorAll('.lang-btn').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+            b.classList.add('active'); b.setAttribute('aria-selected','true');
+            src.src = b.dataset.lang === 'en' ? en : ta;
+            audio.load();
+            audio.play().catch(()=>{});
+          });
+        });
+
+      });
+
+      /* ---------- SNAKE SVG INJECTION & HOVER SOUND BINDING ---------- */
+      function injectSnake(target) {
+        if (!target || target.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('viewBox','0 0 260 60');
+        svg.setAttribute('preserveAspectRatio','none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        const cs = getComputedStyle(target);
+        if (cs.position === 'static') target.style.position = 'relative';
+        target.insertBefore(svg, target.firstChild);
+      }
+
+      // Targets: small boxes, table-wraps, img-boxes, and buttons
+      const targets = Array.from(document.querySelectorAll('.snake-target'));
+      targets.forEach(el => {
+        injectSnake(el);
+        // Make focusable for keyboard users (if not naturally focusable)
+        if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+        // Play hover sound and allow keyboard focus to trigger it
+        el.addEventListener('pointerenter', playHover);
+        el.addEventListener('focus', playHover, {passive:true});
+      });
+
+      // Also attach hover sound to header nav links
+      document.querySelectorAll('header nav a').forEach(a => a.addEventListener('pointerenter', playHover));
+
+      // Small accessibility tweak: clicking a table cell should not steal focus; keep natural behavior
+
+      // Prevent unexpected horizontal overflow on some mobile browsers
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lesson 7: Action Verbs — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  /* RESET & BASE */
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+  :root{
+    --header-h:64px;
+    --footer-h:56px;
+    --glass-bg: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.12);
+    --accent-gold:#ffd24d;
+    --white:#ffffff;
+    --bg-1:#001f3f;
+    --bg-2:#003c8f;
+    --bg-3:#004d99;
+  }
+  html,body{height:100%}
+  body{
+    min-height:100vh;
+    background: linear-gradient(135deg,var(--bg-1),var(--bg-2),var(--bg-3));
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;
+    padding-top: calc(var(--header-h) + 18px);
+    padding-bottom: calc(var(--footer-h) + 18px);
+    overflow-x:hidden;
+  }
+
+  /* SUBTLE FLOATING BLOBS */
+  .animation-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+  .circle{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);filter:blur(28px);animation:float 12s infinite ease-in-out;mix-blend-mode:screen;opacity:0.55}
+  @keyframes float{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-40px) scale(1.12)}100%{transform:translateY(0) scale(1)}}
+
+  /* HEADER */
+  header{
+    position:fixed;inset:0 0 auto 0;height:var(--header-h);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);z-index:1200;
+  }
+  header h1{font-size:1.05rem;font-weight:600;color:#fff;margin-left:6px}
+  header nav{display:flex;gap:10px;align-items:center}
+  header nav a{color:#fff;text-decoration:none;font-weight:500;padding:6px 8px;border-radius:6px;transition:color .18s}
+  header nav a:hover{color:var(--accent-gold)}
+
+  /* FOOTER */
+  footer{position:fixed;inset:auto 0 0 0;height:var(--footer-h);display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.32);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.06);color:#fff;font-size:0.9rem;z-index:1200;padding:0 10px}
+
+  /* MAIN */
+  main{width:100%;display:flex;justify-content:center;padding:18px 12px 28px}
+  .lesson-container{width:100%;max-width:980px;background:var(--glass-bg);padding:24px;border-radius:14px;border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(0,0,0,0.45);backdrop-filter:blur(10px)}
+
+  .title{text-align:center;margin-bottom:10px}
+  .title h1{color:var(--accent-gold);font-size:1.9rem;margin-bottom:6px}
+  .title p{color:#dfeefe;margin-bottom:12px}
+
+  /* AUDIO BOX */
+  .audio-box{margin:12px auto 18px;max-width:720px;background:rgba(255,255,255,0.04);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
+  .audio-title{color:var(--accent-gold);font-weight:700;margin-bottom:8px}
+  .lang-select{display:flex;gap:10px;margin-bottom:10px}
+  .lang-btn{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+  .lang-btn.active{background:var(--accent-gold);color:#000}
+
+  /* Sections */
+  section{margin:14px 0}
+  h2{color:var(--accent-gold);margin-bottom:8px;font-size:1.15rem}
+  p{line-height:1.7;color:#e0e6ef;font-size:1.05rem}
+
+  /* IMAGE GRID */
+  .image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin-top:12px}
+  .img-box{
+    background:rgba(255,255,255,0.03);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);
+    text-align:center;position:relative;overflow:visible;transition:transform .18s,box-shadow .18s,background .18s;
+  }
+  .img-box img{width:100%;height:120px;object-fit:cover;border-radius:10px;border:2px solid rgba(255,255,255,0.12);display:block}
+  .img-box p{margin-top:8px;font-weight:600;color:#e8f4ff;min-height:36px}
+
+  /* BUTTONS */
+  .btns{text-align:center;margin-top:18px}
+  .btn{display:inline-block;margin:8px;padding:10px 22px;border-radius:28px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;font-weight:600;min-width:140px;text-align:center;position:relative;overflow:hidden;transition:transform .18s,background .18s}
+  .btn.primary{background:var(--accent-gold);color:#001f3f}
+  .btn:active{transform:translateY(1px)}
+
+  /* NEON SNAKE SVG (white-only) */
+  .snake-svg{position:absolute;top:-6px;left:-6px;width:calc(100% + 12px);height:calc(100% + 12px);pointer-events:none;opacity:0;transition:opacity .18s ease}
+  .snake-svg polyline{fill:transparent;stroke:var(--white);stroke-width:3;stroke-dasharray:40 460;stroke-dashoffset:40;transition:stroke-dashoffset .75s ease-in-out}
+
+  /* show snake on hover for with-snake elements */
+  .with-snake:hover .snake-svg{opacity:1}
+  .with-snake:hover .snake-svg polyline{stroke-dashoffset:-460}
+
+  /* WHITE GLOW on hover + force black text */
+  .with-snake:hover,
+  .btn:hover {
+    background: var(--white) !important;
+    color: #000 !important;
+    border-color: var(--white) !important;
+    transform: scale(1.03);
+    box-shadow: 0 0 22px rgba(255,255,255,1), 0 0 48px rgba(255,255,255,0.9);
+  }
+  .with-snake:hover * , .btn:hover * { color:#000 !important; }
+
+  /* ensure img-box children behave */
+  .img-box.with-snake:hover img{filter:none}
+
+  /* responsive */
+  @media(max-width:980px){ .img-box img{height:110px} }
+  @media(max-width:520px){
+    :root{--header-h:56px;--footer-h:56px}
+    body{padding-top:calc(var(--header-h)+10px);padding-bottom:calc(var(--footer-h)+10px)}
+    .lesson-container{padding:14px}
+    .img-box img{height:90px}
+    .title h1{font-size:1.4rem}
+    .btn{min-width:120px;padding:10px 12px}
+  }
+
+  /* safety */
+  img, table, .lesson-container {max-width:100%;box-sizing:border-box}
+</style>
+</head>
+<body>
+
+  <!-- Floating subtle blobs -->
+  <div class="animation-bg" aria-hidden="true">
+    <div class="circle" style="width:160px;height:160px;left:6%;top:18%;animation-delay:0s"></div>
+    <div class="circle" style="width:220px;height:220px;left:62%;top:58%;animation-delay:3s"></div>
+    <div class="circle" style="width:120px;height:120px;left:82%;top:8%;animation-delay:6s"></div>
+    <div class="circle" style="width:180px;height:180px;left:28%;top:78%;animation-delay:1.5s"></div>
+  </div>
+
+  <!-- Hover sound -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="lesson-container" role="main" aria-labelledby="lesson-title">
+
+      <div class="title">
+        <h1 id="lesson-title">Lesson 07: Action Verbs</h1>
+        <p>Action verbs tell what someone or something <strong>does</strong>. Physical and mental actions.</p>
+      </div>
+
+      <!-- AUDIO BOX under title -->
+      <div class="audio-box with-snake" data-en="actionverbs_english.mp3" data-ta="actionverbs_tamil.mp3" aria-label="Audio explanation"></div>
+
+      <section class="card-like">
+        <h2 style="text-align:center">💪 Physical Actions (Things we can see)</h2>
+
+        <div class="image-grid" aria-live="polite">
+          <!-- each image box gets with-snake so snake border appears and hover sound triggers -->
+          <div class="img-box with-snake" tabindex="0">
+            <img src="run.jpg" alt="Run">
+            <p>Run</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="jump.jpg" alt="Jump">
+            <p>Jump</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="eat.jpg" alt="Eat">
+            <p>Eat</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="drink.jpg" alt="Drink">
+            <p>Drink</p>
+          </div>
+        
+          <div class="img-box with-snake" tabindex="0">
+            <img src="sing.jpg" alt="Sing">
+            <p>Sing</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="sleep.jpg" alt="Sleep">
+            <p>Sleep</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="swim.jpg" alt="Swim">
+            <p>Swim</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card-like">
+        <h2 style="text-align:center">🧠 Mental Actions (Things we cannot see)</h2>
+
+        <div class="image-grid" aria-live="polite">
+          <div class="img-box with-snake" tabindex="0">
+            <img src="think.jpg" alt="Think">
+            <p>Think</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="remember.jpg" alt="Remember">
+            <p>Remember</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="forget.jpg" alt="Forget">
+            <p>Forget</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="decide.jpg" alt="Decide">
+            <p>Decide</p>
+          </div>
+        
+          <div class="img-box with-snake" tabindex="0">
+            <img src="like.jpg" alt="Like">
+            <p>Like</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="understand.jpg" alt="Understand">
+            <p>Understand</p>
+          </div>
+          <div class="img-box with-snake" tabindex="0">
+            <img src="love.jpg" alt="Love">
+            <p>Love</p>
+          </div>
+        </div>
+      </section>
+
+      <p style="margin-top:12px">Action verbs show what is <strong>happening</strong> in a sentence. Use them to describe action, motion, thought, and behaviour.</p>
+
+      <div class="btns" style="margin-top:18px">
+        <a href="lesson6_video.html" class="btn neon-snake with-snake" aria-label="Watch video">🎥 Watch Video</a>
+        <a href="png7.html" class="btn neon-snake with-snake" aria-label="Take quiz">🧩 Next</a>
+        <a href="topics.html" class="btn neon-snake with-snake" aria-label="Back to topics">🏠 Back to Topics</a>
+      </div>
+
+      <div style="height:8px"></div>
+      <div class="footer" style="margin-top:18px">© 2025 Keynote Grammar • Grammar With Joy</div>
+
+    </div>
+  </main>
+
+  <footer aria-hidden="true">&nbsp;</footer>
+
+  <!-- SCRIPTS: audio injection, snake injection, hover sound binding -->
+  <script>
+  (function(){
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* ---------- AUDIO COMPONENT ---------- */
+      const audioBoxes = document.querySelectorAll('.audio-box');
+      audioBoxes.forEach(box => {
+        const en = box.dataset.en || 'actionverbs_english.mp3';
+        const ta = box.dataset.ta || 'actionverbs_tamil.mp3';
+
+        box.innerHTML = `
+          <div class="audio-title">Audio explanation</div>
+          <div class="lang-select" role="tablist" aria-label="Audio language selector">
+            <button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>
+            <button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>
+          </div>
+          <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+            <source src="${en}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+        const langBtns = box.querySelectorAll('.lang-btn');
+
+        langBtns.forEach(b => b.addEventListener('click', () => {
+          langBtns.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+          b.classList.add('active'); b.setAttribute('aria-selected','true');
+          const lang = b.dataset.lang;
+          src.src = (lang === 'en') ? en : ta;
+          audio.load();
+          audio.play().catch(()=>{/* autoplay may be blocked */});
+        }));
+      });
+
+      /* ---------- SNAKE SVG INJECTION for .with-snake ---------- */
+      const snakeTargets = document.querySelectorAll('.with-snake');
+      snakeTargets.forEach(el => {
+        if (el.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('viewBox','0 0 260 60');
+        svg.setAttribute('preserveAspectRatio','none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        const computed = window.getComputedStyle(el).position;
+        if (computed === 'static') el.style.position = 'relative';
+        el.insertBefore(svg, el.firstChild);
+      });
+
+      /* ---------- NEON SNAKE FOR NAV BUTTONS ---------- */
+      const neonButtons = document.querySelectorAll('.btn.neon-snake');
+      neonButtons.forEach(btn => {
+        if (btn.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('viewBox','0 0 260 60');
+        svg.setAttribute('preserveAspectRatio','none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        if (window.getComputedStyle(btn).position === 'static') btn.style.position = 'relative';
+        btn.insertBefore(svg, btn.firstChild);
+      });
+
+      /* ---------- HOVER SOUND ---------- */
+      const hover = document.getElementById('hoverSound');
+      function playHover() {
+        if(!hover) return;
+        try{ hover.currentTime = 0; hover.play().catch(()=>{}); } catch(e){}
+      }
+      // Attach to with-snake elements, buttons and nav links
+      const hoverTargets = document.querySelectorAll('.with-snake, .btn, header nav a');
+      hoverTargets.forEach(el => el.addEventListener('pointerenter', playHover));
+
+      /* Accessibility: keyboard focus shows hover state for keyboard users */
+      const focusTargets = document.querySelectorAll('.with-snake, .btn');
+      focusTargets.forEach(el => {
+        el.addEventListener('focus', () => el.classList.add('keyboard-focus'), {passive:true});
+        el.addEventListener('blur', () => el.classList.remove('keyboard-focus'), {passive:true});
+      });
+
+      /* Prevent accidental horizontal overflow on iOS */
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+    });
+  })();
+  </script>
+
+</body>
+</html>

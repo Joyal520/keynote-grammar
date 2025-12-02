@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lesson 3.2: Subject & Object Pronouns — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  /* RESET & BASE */
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+  :root{
+    --header-h:64px;
+    --footer-h:56px;
+    --accent-gold:#ffd24d;
+    --soft-white-1: rgba(255,255,255,0.45);
+    --soft-white-2: rgba(255,255,255,0.22);
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.12);
+    --bg1:#001f3f; --bg2:#003c8f; --bg3:#004d99;
+  }
+
+ html,body{height:100%}
+html{width:100%}
+
+body{
+  min-height:100%;
+  background: linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  color:#fff;
+
+  padding-top: calc(var(--header-h) + 18px);
+
+  /* FINAL CLEAN FIX — keeps buttons above footer */
+  padding-bottom: 200px !important;
+
+  display:block;
+  overflow-x:hidden;
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+
+  /* subtle floating dots background */
+  .bg-anim{position:fixed;inset:0;z-index:-2;pointer-events:none}
+  .dot{position:absolute;border-radius:50%;background:rgba(255,255,255,0.05);filter:blur(22px);opacity:.6;animation:drift 12s infinite ease-in-out}
+  @keyframes drift{0%{transform:translateY(0)}50%{transform:translateY(-40px)}100%{transform:translateY(0)}}
+
+  /* HEADER + FOOTER */
+  header{
+    position:fixed;inset:0 0 auto 0;height:var(--header-h);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);z-index:1200;
+  }
+  header h1{font-size:1.05rem;font-weight:600;color:#fff}
+  header nav{display:flex;gap:12px;align-items:center}
+  header nav a{color:#fff;text-decoration:none;font-weight:600;padding:6px 8px;border-radius:6px;transition:color .18s}
+  header nav a:hover{color:var(--accent-gold)}
+
+  footer{
+    position:fixed;inset:auto 0 0 0;height:var(--footer-h);
+    display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.32);
+    backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.06);
+    color:#fff;font-size:0.9rem;z-index:1200;padding:0 10px;
+  }
+
+  /* WRAP & CARD */
+  .wrap{width:100%;max-width:980px;margin:28px auto 60px}
+  .card{
+    background:var(--glass);border:1px solid var(--glass-border);
+    padding:22px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
+    position:relative;overflow:visible;
+  }
+
+
+.card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  padding: 22px;
+  padding-bottom: 200px !important; /* FIX TO REVEAL QUIZ BUTTON */
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  position: relative;
+  overflow: visible;
+}
+
+  .title{text-align:center;margin-bottom:10px}
+  .title h1{color:var(--accent-gold);font-size:1.6rem}
+  .lead{color:#e0e6ef;margin-top:6px}
+
+  /* AUDIO BOX (under title) - small box */
+  .audio-box{
+    max-width:760px;margin:14px 0 18px;padding:12px;border-radius:12px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);
+    position:relative;overflow:visible;transition:transform .18s;
+  }
+  .audio-title{color:var(--accent-gold);font-weight:700;margin-bottom:8px}
+  .lang-select{display:flex;gap:10px;margin-bottom:8px}
+  .lang-btn{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+  .lang-btn.active{background:var(--accent-gold);color:#000}
+  .audio-box {
+    margin: 20px auto;   /* centres horizontally */
+    display: block;      /* required for auto-centering */
+}
+
+
+  /* SECTION styles */
+  section.pronoun-section{
+    display:flex;gap:18px;align-items:center;padding:12px;border-radius:12px;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .pronoun-content{flex:1;min-width:220px}
+  .image-placeholder{flex:0 0 240px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:2px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.75)}
+
+  /* TABLES as small boxes (no scrollbars) */
+  .table-wrap{overflow:visible;margin-top:10px;position:relative}
+  table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.02);border-radius:8px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);color:#e9f2ff}
+  th{color:var(--accent-gold);background:rgba(255,255,255,0.03);font-weight:700}
+
+  /* SOFT WHITE GLOW (only for small boxes / table-wrap / audio-box / pronoun sections) */
+  .snake-target{
+    transition:all .20s ease;position:relative;overflow:visible;
+  }
+  .snake-target:hover{
+    background:#fff !important;
+    color:#000 !important;
+    transform:scale(1.02);
+    border-color:#000 !important;
+    box-shadow:
+      0 0 18px var(--soft-white-1),
+      0 0 38px var(--soft-white-2);
+  }
+  .snake-target:hover *{color:#000 !important}
+
+  /* SNAKE (white thick outline) */
+  .snake-svg{position:absolute;top:-8px;left:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .22s ease}
+  .snake-svg polyline{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:80 600;stroke-dashoffset:80;transition:stroke-dashoffset .85s ease}
+  .snake-target:hover .snake-svg{opacity:1}
+  .snake-target:hover .snake-svg polyline{stroke-dashoffset:-600}
+
+  /* keep main card from glowing */
+  .card:hover{transform:none;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+
+  /* BUTTONS */
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+  .btn{padding:10px 18px;border-radius:999px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;font-weight:600;transition:all .18s}
+  .btn:hover{background:#fff;color:#000;box-shadow:0 0 22px rgba(255,255,255,0.95);transform:scale(1.03)}
+  .btn.primary{background:var(--accent-gold);color:#001f3f}
+  .btn.primary:hover{background:#fff;color:#000}
+
+  /* responsive */
+  @media(max-width:820px){
+    .pronoun-section{flex-direction:column;align-items:flex-start}
+    .image-placeholder{width:100%;height:160px}
+    .title{text-align:center}
+    .card{padding:18px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- soft animated dots -->
+  <div class="bg-anim" aria-hidden="true">
+    <div class="dot" style="width:120px;height:120px;left:6%;top:72%;animation-delay:0s"></div>
+    <div class="dot" style="width:180px;height:180px;left:70%;top:8%;animation-delay:2s"></div>
+    <div class="dot" style="width:90px;height:90px;left:40%;top:44%;animation-delay:4s"></div>
+  </div>
+
+  <!-- hover sound -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+            <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <main class="card" role="main" aria-labelledby="lesson-title">
+      <div class="title">
+        <h1 id="lesson-title"> Subject vs. Object Pronouns</h1>
+        <p class="lead">A short reference: subject pronouns do the action; object pronouns receive it.</p>
+      </div>
+
+      <!-- AUDIO BOX (under title) -->
+      <div class="audio-box snake-target" data-en="subjectobject_english.mp3" data-ta="subjectobject_tamil.mp3" aria-label="Audio explanation (English/Tamil)"></div>
+
+      <!-- SUBJECT PRONOUNS -->
+      <section class="pronoun-section snake-target" aria-labelledby="subject-title">
+        <div class="pronoun-content">
+          <h3 id="subject-title" style="margin-bottom:8px;color:#ff33cc">Subject Pronouns (The doers)</h3>
+          <p style="color:#e6f4ff;margin-bottom:8px">
+            Subject pronouns are used as the subject of the verb — they perform the action.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Pronoun</th><th>Example Sentence</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>I</td><td><strong>I</strong> like swimming.</td></tr>
+                <tr><td>We</td><td><strong>We</strong> need more time.</td></tr>
+                <tr><td>You</td><td><strong>You</strong> are a genius.</td></tr>
+                <tr><td>They</td><td><strong>They</strong> were playing in the garden.</td></tr>
+                <tr><td>He</td><td><strong>He</strong> was a lawyer.</td></tr>
+                <tr><td>She</td><td><strong>She</strong> is my friend.</td></tr>
+                <tr><td>It</td><td><strong>It</strong> is a beautiful day.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="image-placeholder" aria-hidden="true">
+          <!-- Replace with an actual image if you want -->
+          <img src="day.png" alt="Subject pronouns illustration" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+      </section>
+
+      <!-- OBJECT PRONOUNS -->
+      <section class="pronoun-section snake-target" aria-labelledby="object-title">
+        <div class="image-placeholder" aria-hidden="true">
+          <img src="Party.png" alt="Object pronouns illustration" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+
+        <div class="pronoun-content">
+          <h3 id="object-title" style="margin-bottom:8px;color:#33ccff">Object Pronouns (The receivers)</h3>
+          <p style="color:#e6f4ff;margin-bottom:8px">
+            Object pronouns are used as direct/indirect objects or after prepositions — they receive the action.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Pronoun</th><th>Example Sentence</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>me</td><td>Can you help <strong>me</strong>?</td></tr>
+                <tr><td>us</td><td>They helped <strong>us</strong>.</td></tr>
+                <tr><td>you</td><td>I will see <strong>you</strong> tomorrow.</td></tr>
+                <tr><td>them</td><td>I saw <strong>them</strong> on the beach.</td></tr>
+                <tr><td>him</td><td>She invited <strong>him</strong> to the party.</td></tr>
+                <tr><td>her</td><td>Do you know <strong>her</strong>?</td></tr>
+                <tr><td>it</td><td>I have a<strong> dog</strong>. I give <strong>it</strong> meat every day.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- NAV BUTTONS -->
+      <div class="actions" style="margin-top:20px">
+        <a class="btn primary snake-target" href="lesson3_video.html" aria-label="Back to video">← Back to Video</a>
+        <a class="btn snake-target" href="png3.html" aria-label="Take quiz">Next →</a>
+        <a class="btn snake-target" href="topics.html" aria-label="Back to topics">Back to Topics</a>
+      </div>
+    </main>
+  </div>
+
+  <footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+  <!-- SCRIPTS: audio builder, snake injection, hover sound -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      /* HOVER SOUND */
+      const hoverSound = document.getElementById('hoverSound');
+      function playHover() {
+        if(!hoverSound) return;
+        try { hoverSound.currentTime = 0; hoverSound.play().catch(()=>{}); } catch(e) {}
+      }
+
+      /* AUDIO BOX: builds EN/TA toggle */
+      document.querySelectorAll('.audio-box').forEach(box => {
+        const en = box.dataset.en || 'subjectobject_english.mp3';
+        const ta = box.dataset.ta || 'subjectobject_tamil.mp3';
+
+        box.innerHTML = `
+          <div class="audio-title">Audio explanation</div>
+          <div class="lang-select" role="tablist" aria-label="Audio language selector">
+            <button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>
+            <button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>
+          </div>
+          <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+            <source src="${en}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+        box.querySelectorAll('.lang-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            box.querySelectorAll('.lang-btn').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+            b.classList.add('active'); b.setAttribute('aria-selected','true');
+            src.src = b.dataset.lang === 'en' ? en : ta;
+            audio.load();
+            audio.play().catch(()=>{});
+          });
+        });
+      });
+
+      /* SNAKE SVG INJECTION for elements with .snake-target */
+      function injectSnake(target){
+        if(!target || target.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('viewBox','0 0 260 60');
+        svg.setAttribute('preserveAspectRatio','none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        // ensure target can contain absolutely positioned svg
+        if(getComputedStyle(target).position === 'static') target.style.position = 'relative';
+        target.insertBefore(svg, target.firstChild);
+      }
+      document.querySelectorAll('.snake-target').forEach(el => {
+        injectSnake(el);
+        // pointerenter for hover sound
+        el.addEventListener('pointerenter', playHover);
+        // keyboard focus also triggers sound & visual
+        el.addEventListener('focus', playHover, {passive:true});
+      });
+
+      // also attach hover sound to header nav links
+      document.querySelectorAll('header nav a').forEach(a => a.addEventListener('pointerenter', playHover));
+
+      // small accessibility: make snake-target focusable if not natively focusable
+      document.querySelectorAll('.snake-target').forEach(el=>{
+        if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      });
+
+      // prevent accidental horizontal overflow on some mobile browsers
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+    });
+  </script>
+</body>
+</html>

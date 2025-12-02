@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Grammar With Joy — Tubes Cursor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+/* LIGHT & DARK MODE COLORS */
+:root {
+ --bg: #001035;
+  --text: #ffffff;
+  --glass: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.18);
+  --btn: rgba(255,255,255,0.2);
+  --blob1: #ffb656;
+  --blob2: #0099ff;
+  --blob3: #ff0080;
+}
+
+body.light-mode {
+  --bg: #f2f6ff;
+  --text: #001b2e;
+  --glass: rgba(0,0,0,0.08);
+  --border: rgba(0,0,0,0.15);
+  --btn: rgba(0,0,0,0.15);
+  --blob1: #ffd28a;
+  --blob2: #66c0ff;
+  --blob3: #ff74c1;
+}
+
+/* BODY */
+body{
+  background: var(--bg);
+  color: var(--text);
+  overflow-x:hidden;
+  position: relative;
+  min-height:100vh;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* Tubes canvas (background layer) */
+#canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;          /* sits behind UI (header z-index:10) */
+  pointer-events: none; /* does not block clicks */
+  display: block;
+}
+
+/* MOVING BLOBS */
+.blob{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(70px);
+  opacity:0.7;
+  z-index:-2; /* behind the tubes canvas */
+  animation:float 18s infinite alternate ease-in-out;
+}
+.blob1{ width:420px;height:420px;background:var(--blob1);top:-80px;left:-120px; animation-duration:25s; }
+.blob2{ width:380px;height:380px;background:var(--blob2);bottom:-100px;right:-150px; animation-duration:20s; }
+.blob3{ width:300px;height:300px;background:var(--blob3);top:40%;left:70%; animation-duration:30s; }
+
+@keyframes float{
+  0%{transform:translate(0,0) scale(1);}
+  50%{transform:translate(60px,-40px) scale(1.2);}
+  100%{transform:translate(-60px,60px) scale(0.9);}
+}
+
+/* FLOATING ALPHABETS */
+.alphabet {
+    position: absolute;
+    font-size: 2rem;
+    user-select: none;
+    animation: floatUp linear infinite;
+    opacity: 0.85;
+    z-index: -1; /* behind tubes */
+}
+@keyframes floatUp {
+    0% { transform: translateY(110vh) rotateX(0deg) rotateY(0deg); opacity:0.8; }
+    100% { transform: translateY(-10vh) rotateX(720deg) rotateY(360deg); opacity:0; }
+}
+
+/* GLOWING PARTICLES */
+.particle{
+  position:fixed;
+  width:6px;height:6px;
+  background:white;
+  border-radius:50%;
+  opacity:0.7;
+  pointer-events:none;
+  filter:blur(3px);
+  animation: rise 6s linear infinite;
+  z-index: -1; /* behind tubes canvas */
+}
+@keyframes rise{
+  0%{transform:translateY(0) scale(0.5); opacity:0.6;}
+  100%{transform:translateY(-120vh) scale(1.2); opacity:0;}
+}
+
+/* HEADER */
+header{
+  position:fixed;top:0;width:100%;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 50px;
+  background: var(--glass);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(15px);
+  z-index:10; /* above the tubes canvas */
+}
+header h1{ color:var(--text);font-size:1.5rem;font-weight:600; }
+
+nav a{ color:var(--text); text-decoration:none; margin:0 15px;font-weight:500; transition:color 0.3s; }
+nav a:hover{ color:#ffcc33; box-shadow:0 0 15px rgba(255,255,0,0.8); }
+
+/* TOGGLE BUTTON */
+.mode-toggle{ cursor:pointer; padding:8px 18px; border-radius:40px; background:var(--btn); color:var(--text);
+  font-size:0.9rem;border:1px solid var(--border); transition:0.3s;
+}
+.mode-toggle:hover{ background:rgba(255,255,0,0.45); box-shadow:0 0 18px rgba(255,255,0,0.8); }
+
+/* HERO SECTION */
+.hero{
+  text-align:center;
+  margin-top:160px;
+  padding:60px 30px;
+  background: var(--glass);
+  border-radius:25px;
+  max-width:750px;
+  margin-left:auto;margin-right:auto;
+  backdrop-filter:blur(18px);
+  border:1px solid var(--border);
+  box-shadow:0 5px 40px rgba(0,0,0,0.25);
+  z-index:2; /* above the tubes canvas */
+}
+.hero h2{ font-size:2.5rem; margin-bottom:20px; }
+.hero p{ color:#e0e0e0; margin-bottom:30px; line-height:1.6; }
+
+/* BUTTONS */
+.btn{
+  background:var(--btn);
+  border:1px solid var(--border);
+  padding:12px 30px;
+  border-radius:30px;
+  color:var(--text);
+  font-weight:500;
+  text-decoration:none;
+  margin:10px;
+  transition:0.3s;
+  z-index:2;
+}
+.btn:hover{ background:rgba(255,255,0,0.45); transform:scale(1.05); box-shadow:0 0 18px rgba(255,255,0,0.8); }
+
+/* FEATURES */
+.features{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+  margin:80px 20px;
+  max-width:1100px;
+  margin-left:auto;margin-right:auto;
+  z-index:2;
+}
+
+.card{
+  background:var(--glass);
+  padding:35px;
+  border-radius:22px;
+  text-align:center;
+  color:var(--text);
+  border:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  box-shadow:0 5px 40px rgba(0,0,0,0.2);
+  transition:0.3s;
+  z-index:2;
+}
+.card:hover{ transform:translateY(-10px); box-shadow:0 10px 50px rgba(0,0,0,0.4); }
+.card-link { text-decoration: none; color: var(--text); display: block; }
+
+/* FOOTER */
+footer{ width:100%;text-align:center;padding:20px; background:var(--glass); border-top:1px solid var(--border);
+  backdrop-filter:blur(15px); position:fixed;bottom:0; z-index:10; }
+
+/* Floating play button */
+.floating-play-btn{
+  position:fixed; bottom:90px; right:30px; padding:14px 32px; border-radius:50px; background:var(--btn);
+  color:var(--text); border:1px solid var(--border); text-decoration:none; font-weight:600; font-size:1.1rem;
+  backdrop-filter:blur(15px); box-shadow:0 0 22px rgba(255,255,255,0.25); transition:0.3s; z-index:10;
+}
+.floating-play-btn:hover{ background:rgba(255,255,0,0.45); transform:scale(1.08); box-shadow:0 0 25px rgba(255,255,0,0.9); }
+
+/* Snake hover effect and others kept as-is (z-index applied where needed) */
+.neon-snake{ position: relative; overflow: hidden; z-index:10; }
+.neon-snake .snake-svg{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.neon-snake .snake-svg polyline{ fill: transparent; stroke: #ff6f61; stroke-width: 3px; stroke-dasharray: 40 460; stroke-dashoffset: 40; transition: .8s ease-in-out; }
+.neon-snake:hover { background-color: #ff6f61 !important; color: #000 !important; box-shadow: 0 0 10px #ff6f61, 0 0 40px #ff6f61, 0 0 80px #ff6f61; }
+.neon-snake:hover .snake-svg polyline { stroke-dashoffset: -460; }
+
+/* Level card */
+.level-card { cursor: pointer; transition: transform .2s, box-shadow .2s; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 18px; z-index:2; }
+.level-card:hover { transform: translateY(-6px); box-shadow: 0 8px 18px rgba(0,0,0,0.35); }
+.level-info { display:flex; justify-content:space-between; margin-top:12px; font-size:14px; color:var(--muted); }
+.stars { color: var(--accent); letter-spacing:3px; }
+
+/* Light mode hero text fix */
+body.light-mode .hero p, body.light-mode .hero h2 { color: #000 !important; }
+
+/* UNIVERSAL SNAKE HOVER EFFECT FOR CARDS + BUTTONS */
+.snake-hover {
+    position: relative;
+    overflow: hidden;
+    z-index: 5;
+}
+
+.snake-hover .snake-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.snake-hover .snake-svg polyline {
+    fill: transparent;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-dasharray: 40 460;
+    stroke-dashoffset: 40;
+    transition: .8s ease-in-out;
+}
+
+/* Hover animation */
+.snake-hover:hover .snake-svg polyline {
+    stroke-dashoffset: -460;
+}
+
+/* White glow + black text on hover */
+.snake-hover:hover {
+    background: #ffffff !important;
+    color: #000 !important;
+    border-color: #fff !important;
+    box-shadow: 
+        0 0 25px #ffffff,
+        0 0 50px #ffffff,
+        0 0 90px #ffffff;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<!-- TUBES CANVAS (background) -->
+<canvas id="canvas"></canvas>
+
+<!-- MOVING BLOBS -->
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<!-- GLOW PARTICLES (script will append with z-index:-1) -->
+<script>
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'vw';
+  p.style.top=(Math.random()*100+100)+'vh';
+  p.style.animationDuration=(4+Math.random()*3)+'s';
+  p.style.zIndex = '-1'; // ensure behind the tubes canvas
+  document.body.appendChild(p);
+}
+</script>
+
+<!-- FLOATING ALPHABETS -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const colors = ['#4ecca3', '#ff6b6b', '#feca57', '#57a7f3', '#a55eea', '#ffffff'];
+
+    function createAlphabet() {
+        const char = document.createElement('span');
+        char.classList.add('alphabet');
+
+        char.textContent = alphabets[Math.floor(Math.random() * alphabets.length)];
+        char.style.left = `${Math.random() * 100}vw`;
+        char.style.animationDuration = `${Math.random() * 10 + 10}s`;
+        char.style.animationDelay = `${Math.random() * 5}s`;
+        char.style.fontSize = `${Math.random() * 1.5 + 1.2}rem`;
+
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        char.style.color = randomColor;
+        char.style.textShadow = `0 0 8px ${randomColor}, 0 0 12px ${randomColor}`;
+
+        body.appendChild(char);
+
+        const duration = parseFloat(char.style.animationDuration) * 1000;
+        const delay = parseFloat(char.style.animationDelay) * 1000;
+
+        setTimeout(() => {
+            if (char.parentNode) {
+                char.parentNode.removeChild(char);
+            }
+        }, duration + delay);
+    }
+
+    setInterval(createAlphabet, 200);
+});
+</script>
+
+<header>
+  <h1>Grammar With Joy</h1>
+  <nav>
+    <a href="topics.html">Topics</a>
+    <a href="start.html">Test centre</a>
+    <a href="library.html">Library</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <button class="mode-toggle" onclick="toggleMode()">Toggle Mode</button>
+</header>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle("light-mode");
+}
+</script>
+
+<main>
+  <section class="hero">
+    <h2>Welcome to Grammar With Joy</h2>
+    <p>
+      Master English grammar in a fun, interactive, and engaging way!
+      Learn grammar, practice quizzes, and explore AI-powered lessons
+      built from the Keynote Grammar book.
+    </p>
+    <a href="signup.html" class="btn snake-hover">
+  Start Learning
+  <svg class="snake-svg" height="50" width="200">
+    <polyline points="0,0 200,0 200,50 0,50 0,0"></polyline>
+  </svg>
+</a>
+    <a href="taketest.html" class="btn">Test Your Level</a>
+  </section>
+
+  <section class="features">
+    <div class="card level-card snake-hover" onclick="openLevel(1)">
+  <svg class="snake-svg" height="50" width="200">
+    <polyline points="0,0 200,0 200,200 0,200 0,0"></polyline>
+  </svg>
+  <h3>Level 1 — Sentence Builder</h3>
+      <p>Start building sentence with simple words with clicks, sounds, and animations.</p>
+      <div class="level-info">
+        <span class="stars">★ ★ ★</span>
+        <span class="status">Unlocked</span>
+      </div>
+    </div>
+
+    <a href="gamepage.html" class="card card-link">
+      <h3>🎮 Play</h3>
+      <p>Test your knowledge with fun quizzes and games.</p>
+    </a>
+
+    <div class="card">
+      <h3>🏆 Track</h3>
+      <p>Monitor your progress and see your improvement.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 Grammar With Joy | Designed by R. J. Roshan
+</footer>
+
+<!-- FLOATING PLAY OPTIONS BUTTON -->
+<a href="gamepage.html" class="floating-play-btn">🎮 Play</a>
+
+  <svg class="snake-svg" height="50" width="200">
+    <polyline points="0,0 200,0 200,50 0,50 0,0"></polyline>
+  </svg>
+</a>
+
+<!-- HOVER SOUND (keeps original behavior) -->
+<audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const hoverSound = document.getElementById("hoverSound");
+    const interactiveItems = document.querySelectorAll(".btn, nav a, .mode-toggle, .floating-play-btn");
+
+    interactiveItems.forEach(item => {
+        item.addEventListener("mouseenter", () => {
+            if (!hoverSound) return;
+            try {
+                hoverSound.currentTime = 0;
+                hoverSound.play();
+            } catch (e) {
+                // autoplay restrictions may block sound
+            }
+        });
+    });
+});
+</script>
+
+<!-- GSAP TAP ANIMATION FOR PLAY BUTTON -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+const playBtn = document.querySelector('.floating-play-btn');
+if (playBtn) {
+  playBtn.addEventListener('click', function(){
+      gsap.fromTo(this, {scale:1}, {scale:0.88, duration:0.12, yoyo:true, repeat:1, ease:"power1.out"});
+  });
+}
+function openLevel(num){
+  if(num === 1){
+    window.location.href = "sentence builder/sentencehome.html";
+  }
+}
+</script>
+
+<!-- TUBES CURSOR MODULE (background) -->
+<script type="module">
+  import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+
+  // initialize the tubes cursor on our canvas
+  const canvas = document.getElementById('canvas');
+
+  // Guard: module might fail to load in some environments; wrap in try/catch
+  try {
+    const app = TubesCursor(canvas, {
+      tubes: {
+        colors: ["#f967fb", "#53bc28", "#6958d5"],
+        lights: {
+          intensity: 200,
+          colors: ["#83f36e", "#fe8a2e", "#ff008a", "#60aed5"]
+        },
+        tubeWidth: 6,            // optional: width of tube
+        tubeFade: 0.9            // optional: fade factor
+      },
+      // optional settings for performance
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+      autoResize: true
+    });
+
+    // On click: randomise colors and lights (keeps interaction you had)
+    document.body.addEventListener('click', () => {
+      const colors = randomColors(3);
+      const lightsColors = randomColors(4);
+      app.tubes.setColors(colors);
+      app.tubes.setLightsColors(lightsColors);
+    });
+
+    // Utility: random hex colors
+    function randomColors (count) {
+      return new Array(count).fill(0).map(() => "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'));
+    }
+
+    // Resize handling — keep canvas full-screen
+    window.addEventListener('resize', () => {
+      if (app && app.resize) app.resize();
+    });
+  } catch (err) {
+    console.error('TubesCursor failed to initialize:', err);
+  }
+</script>
+
+</body>
+</html>

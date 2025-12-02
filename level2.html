@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Keynote Grammar — Level 2 (4-word Sentences)</title>
+<style>
+:root{
+  --bg:#0f1629; --panel:#0b1b33; --tile:#1e2a47; --tile-hover:#2b3f64;
+  --accent:#ffb800; --accent-2:#00eaff; --text:#ffffff; --muted:#9aa7c7;
+  --answer-bg:#ffeb3b; --answer-color:#000;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+}
+.app{max-width:920px;margin:18px auto;padding:18px}
+.header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.title{font-weight:700;font-size:20px}
+.controls{display:flex;gap:8px;align-items:center}
+select,button{font-size:14px;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.small{font-size:13px;padding:6px 10px;color:var(--muted)}
+
+/* progress & xp */
+#overall-bar{width:100%;height:12px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;margin:8px 0 18px}
+#overall-fill{width:0%;height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .5s ease}
+
+/* main panel */
+.panel{background:var(--panel);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.45)}
+
+/* play area */
+.top-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.progress-text{color:var(--muted);font-size:14px}
+.xp-wrap{flex:1;min-width:160px;margin-left:12px}
+#xp-bar{width:100%;height:12px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden}
+#xp-fill{width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .4s}
+
+/* stars */
+.stars{display:flex;gap:6px;align-items:center}
+.star{font-size:22px;color:rgba(255,255,255,0.18);transition:color .25s}
+.star.active{color:var(--accent)}
+
+/* bank and answer */
+.bank-answer{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.word-bank,.answer-zone{flex:1 1 320px;min-height:120px;border-radius:10px;padding:12px;border:2px dashed rgba(255,255,255,0.04);background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent);position:relative}
+.zone-title{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+
+/* punctuation hint badge */
+.punct-badge{font-weight:700;color:var(--accent);background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:8px;font-size:13px}
+
+/* word tiles */
+.word-tile{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;margin:8px 8px 0 0;border-radius:10px;cursor:pointer;background:var(--tile);color:var(--text);font-weight:700;user-select:none;transition:transform .12s ease, background .12s, box-shadow .12s;box-shadow:0 6px 18px rgba(2,6,23,0.28)}
+.word-tile:hover{transform:translateY(-6px) scale(1.02);background:var(--tile-hover)}
+.word-tile.answer-tile{background:var(--answer-bg)!important;color:var(--answer-color)!important;box-shadow:0 10px 26px rgba(0,0,0,0.22)}
+.word-tile.disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* actions */
+.actions{display:flex;gap:10px;margin-top:14px;align-items:center;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#000;padding:10px 14px;border-radius:10px;font-weight:700}
+.btn-ghost{background:rgba(255,255,255,0.03);color:var(--text);padding:8px 12px;border-radius:10px}
+
+/* message */
+#message{margin-top:12px;text-align:center;font-size:16px;min-height:22px}
+
+/* confetti canvas */
+#confetti-canvas{position:fixed;pointer-events:none;top:0;left:0;width:100%;height:100%;z-index:9999}
+/* fireworks */
+#fireworks-overlay{position:fixed;pointer-events:none;top:0;left:0;width:100%;height:100%;z-index:10000;display:none}
+
+/* wrong shake */
+@keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.shake{animation:shake .6s cubic-bezier(.36,.07,.19,.97)}
+
+/* small visual for punctuation tile */
+.word-tile.punct { font-weight:900; background: rgba(255,255,255,0.06); color: var(--text); }
+
+/* responsive */
+@media (max-width:720px){.bank-answer{flex-direction:column}.word-bank,.answer-zone{width:100%}.top-row{flex-direction:column;align-items:flex-start}.xp-wrap{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+
+<div class="app" id="appRoot">
+  <div class="header">
+    <div>
+      <div class="title">Keynote Grammar — Level 2 (4-word sentences)</div>
+      <div style="font-size:13px;color:var(--muted)">Click words to build the sentence • Punctuation tiles included • Need 8/10 to pass</div>
+    </div>
+
+    <div class="controls">
+      <button id="homeBtn" class="btn-ghost">Home</button>
+      <button id="resetBtn" class="btn-ghost">Reset</button>
+      <button id="soundToggle" class="btn-ghost">Sound: On</button>
+    </div>
+  </div>
+
+  <div id="overall-bar"><div id="overall-fill"></div></div>
+
+  <div class="panel" id="mainPanel">
+    <!-- intro -->
+    <div id="introBlock">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <div style="min-width:220px">
+          <div style="font-weight:600">Level 2 — Sub-level <span id="intro-sub-num">1</span></div>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px">Each sub-level contains 10 scrambled 4-word sentences (punctuation tiles included).</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="startBtn" class="btn-primary">Start Sub-level</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- gameplay -->
+    <div id="playBlock" style="display:none">
+      <div class="top-row">
+        <div>
+          <div id="progressTxt" class="progress-text">Question 1 of 10</div>
+          <div style="font-size:13px;color:var(--muted)">Sub-level: <strong id="currentSub">1</strong></div>
+        </div>
+
+        <div class="xp-wrap">
+          <div style="font-size:13px;color:var(--muted)">XP</div>
+          <div id="xp-bar"><div id="xp-fill"></div></div>
+        </div>
+
+        <div class="stars" title="Stars">
+          <span class="star" id="star1">★</span>
+          <span class="star" id="star2">★</span>
+          <span class="star" id="star3">★</span>
+        </div>
+      </div>
+
+      <div class="bank-answer">
+        <div class="word-bank" id="wordBank">
+          <div class="zone-title">Word Bank <span id="punctHint" class="punct-badge" style="display:none">?</span></div>
+        </div>
+
+        <div class="answer-zone" id="answerZone">
+          <div class="zone-title">Your Answer (click tiles to move)</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="undoBtn" class="btn-ghost">Undo</button>
+        <button id="submitBtn" class="btn-primary">Submit Answer</button>
+      </div>
+
+      <div id="message"></div>
+    </div>
+
+    <!-- completion -->
+    <div id="completeBlock" style="display:none;text-align:center;margin-top:12px">
+      <div style="font-weight:700;font-size:18px">Sub-level complete</div>
+      <div style="margin-top:8px;color:var(--muted)">Score: <strong id="finalScore">0</strong>/10</div>
+      <div id="passMsg" style="margin-top:8px;color:var(--muted)"></div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button id="nextBtn" class="btn-primary">Next Sub-level</button>
+        <button id="retryBtn" class="btn-ghost">Retry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+<canvas id="fireworks-overlay"></canvas>
+
+<!-- Place your click sound as rightclick.mp3 next to this file -->
+<audio id="clickSound" src="rightclick.mp3" preload="auto"></audio>
+
+<script>
+/* -------------------------------
+   Level 2 — Final HTML + JS
+   ------------------------------- */
+
+/* Questions */
+const SUB_LEVELS = [
+  [
+    { scrambled:["i","am","eating","rice"], answer:"I am eating rice.", type:"positive" },
+    { scrambled:["she","is","reading","books"], answer:"She is reading books.", type:"positive" },
+    { scrambled:["they","are","playing","games"], answer:"They are playing games.", type:"positive" },
+    { scrambled:["we","are","learning","today"], answer:"We are learning today.", type:"positive" },
+    { scrambled:["he","is","watching","tv"], answer:"He is watching TV.", type:"positive" },
+    { scrambled:["i","will","finish","homework"], answer:"I will finish homework.", type:"positive" },
+    { scrambled:["she","bought","a","book"], answer:"She bought a book.", type:"positive" },
+    { scrambled:["they","found","the","cat"], answer:"They found the cat.", type:"positive" },
+    { scrambled:["we","made","a","cake"], answer:"We made a cake.", type:"positive" },
+    { scrambled:["he","opened","the","box"], answer:"He opened the box.", type:"positive" }
+  ],
+  [
+    { scrambled:["are","you","coming","today"], answer:"Are you coming today?", type:"yesno" },
+    { scrambled:["do","they","like","pizza"], answer:"Do they like pizza?", type:"yesno" },
+    { scrambled:["does","she","know","him"], answer:"Does she know him?", type:"yesno" },
+    { scrambled:["is","it","raining","now"], answer:"Is it raining now?", type:"yesno" },
+    { scrambled:["will","you","help","me"], answer:"Will you help me?", type:"yesno" },
+    { scrambled:["have","you","seen","this"], answer:"Have you seen this?", type:"yesno" },
+    { scrambled:["are","they","at","home"], answer:"Are they at home?", type:"yesno" },
+    { scrambled:["do","we","start","now"], answer:"Do we start now?", type:"yesno" },
+    { scrambled:["did","he","call","you"], answer:"Did he call you?", type:"yesno" },
+    { scrambled:["can","you","open","door"], answer:"Can you open the door?", type:"yesno" }
+  ],
+  [
+    { scrambled:["where","are","you","going"], answer:"Where are you going?", type:"wh" },
+    { scrambled:["what","did","she","buy"], answer:"What did she buy?", type:"wh" },
+    { scrambled:["who","is","at","door"], answer:"Who is at the door?", type:"wh" },
+    { scrambled:["when","will","we","meet"], answer:"When will we meet?", type:"wh" },
+    { scrambled:["why","is","he","late"], answer:"Why is he late?", type:"wh" },
+    { scrambled:["which","one","do","you"], answer:"Which one do you?", type:"wh" },
+    { scrambled:["how","did","they","come"], answer:"How did they come?", type:"wh" },
+    { scrambled:["whose","book","is","this"], answer:"Whose book is this?", type:"wh" },
+    { scrambled:["what","are","you","doing"], answer:"What are you doing?", type:"wh" },
+    { scrambled:["where","did","you","go"], answer:"Where did you go?", type:"wh" }
+  ],
+  [
+    { scrambled:["please","open","the","door"], answer:"Please open the door.", type:"imperative" },
+    { scrambled:["wash","your","hands","now"], answer:"Wash your hands now.", type:"imperative" },
+    { scrambled:["bring","me","that","book"], answer:"Bring me that book.", type:"imperative" },
+    { scrambled:["sit","down","and","listen"], answer:"Sit down and listen.", type:"imperative" },
+    { scrambled:["turn","off","the","light"], answer:"Turn off the light.", type:"imperative" },
+    { scrambled:["finish","your","meal","quickly"], answer:"Finish your meal quickly.", type:"imperative" },
+    { scrambled:["write","the","answer","now"], answer:"Write the answer now.", type:"imperative" },
+    { scrambled:["close","the","window","please"], answer:"Close the window please.", type:"imperative" },
+    { scrambled:["bring","the","bags","here"], answer:"Bring the bags here.", type:"imperative" },
+    { scrambled:["stand","up","and","speak"], answer:"Stand up and speak.", type:"imperative" }
+  ],
+  [
+    { scrambled:["she","is","very","kind"], answer:"She is very kind.", type:"positive" },
+    { scrambled:["do","you","want","tea"], answer:"Do you want tea?", type:"yesno" },
+    { scrambled:["where","is","my","pen"], answer:"Where is my pen?", type:"wh" },
+    { scrambled:["please","pass","the","salt"], answer:"Please pass the salt.", type:"imperative" },
+    { scrambled:["they","bought","a","car"], answer:"They bought a car.", type:"positive" },
+    { scrambled:["will","he","come","soon"], answer:"Will he come soon?", type:"yesno" },
+    { scrambled:["what","did","you","say"], answer:"What did you say?", type:"wh" },
+    { scrambled:["pick","up","the","keys"], answer:"Pick up the keys.", type:"imperative" },
+    { scrambled:["we","found","new","home"], answer:"We found a new home.", type:"positive" },
+    { scrambled:["can","you","play","piano"], answer:"Can you play the piano?", type:"yesno" }
+  ]
+];
+
+/* ---------- helpers ---------- */
+function qs(s){ return document.querySelector(s) }
+function qsa(s){ return Array.from(document.querySelectorAll(s)) }
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5) }
+
+/* ---------- state ---------- */
+let currentSub = 0
+let questions = []
+let qIndex = 0
+let score = 0
+let xp = 0
+let bankHistory = []
+let overallProgress = 0
+
+/* ---------- elements ---------- */
+const startBtn = qs('#startBtn'), resetBtn = qs('#resetBtn'), homeBtn = qs('#homeBtn'), soundToggle = qs('#soundToggle')
+const introSubNum = qs('#intro-sub-num'), overallFill = qs('#overall-fill')
+const playBlock = qs('#playBlock'), introBlock = qs('#introBlock'), completeBlock = qs('#completeBlock')
+const progressTxt = qs('#progressTxt'), currentSubTxt = qs('#currentSub'), xpFill = qs('#xp-fill')
+const starEls = [qs('#star1'), qs('#star2'), qs('#star3')]
+const wordBank = qs('#wordBank'), answerZone = qs('#answerZone'), undoBtn = qs('#undoBtn'), submitBtn = qs('#submitBtn')
+const messageEl = qs('#message'), finalScoreEl = qs('#finalScore'), passMsgEl = qs('#passMsg'), nextBtn = qs('#nextBtn'), retryBtn = qs('#retryBtn')
+const punctHint = qs('#punctHint'), clickAudio = qs('#clickSound')
+
+/* ---------- audio ---------- */
+const AudioCtx = window.AudioContext || window.webkitAudioContext
+let audioCtx = null
+try{ audioCtx = new AudioCtx() }catch(e){ audioCtx = null }
+let soundOn = true
+soundToggle && soundToggle.addEventListener('click', ()=>{ soundOn = !soundOn; soundToggle.textContent = 'Sound: ' + (soundOn ? 'On' : 'Off') })
+
+function playTone(freq, type='sine', len=0.12, gain=0.12){
+  if(!audioCtx || !soundOn) return
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain()
+  o.type = type; o.frequency.value = freq
+  g.gain.setValueAtTime(gain, audioCtx.currentTime)
+  o.connect(g); g.connect(audioCtx.destination)
+  o.start(); setTimeout(()=>{ try{o.stop()}catch(e){} }, len*1000)
+}
+function playCorrect(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(880,'sine',0.09,0.08); setTimeout(()=>playTone(1100,'sine',0.09,0.06),90); setTimeout(()=>playTone(1320,'sine',0.09,0.05),180) }
+function playWrong(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(160,'sawtooth',0.26,0.12) }
+function playComplete(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(660,'triangle',0.09,0.12); setTimeout(()=>playTone(880,'triangle',0.09,0.12),120); setTimeout(()=>playTone(1320,'triangle',0.14,0.12),240) }
+
+/* ---------- confetti/fireworks ---------- */
+const confCanvas = qs('#confetti-canvas'), cctx = confCanvas ? confCanvas.getContext('2d') : null
+const fwCanvas = qs('#fireworks-overlay'), fwCtx = fwCanvas ? fwCanvas.getContext('2d') : null
+function resizeCanvas(){ if(confCanvas){ confCanvas.width = innerWidth; confCanvas.height = innerHeight } if(fwCanvas){ fwCanvas.width = innerWidth; fwCanvas.height = innerHeight } }
+window.addEventListener('resize', resizeCanvas); resizeCanvas()
+
+let confetti = [], confRunning = false
+function launchConfetti(count=50){
+  if(!cctx) return
+  confetti = []
+  const colors = ['#ffda32','#ff6b6b','#00eaff','#00c2a8','#ffd45e','#7b61ff']
+  for(let i=0;i<count;i++) confetti.push({ x: Math.random()*confCanvas.width, y: -Math.random()*confCanvas.height, vx:(Math.random()-0.5)*4, vy:2+Math.random()*6, r:4+Math.random()*8, col: colors[Math.floor(Math.random()*colors.length)], rot: Math.random()*360 })
+  if(!confRunning){ confRunning = true; requestAnimationFrame(stepConfetti) }
+}
+function stepConfetti(){
+  if(!cctx) return
+  cctx.clearRect(0,0,confCanvas.width,confCanvas.height)
+  confetti.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.rot+=p.vx; cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180); cctx.fillStyle=p.col; cctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6); cctx.restore() })
+  confetti = confetti.filter(p=>p.y < confCanvas.height + 50)
+  if(confetti.length) requestAnimationFrame(stepConfetti); else confRunning = false
+}
+
+/* simple fireworks burst */
+let fireworks = [], fwRunning = false
+function spawnFireworksBurst(x=fwCanvas.width/2, y=fwCanvas.height/3, count=20){
+  if(!fwCtx) return
+  for(let i=0;i<count;i++){
+    const angle = (Math.PI*2/count)*i
+    fireworks.push({ x,y, vx: Math.cos(angle)*(2+Math.random()*4), vy: Math.sin(angle)*(2+Math.random()*4), life:80+Math.floor(Math.random()*60), r:2+Math.random()*3, color: `hsl(${Math.floor(Math.random()*360)},80%,60%)` })
+  }
+  if(!fwRunning){ fwRunning=true; fwCanvas.style.display='block'; requestAnimationFrame(stepFireworks) }
+}
+function stepFireworks(){
+  if(!fwCtx) return
+  fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height)
+  fireworks.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.03; p.life--; fwCtx.beginPath(); fwCtx.fillStyle = p.color; fwCtx.globalAlpha = Math.max(0,p.life/120); fwCtx.arc(p.x,p.y,p.r,0,Math.PI*2); fwCtx.fill() })
+  fireworks = fireworks.filter(p=>p.life>0)
+  if(fireworks.length) requestAnimationFrame(stepFireworks); else { fwRunning=false; fwCanvas.style.display='none' }
+}
+
+/* ---------- game logic ---------- */
+
+function saveProgressReset(){ currentSub = 0; overallProgress = 0; introSubNum.textContent = currentSub+1; updateOverallBar() }
+resetBtn && resetBtn.addEventListener('click', ()=>{ if(!confirm('Reset progress?')) return; saveProgressReset(); alert('Progress reset') })
+homeBtn && homeBtn.addEventListener('click', ()=>{ try{ window.location.href='index.html' }catch(e){} })
+
+startBtn && startBtn.addEventListener('click', startSubLevel)
+
+/* Start sub-level */
+function startSubLevel(){
+  questions = shuffle([...SUB_LEVELS[currentSub]])
+  qIndex = 0; score = 0; xp = 0; bankHistory = []
+  updateXP(); updateStars(0)
+  currentSubTxt && (currentSubTxt.textContent = currentSub + 1)
+  introBlock.style.display = 'none'; completeBlock.style.display = 'none'; playBlock.style.display = 'block'
+  progressTxt.textContent = `Question ${qIndex+1} of 10`
+  renderQuestion()
+}
+
+/* Render question — create tiles with correct casing and include punctuation tile randomized */
+function renderQuestion(){
+  messageEl.textContent = ''
+  const q = questions[qIndex]; if(!q) return
+
+  // show hint badge when punctuation is relevant
+  if(q.type === 'yesno' || q.type === 'wh'){ punctHint.style.display = 'inline-block'; punctHint.textContent = '?' } else { punctHint.style.display = 'none' }
+
+  // clear areas
+  wordBank.innerHTML = '<div class="zone-title">Word Bank <span style="opacity:.6;margin-left:8px;font-size:12px">Click to add</span></div>'
+  answerZone.innerHTML = '<div class="zone-title">Your Answer (click tiles to move)</div>'
+  bankHistory = []
+
+  // Build mapping from normalized token -> preferred display form using correct answer
+  const correct = q.answer.trim()
+  // get words excluding trailing punctuation for mapping (split by space)
+  const correctTokens = correct.replace(/[?!\.]+$/,'').split(/\s+/)
+
+  // helper to find display form for a scrambled token (case-insensitive)
+  function findDisplayForm(token){
+    const norm = token.replace(/[^\w]/g,'').toLowerCase()
+    for(let w of correctTokens){
+      if(w.replace(/[^\w]/g,'').toLowerCase() === norm) return w
+    }
+    // fallback: if it's the first word, capitalise first char
+    const first = correctTokens[0] || ''
+    if(first.replace(/[^\w]/g,'').toLowerCase() === norm) return first
+    // else return token as-is (lowercase)
+    return token
+  }
+
+  // create tiles list from scrambled + punctuation tile (as separate)
+  let tiles = q.scrambled.map(s => s) // copy
+  // Add punctuation tile (Option B: punctuation is a tile and must be clicked)
+  const punct = (q.type === 'yesno' || q.type === 'wh') ? '?' : '.'
+  tiles.push(punct)
+  // Now randomise tile order
+  tiles = shuffle(tiles)
+
+  tiles.forEach(tok => {
+    const tile = document.createElement('div')
+    tile.className = 'word-tile'
+    // identify if punctuation
+    if(tok === '?' || tok === '.'){
+      tile.classList.add('punct')
+      tile.textContent = tok
+      tile.dataset.word = tok
+    } else {
+      // find display form from correct answer (preserve TV / I / first word capitalization)
+      const display = findDisplayForm(tok)
+      // If display equals the first correct token, ensure its first letter is capitalised
+      const firstTokenNorm = correctTokens[0] ? correctTokens[0].replace(/[^\w]/g,'').toLowerCase() : ''
+      if(tok.replace(/[^\w]/g,'').toLowerCase() === firstTokenNorm){
+        // ensure first letter uppercase (but if correctTokens[0] itself had TV or I or proper casing, use that)
+        let df = display
+        if(df.length) df = df.charAt(0).toUpperCase() + df.slice(1)
+        tile.textContent = df
+      } else {
+        // use display exactly as in correct answer when available, otherwise lowercase tile
+        tile.textContent = display || tok
+      }
+      tile.dataset.word = tok
+    }
+
+    tile.tabIndex = 0
+
+    tile.addEventListener('click', ()=>{
+      // play click sound if available
+      if(soundOn && clickAudio){ try{ clickAudio.currentTime = 0; clickAudio.play().catch(()=>{}) }catch(e){} }
+      // move to answer zone
+      answerZone.appendChild(tile)
+      tile.classList.add('answer-tile')
+      // disable from being clicked again in the bank (but since we moved node out, it's fine)
+      bankHistory.push(tile)
+    })
+
+    tile.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); tile.click() }
+    })
+
+    wordBank.appendChild(tile)
+  })
+
+  progressTxt.textContent = `Question ${qIndex+1} of 10`
+}
+
+/* Undo: move last appended tile back to bank */
+undoBtn && undoBtn.addEventListener('click', ()=>{
+  const children = Array.from(answerZone.querySelectorAll('.word-tile'))
+  if(!children.length) return
+  const last = children[children.length -1]
+  last.classList.remove('answer-tile')
+  last.style.background = ''
+  last.style.color = ''
+  wordBank.appendChild(last)
+  bankHistory.pop()
+})
+
+/* Submit answer: build string exactly from displayed tile texts, expect punctuation tile attached without space */
+submitBtn && submitBtn.addEventListener('click', ()=>{
+  const selectedTiles = Array.from(answerZone.querySelectorAll('.word-tile'))
+  // Construct the user sentence: ensure punctuation attaches without extra space
+  let user = ''
+  selectedTiles.forEach((t, i) => {
+    const txt = t.textContent.trim()
+    if(txt === '?' || txt === '.'){
+      user = user.trim() + txt
+    } else {
+      user += (user.length === 0 ? '' : ' ') + txt
+    }
+  })
+
+  // auto-fix extra whitespace and capitalization is already applied to first word tile
+  user = user.replace(/\s+/g,' ').trim()
+
+  const q = questions[qIndex]
+  if(!q) return
+  const correct = q.answer.trim()
+
+  // Compare exact (case + punctuation). Provide helpful message.
+  if(user === correct){
+    score++; xp = Math.min(100, xp + 10); updateXP(); playCorrect()
+    messageEl.textContent = 'Correct! — ' + correct; messageEl.style.color = '#b6ffda'
+  } else {
+    playWrong(); messageEl.textContent = 'Wrong — correct: ' + correct; messageEl.style.color = '#ffb3b3'
+    // shake answer area
+    answerZone.classList.remove('shake'); void answerZone.offsetWidth; answerZone.classList.add('shake')
+  }
+
+  updateStars(scoreBasedStars(score))
+  qIndex++
+  if(qIndex < 10) setTimeout(renderQuestion, 520)
+  else setTimeout(finishSubLevel, 620)
+})
+
+function scoreBasedStars(s){ if(s>=9) return 3; if(s>=8) return 2; if(s>=6) return 1; return 0 }
+function updateXP(){ xpFill && (xpFill.style.width = xp + '%') }
+function updateStars(count){ for(let i=0;i<3;i++){ if(starEls[i]) count>i ? starEls[i].classList.add('active') : starEls[i].classList.remove('active') } }
+function playCorrect(){ playCorrect() } // placeholder - already defined above
+function playComplete(){ playComplete() }
+
+/* finish sublevel */
+function finishSubLevel(){
+  finalScoreEl.textContent = score
+  if(score >= 8){
+    passMsgEl.textContent = 'Passed — well done!'
+    nextBtn.style.display = 'inline-block'; retryBtn.style.display = 'none'
+    overallProgress = Math.max(overallProgress, currentSub+1); updateOverallBar()
+    // celebration
+    playComplete(); launchConfetti(60)
+  } else {
+    passMsgEl.textContent = 'Failed — you need at least 8 correct.'
+    nextBtn.style.display = 'none'; retryBtn.style.display = 'inline-block'
+  }
+  playBlock.style.display = 'none'; completeBlock.style.display = 'block'
+}
+
+/* next/retry */
+nextBtn && nextBtn.addEventListener('click', ()=>{
+  currentSub++
+  if(currentSub >= SUB_LEVELS.length){
+    qs('#mainPanel').innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:20px;font-weight:700">LEVEL 2 COMPLETE</div><div style="color:var(--muted);margin-top:8px">You passed all sub-levels</div><div style="margin-top:12px"><button class="btn-ghost" onclick="window.location.href=\'index.html\'">Return Home</button></div></div>'
+    overallProgress = SUB_LEVELS.length; updateOverallBar()
+    // big celebration
+    spawnFireworksBurst(fwCanvas.width/2 || 400, fwCanvas.height/3 || 200, 30)
+    launchConfetti(100)
+    return
+  }
+  introSubNum.textContent = currentSub + 1
+  introBlock.style.display = 'block'; completeBlock.style.display = 'none'
+  overallFill.style.width = (overallProgress / SUB_LEVELS.length) * 100 + '%'
+})
+retryBtn && retryBtn.addEventListener('click', startSubLevel)
+
+function updateOverallBar(){ overallFill.style.width = (overallProgress / SUB_LEVELS.length) * 100 + '%' }
+
+/* ensure start button focus */
+startBtn && startBtn.focus()
+saveProgressReset()
+
+/* resume audio context on first user gesture */
+document.addEventListener('click', ()=>{ if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume() }, { once:true })
+</script>
+</body>
+</html>

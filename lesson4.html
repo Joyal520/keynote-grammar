@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lesson 4: Possessive Adjectives & Pronouns — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  /* RESET & BASE */
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+  :root{
+    --header-h:64px;
+    --footer-h:56px;
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.12);
+    --accent-gold:#ffd24d;
+    --white-glow: #ffffff;
+  }
+  html,body{height:100%}
+  body{
+    min-height:100vh;
+    background: linear-gradient(135deg,#0a1124,#1b2b47);
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;
+    padding-top: calc(var(--header-h) + 18px);
+    padding-bottom: calc(var(--footer-h) + 18px);
+    overflow-x:hidden;
+  }
+
+  /* HEADER */
+  header{
+    position:fixed;inset:0 0 auto 0;height:var(--header-h);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);z-index:1200;
+  }
+  header h1{font-size:1.05rem;font-weight:600;color:#fff;margin-left:6px}
+  header nav{display:flex;gap:10px;align-items:center}
+  header nav a{color:#fff;text-decoration:none;font-weight:500;padding:6px 8px;border-radius:6px;transition:color .18s}
+  header nav a:hover{color:var(--accent-gold)}
+
+  /* FOOTER */
+  footer{
+    position:fixed;inset:auto 0 0 0;height:var(--footer-h);display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.32);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.06);
+    color:#fff;font-size:0.9rem;z-index:1200;padding:0 10px;
+  }
+
+  /* MAIN & CONTAINER */
+  main{width:100%;display:flex;justify-content:center;padding:18px 12px 28px}
+  .lesson-container{
+    width:100%;max-width:1100px;
+    background:var(--glass-bg);padding:20px;border-radius:14px;
+    border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(0,0,0,0.45);backdrop-filter:blur(10px);
+  }
+  .lesson-title{text-align:center;margin-bottom:8px}
+  .lesson-title h2{color:var(--accent-gold);font-size:1.6rem;margin-bottom:6px}
+  .lesson-title p{color:#dfeefe;margin-bottom:12px}
+
+  /* AUDIO BOX */
+  .audio-box{margin:10px auto 18px;max-width:640px;background:rgba(255,255,255,0.04);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
+  .audio-title{color:var(--accent-gold);font-weight:700;margin-bottom:8px}
+  .lang-select{display:flex;gap:10px;margin-bottom:10px}
+  .lang-btn{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+  .lang-btn.active{background:var(--accent-gold);color:#000}
+
+  /* GRID FOR CARDS */
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .card{
+    background:rgba(255,255,255,0.04);
+    border-radius:12px;border:1px solid rgba(255,255,255,0.08);
+    overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    transition:transform .22s, box-shadow .22s, background .22s;
+  }
+  .card .card-head{padding:16px;color:#fff}
+  .card .card-body{padding:18px;color:#e8f4ff}
+
+  .card .tag{
+    display:inline-block;padding:10px 14px;border-radius:10px;font-weight:700;
+  }
+  .adj-tag{background:#3b82f6;color:#fff}
+  .pro-tag{background:#2563eb;color:#fff}
+
+  /* EXAMPLE BOXES */
+  .example-box{background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.08);transition:transform .18s, background .18s, box-shadow .18s}
+  .examples-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+
+  /* NAV BUTTONS */
+  .nav-buttons{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  .btn{
+    padding:10px 18px;border-radius:28px;background:rgba(255,255,255,0.12);color:#fff;text-decoration:none;
+    font-weight:600;border:1px solid rgba(255,255,255,0.12);position:relative;overflow:hidden;transition:transform .18s, background .18s;
+    min-width:150px;text-align:center;
+  }
+
+  /* NEON SNAKE (SVG injected) */
+  .neon-snake .snake-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+  .neon-snake .snake-svg polyline{fill:transparent;stroke:#fff;stroke-width:3;stroke-dasharray:40 460;stroke-dashoffset:40;transition:.75s ease-in-out}
+  .neon-snake:hover{background:var(--white-glow)!important;color:#000 !important;box-shadow:0 0 22px var(--white-glow),0 0 60px var(--white-glow)}
+  .neon-snake:hover .snake-svg polyline{stroke-dashoffset:-460}
+
+  /* ====== SCOPED WHITE GLOW for ALL cards + examples + inner text forced black ====== */
+  .card:hover,
+.example-box:hover,
+.audio-box:hover {
+  background: rgba(255,255,255,0.85) !important;
+  color: #000 !important;
+  border-color: rgba(255,255,255,0.85) !important;
+  transform: scale(1.02);
+  box-shadow:
+    0 0 8px rgba(255,255,255,0.45),
+    0 0 18px rgba(255,255,255,0.25);
+  transition: all .20s ease;
+}
+.card:hover * ,
+  .example-box:hover * ,
+  .audio-box:hover * {
+    color: #000 !important;
+  }
+
+  /* Prevent generic container hover from flipping colors */
+  .lesson-container > *:not(.card):not(.audio-box):not(.nav-buttons){transition:none}
+
+  /* RESPONSIVE */
+  @media(max-width:980px){ .grid-2{grid-template-columns:1fr} }
+  @media(max-width:520px){
+    :root{--header-h:56px;--footer-h:56px}
+    header{padding:10px 12px}
+    body{padding-top:calc(var(--header-h)+10px);padding-bottom:calc(var(--footer-h)+10px)}
+    .lesson-container{padding:14px}
+    .lesson-title h2{font-size:1.3rem}
+    .card .card-head{padding:12px}
+    .card .card-body{padding:12px}
+    .nav-buttons .btn{min-width:120px;padding:10px 12px}
+  }
+
+  /* SAFETY: prevent overflow */
+  img, table, .lesson-container, .example-box {max-width:100%;box-sizing:border-box}
+</style>
+</head>
+<body>
+
+  <!-- Hover sound (requested file) -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="lesson-container" role="main" aria-labelledby="lesson-title">
+
+      <div class="lesson-title">
+        <h2 id="lesson-title">Lesson 4: Possessive Adjectives & Possessive Pronouns</h2>
+        <p>Learn the difference: adjectives come before nouns; pronouns replace nouns.</p>
+      </div>
+
+      <!-- AUDIO BOX (placed under title) -->
+      <div class="audio-box" data-en="possessives_english.mp3" data-ta="possessives_ Tamil.mp3" aria-label="Audio explanation"></div>
+
+      <div class="grid-2" aria-live="polite">
+
+        <!-- Possessive Adjectives Card -->
+        <section class="card" aria-labelledby="adj-heading">
+          <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 id="adj-heading" style="font-size:1.25rem;margin:0">Possessive Adjectives</h3>
+              <div style="margin-top:6px" class="tag adj-tag">MY · YOUR · OUR · THEIR · HIS · HER · ITS</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <p>A <strong>possessive adjective</strong> comes before a noun to show ownership.</p>
+
+            <div class="example-box" style="margin-top:14px;height:66px;display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,0.08);">
+              <strong style="color:#0b3a80">My, your, our — used before a noun</strong>
+            </div>
+
+            <h4 style="margin-top:14px;margin-bottom:8px;color:var(--accent-gold)">Examples</h4>
+            <div class="examples-list">
+              <div class="example-box"><strong>my</strong> — This is my pen.</div>
+              <div class="example-box"><strong>our</strong> — Our house is near the post office.</div>
+              <div class="example-box"><strong>your</strong> — What is your favourite hobby?</div>
+              <div class="example-box"><strong>their</strong> — I don’t know their names.</div>
+              <div class="example-box"><strong>his</strong> — His wife is a teacher.</div>
+              <div class="example-box"><strong>her</strong> — We need her support.</div>
+              <div class="example-box"><strong>its</strong> — I have a rabbit. Its fur is soft.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Possessive Pronouns Card -->
+        <section class="card" aria-labelledby="pro-heading">
+          <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 id="pro-heading" style="font-size:1.25rem;margin:0">Possessive Pronouns</h3>
+              <div style="margin-top:6px" class="tag pro-tag">MINE · YOURS · OURS · THEIRS · HIS · HERS</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <p>A <strong>possessive pronoun</strong> replaces the noun and shows ownership.</p>
+
+            <div class="example-box" style="margin-top:14px;height:66px;display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,0.08);">
+              <strong style="color:#05316a">Mine, yours, ours — stand alone</strong>
+            </div>
+
+            <h4 style="margin-top:14px;margin-bottom:8px;color:var(--accent-gold)">Examples</h4>
+            <div class="examples-list">
+              <div class="example-box"><strong>mine</strong> — The car is mine.</div>
+              <div class="example-box"><strong>ours</strong> — The house is ours.</div>
+              <div class="example-box"><strong>yours</strong> — Is this book yours?</div>
+              <div class="example-box"><strong>theirs</strong> — The responsibility is theirs.</div>
+              <div class="example-box"><strong>his</strong> — The hat is his.</div>
+              <div class="example-box"><strong>hers</strong> — The bag is hers.</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="nav-buttons" style="margin-top:20px">
+         <a href="lesson4_video.html" class="btn neon-snake">🎬 Watch Video</a>
+<a href="topics.html" class="btn neon-snake">← 🏠 Back to Topics</a>
+<a href="png4.html" class="btn neon-snake">🧩 Next</a>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer>&copy; 2025 Grammar With Joy | Designed by R. J. Roshan</footer>
+
+  <!-- SCRIPTS: audio builder, neon injector, hover sound binding -->
+  <script>
+  (function(){
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* ---------- AUDIO COMPONENT (auto-builds for every .audio-box) ---------- */
+      const audioBoxes = document.querySelectorAll('.audio-box');
+      audioBoxes.forEach(box => {
+        const en = box.dataset.en || 'possessives_english.mp3';
+        const ta = box.dataset.ta || 'possessives_ Tamil.mp3';
+
+        box.innerHTML = `
+          <div class="audio-title">Audio explanation</div>
+          <div class="lang-select" role="tablist" aria-label="Audio language selector">
+            <button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>
+            <button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>
+          </div>
+          <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+            <source src="${en}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+        const langBtns = box.querySelectorAll('.lang-btn');
+
+        langBtns.forEach(b => b.addEventListener('click', () => {
+          langBtns.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+          b.classList.add('active'); b.setAttribute('aria-selected','true');
+          const lang = b.dataset.lang;
+          src.src = (lang === 'en') ? en : ta;
+          audio.load();
+          audio.play().catch(()=>{/* autoplay may be blocked — user will need to tap play */});
+        }));
+      });
+
+      /* ---------- NEON SNAKE: inject SVG into all .btn.neon-snake ---------- */
+      const neonButtons = document.querySelectorAll('.btn.neon-snake');
+      neonButtons.forEach(btn => {
+        if (btn.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('class','snake-svg');
+        svg.setAttribute('width','100%');
+        svg.setAttribute('height','100%');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        btn.appendChild(svg);
+      });
+
+      /* ---------- HOVER SOUND ---------- */
+      const hover = document.getElementById('hoverSound');
+      function playHover() {
+        if (!hover) return;
+        try { hover.currentTime = 0; hover.play().catch(()=>{}); } catch(e) {}
+      }
+
+      // Attach hover sound to cards, example boxes, audio box and neon buttons
+      const hoverTargets = document.querySelectorAll('.card, .example-box, .audio-box, .btn, header nav a');
+      hoverTargets.forEach(el => el.addEventListener('pointerenter', playHover));
+
+      /* Accessibility: keyboard focus handling for neon buttons */
+      neonButtons.forEach(btn => {
+        btn.addEventListener('focus', () => btn.classList.add('focused'));
+        btn.addEventListener('blur', () => btn.classList.remove('focused'));
+      });
+
+      /* Prevent accidental horizontal overflow on iOS */
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+    });
+  })();
+  </script>
+
+</body>
+</html>

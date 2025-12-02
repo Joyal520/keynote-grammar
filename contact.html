@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Keynote Grammar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box;}
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #001a33, #004080);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating bubbles animation */
+    .bubbles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -150px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+    @keyframes rise {
+      0% {transform: translateY(0) scale(1);}
+      50% {transform: translateY(-60vh) scale(1.2);}
+      100% {transform: translateY(-100vh) scale(0.8);}
+    }
+
+    /* Glass card */
+    .contact-container {
+      position: relative;
+      z-index: 2;
+      max-width: 400px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      padding: 30px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #ffcc33;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #d6e3f0;
+      margin-bottom: 25px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 1rem;
+      backdrop-filter: blur(8px);
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 30px;
+      background: #ffcc33;
+      color: #001a33;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #ffd84d;
+      transform: translateY(-2px);
+    }
+
+    .footer-links {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a {
+      color: #ffcc33;
+      text-decoration: none;
+      margin: 0 8px;
+      transition: opacity .3s;
+    }
+    .footer-links a:hover {opacity:.8;}
+
+    /* Bubble sizes and positions */
+    .bubble:nth-child(1) {left:10%; width:80px; height:80px; animation-delay:0s;}
+    .bubble:nth-child(2) {left:25%; width:100px; height:100px; animation-delay:2s;}
+    .bubble:nth-child(3) {left:45%; width:60px; height:60px; animation-delay:4s;}
+    .bubble:nth-child(4) {left:70%; width:120px; height:120px; animation-delay:1s;}
+    .bubble:nth-child(5) {left:85%; width:90px; height:90px; animation-delay:3s;}
+  </style>
+</head>
+<body>
+
+  <!-- Floating Bubbles -->
+  <div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+  </div>
+
+  <!-- Contact Card -->
+  <div class="contact-container">
+    <h1>Contact Us</h1>
+    <p>We’d love to hear from you! Fill out the form below to reach the Keynote Grammar team.</p>
+
+    <form>
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Email Address" required>
+      <textarea placeholder="Your Message..." required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div class="footer-links">
+      <a href="homepage.html">🏠 Home</a> |
+      <a href="topics.html">📚 Topics</a>
+    </div>
+  </div>
+
+</body>
+</html>

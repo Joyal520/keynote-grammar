@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - Keynote Grammar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Existing Background Gradient Animation */
+      background: linear-gradient(270deg, #ff6a00, #ee0979, #2193b0, #6dd5ed);
+      background-size: 800% 800%;
+      animation: gradientShift 15s ease infinite;
+      overflow: hidden;
+      color: #fff;
+      position: relative; /* Needed for pseudo-elements */
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* --- MORPHING GRADIENT BLOBS --- */
+    body::before, body::after {
+      content: '';
+      position: absolute;
+      width: 40vw;
+      height: 40vw;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      filter: blur(90px); /* Soft blur for the glowing blob effect */
+      z-index: -1;
+      opacity: 0.5;
+      animation: morph 18s infinite alternate ease-in-out;
+    }
+
+    body::before {
+      background: #ffe259; /* Yellow/Gold blob */
+      top: 5%;
+      left: 10%;
+      transform: rotate(10deg);
+    }
+
+    body::after {
+      background: #ee0979; /* Pink/Magenta blob */
+      bottom: 0;
+      right: 15%;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+      animation-delay: 4s; /* Delay for asynchronous movement */
+      opacity: 0.6;
+    }
+
+    @keyframes morph {
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
+      50% {
+        transform: translate(20px, 30px) rotate(180deg) scale(1.1);
+      }
+      100% {
+        transform: translate(-30px, -20px) rotate(360deg) scale(0.95);
+        border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+      }
+    }
+    /* --- END MORPHING GRADIENT BLOBS --- */
+
+    .about-container {
+      background: rgba(0, 0, 0, 0.6); /* Slightly darker background for contrast */
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      width: 85%;
+      max-width: 700px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+      animation: fadeIn 2s ease forwards;
+      z-index: 10; /* Ensure the content is above the blobs */
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: #ffe259;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+      color: #333;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+
+    .floating-bubbles span {
+      position: absolute;
+      bottom: -150px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-1000px) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* Random bubbles */
+    .floating-bubbles span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .floating-bubbles span:nth-child(2) { left: 25%; animation-delay: 2s; width: 40px; height: 40px; }
+    .floating-bubbles span:nth-child(3) { left: 40%; animation-delay: 4s; }
+    .floating-bubbles span:nth-child(4) { left: 60%; animation-delay: 1s; width: 50px; height: 50px; }
+    .floating-bubbles span:nth-child(5) { left: 80%; animation-delay: 3s; }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-bubbles">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="about-container">
+    <h1>About Keynote Grammar</h1>
+    <p>
+      <strong>Keynote Grammar</strong> is a creative grammar-learning platform designed by <strong>R. J. Roshan</strong> to make English learning fun, structured, and practical.
+      Built from the book <em>Keynote Grammar – From Basics to Intermediate</em>, the platform blends lessons, activities, and quizzes into an interactive digital experience.
+      It helps learners build confidence and accuracy step by step — from simple sentences to complex grammar rules.
+    </p>
+
+    <div class="buttons">
+      <a href="homepage.html" class="btn">Home</a>
+      <a href="topics.html" class="btn">Explore Lessons</a>
+      <a href="quiz.html" class="btn">Take a Quiz</a>
+      <a href="contact.html" class="btn">Contact Us</a>
+    </div>
+
+    <footer>
+      © 2025 Grammar With Joy | Designed by R. J. Roshan
+    </footer>
+  </div>
+</body>
+</html>

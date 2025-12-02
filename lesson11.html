@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Forms of a Verb — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  /* Reset & variables */
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+  :root{
+    --header-h:64px;
+    --bottom-space:120px; /* keeps bottom buttons reachable */
+    --bg-1:#001f3f; --bg-2:#003c8f; --bg-3:#004d99;
+    --soft-white-1: rgba(255,255,255,0.45);
+    --soft-white-2: rgba(255,255,255,0.22);
+  }
+
+  /* Body: use document flow so page scrolls normally and centers container */
+  html,body{height:auto;min-height:100%;}
+  body{
+    background:linear-gradient(135deg,var(--bg-1),var(--bg-2),var(--bg-3));
+    color:#fff;
+    padding-top: calc(var(--header-h) + 18px);
+    padding-bottom: calc(var(--bottom-space) + 56px);
+    display:block;          /* allow normal vertical flow (important for mobile scrolling) */
+    overflow-x:hidden;
+  }
+
+  /* floating bubbles */
+  .bubbles{position:fixed;inset:0;z-index:-2;pointer-events:none}
+  .bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);filter:blur(22px);animation:float 12s infinite ease-in-out}
+  @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-40px)}100%{transform:translateY(0)}}
+
+  /* page container -- centered */
+  .container{width:100%;max-width:980px;margin:28px auto 60px;padding:28px;border-radius:14px;
+    background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,0.45);
+    border:1px solid rgba(255,255,255,0.12);
+  }
+
+  h1{text-align:center;color:#ffcc33;margin-bottom:8px;font-size:1.8rem}
+  p.intro{text-align:center;color:#d9e7ff;margin-bottom:18px}
+
+  /* AUDIO BOX (small) */
+  .audio-box{
+    max-width:720px;margin:12px auto 18px;background:rgba(255,255,255,0.04);
+    border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08);
+    position:relative;overflow:visible;
+  }
+  .audio-title{color:#ffcc33;font-weight:700;margin-bottom:8px}
+  .lang-select{display:flex;gap:8px;margin-bottom:8px}
+  .lang-btn{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:#fff;font-weight:700;cursor:pointer}
+  .lang-btn.active{background:#fff;color:#000}
+
+  /* table (small box) */
+  table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.02);border-radius:10px;overflow:visible}
+  th,td{padding:10px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);color:#f1f6ff;transition:color .18s, background .18s}
+  th{background:rgba(255,255,255,0.06);color:#ffeb99;font-weight:600}
+  tr:hover td{background:rgba(255,255,255,0.10)}
+
+  /* example boxes (small boxes) */
+  .examples-flex{display:flex;gap:18px;align-items:flex-start;margin-top:20px;flex-wrap:wrap}
+  .examples-left{flex:1 1 60%;min-width:240px}
+  .example-box{
+    background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-top:10px;border:1px solid rgba(255,255,255,0.08);
+    color:#e8f0ff;transition:transform .18s,box-shadow .18s,background .18s;
+  }
+
+  /* small image placeholder */
+  .img-placeholder{flex:1 1 35%;min-width:180px;height:300px;border-radius:12px;border:2px dashed rgba(255,255,255,0.22);
+    display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-weight:600;margin-top:20px;
+  }
+  .img-placeholder img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:block}
+
+  /* buttons */
+  .btns{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+  .btn{background:rgba(255,255,255,0.9);color:#001f3f;padding:10px 18px;border-radius:10px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,0.2);transition:transform .16s,box-shadow .16s}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.25)}
+
+  /* SNAKE + SOFT WHITE GLOW (applies only to .snake-target elements) */
+  .snake-svg{position:absolute;top:-8px;left:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .24s}
+  .snake-svg polyline{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:60 380;stroke-dashoffset:60;transition:stroke-dashoffset .7s}
+  /* soft white glow on small boxes */
+  .snake-target:hover{
+    background:#fff !important;
+    color:#000 !important;
+    transform:scale(1.02);
+    box-shadow: 0 0 18px var(--soft-white-1), 0 0 36px var(--soft-white-2);
+    border-color: rgba(0,0,0,0.06) !important;
+  }
+  .snake-target:hover *{color:#000 !important}
+  .snake-target:hover .snake-svg{opacity:1}
+  .snake-target:hover .snake-svg polyline{stroke-dashoffset:-380}
+
+  /* table row hover uses same soft glow */
+  tbody tr{transition:all .16s}
+  tbody tr:hover{background:#fff !important;color:#000 !important;box-shadow:0 0 18px var(--soft-white-1)}
+  tbody tr:hover td{color:#000 !important;font-weight:600}
+
+  /* keep main container itself locked from glowing */
+  .container:hover{transform:none;box-shadow:none}
+
+  /* accessibility: focus */
+  .snake-target:focus{outline:3px solid rgba(255,255,255,0.12);outline-offset:3px}
+
+  /* responsive */
+  @media (max-width:860px){
+    .img-placeholder{height:200px}
+    .examples-left{flex-basis:100%}
+    .img-placeholder{flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+
+<!-- background bubbles -->
+<div class="bubbles" aria-hidden="true">
+  <div class="bubble" style="width:120px;height:120px;left:8%;top:18%;animation-delay:0s"></div>
+  <div class="bubble" style="width:160px;height:160px;left:68%;top:8%;animation-delay:2s"></div>
+  <div class="bubble" style="width:100px;height:100px;left:82%;top:42%;animation-delay:4s"></div>
+</div>
+
+<!-- hover sound (file should exist) -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<div class="container" role="main" aria-labelledby="title">
+  <h1 id="title">Forms of a Verb</h1>
+  <p class="intro">In English, a verb has five main forms. These forms are used in different tenses and grammatical structures.</p>
+
+  <!-- AUDIO BOX (injected with JS; marked as snake-target so small box glows) -->
+  <div class="audio-box snake-target" data-en="forms_english.mp3" data-ta="forms_tamil.mp3" aria-label="Audio explanation">
+    <!-- JS will populate contents -->
+  </div>
+
+  <h2>Verb Forms Table</h2>
+  <!-- table is a small box: make it snake-target via wrapper -->
+  <div class="snake-target" style="border-radius:10px;padding:6px;margin-top:10px;">
+    <table id="verbTable" role="table" aria-label="Verb forms table">
+      <thead>
+        <tr><th>Form</th><th>Eat</th><th>Cook</th><th>Sleep</th></tr>
+      </thead>
+      <tbody>
+        <tr data-example="base"><td>Base Form</td><td>eat</td><td>cook</td><td>sleep</td></tr>
+        <tr data-example="s"><td>-s Form</td><td>eats</td><td>cooks</td><td>sleeps</td></tr>
+        <tr data-example="ing"><td>-ing Form</td><td>eating</td><td>cooking</td><td>sleeping</td></tr>
+        <tr data-example="past"><td>Past Form</td><td>ate</td><td>cooked</td><td>slept</td></tr>
+        <tr data-example="pp"><td>Past Participle</td><td>eaten</td><td>cooked</td><td>slept</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="examples-flex">
+    <div class="examples-left">
+      <h2>Examples</h2>
+      <div id="base"  class="example-box snake-target" tabindex="0">1. I cook dinner.</div>
+      <div id="s"     class="example-box snake-target" tabindex="0">2. She cooks dinner.</div>
+      <div id="ing"   class="example-box snake-target" tabindex="0">3. She is cooking dinner.</div>
+      <div id="past"  class="example-box snake-target" tabindex="0">4. She cooked dinner.</div>
+      <div id="pp"    class="example-box snake-target" tabindex="0">5. She has cooked dinner.</div>
+    </div>
+
+    <div class="img-placeholder snake-target" tabindex="0">
+      <img src="dinner.jpg" alt="Illustration of cooking" />
+    </div>
+  </div>
+
+  <div class="btns">
+    <a href="lesson_forms_video.html" class="btn snake-target">🎬 Watch Video</a>
+    <a href="png11.html" class="btn snake-target">🧩 Next</a>
+    <a href="topics.html" class="btn snake-target">🏠 Back to Topics</a>
+  </div>
+</div>
+
+<script>
+/* Behavior:
+   - Injects audio UI inside .audio-box using forms_english.mp3 + forms_tamil.mp3
+   - Injects SVG 'snake' into every .snake-target
+   - Plays hover/touch sound on pointerenter & touchstart for snake-targets and nav links
+   - Highlights example on table-row hover/click (existing behavior)
+*/
+
+/* hover sound element */
+const hoverSound = document.getElementById('hoverSound');
+function playHoverSound() {
+  if (!hoverSound) return;
+  try { hoverSound.currentTime = 0; hoverSound.play().catch(()=>{}); } catch(e) {}
+}
+
+/* Build audio UI for each .audio-box */
+document.querySelectorAll('.audio-box').forEach(box => {
+  const en = box.dataset.en || 'forms_english.mp3';
+  const ta = box.dataset.ta || 'forms_tamil.mp3';
+
+  box.innerHTML = `
+    <div class="audio-title">Audio explanation</div>
+    <div class="lang-select" role="tablist" aria-label="Choose language">
+      <button class="lang-btn active" data-lang="en" aria-pressed="true">English</button>
+      <button class="lang-btn" data-lang="ta" aria-pressed="false">Tamil</button>
+    </div>
+    <audio class="audioPlayer" controls preload="none" style="width:100%">
+      <source src="${en}" type="audio/mpeg">
+      Your browser does not support audio.
+    </audio>
+  `;
+
+  const audio = box.querySelector('.audioPlayer');
+  const src = audio.querySelector('source');
+  const buttons = box.querySelectorAll('.lang-btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+      src.src = (btn.dataset.lang === 'en') ? en : ta;
+      audio.load();
+      audio.play().catch(()=>{ /* user interaction may be required */ });
+    });
+  });
+
+  // play hover sound for the audio box (both pointerenter and touchstart)
+  box.addEventListener('pointerenter', playHoverSound);
+  box.addEventListener('touchstart', playHoverSound);
+});
+
+/* Inject snake svg into every snake-target */
+function injectSnake(el){
+  if (!el || el.querySelector('.snake-svg')) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS,'svg');
+  svg.setAttribute('class','snake-svg');
+  svg.setAttribute('viewBox','0 0 260 60');
+  svg.setAttribute('preserveAspectRatio','none');
+  svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+  // ensure target can position absolute children
+  const cs = getComputedStyle(el);
+  if (cs.position === 'static') el.style.position = 'relative';
+  el.insertBefore(svg, el.firstChild);
+}
+
+/* Setup snake-target elements: inject snake and attach hover/touch sound & keyboard focus */
+document.querySelectorAll('.snake-target').forEach(el => {
+  injectSnake(el);
+
+  // pointerenter and touchstart to play sound
+  el.addEventListener('pointerenter', playHoverSound);
+  el.addEventListener('touchstart', playHoverSound, {passive:true});
+
+  // also support focus (keyboard)
+  el.addEventListener('focus', playHoverSound);
+});
+
+/* Also attach hover sound to buttons (if they weren't snake-target) */
+document.querySelectorAll('.btn').forEach(b => {
+  if (!b.classList.contains('snake-target')) {
+    b.addEventListener('pointerenter', playHoverSound);
+    b.addEventListener('touchstart', playHoverSound, {passive:true});
+  }
+});
+
+/* Table <tr> hover/click -> highlight example boxes (existing behavior) */
+const rows = document.querySelectorAll('#verbTable tr[data-example]');
+rows.forEach(row => {
+  const targetId = row.dataset.example;
+  const target = document.getElementById(targetId);
+  row.addEventListener('mouseenter', () => {
+    if (target) target.classList.add('highlight');
+  });
+  row.addEventListener('mouseleave', () => {
+    if (target) target.classList.remove('highlight');
+  });
+  row.addEventListener('click', () => {
+    document.querySelectorAll('.example-box').forEach(box => box.classList.remove('highlight'));
+    if (target) {
+      target.classList.add('highlight');
+      target.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  });
+
+  // ensure pointerenter on row plays sound (because rows are inside a snake-target wrapper)
+  row.addEventListener('pointerenter', playHoverSound);
+  row.addEventListener('touchstart', playHoverSound, {passive:true});
+});
+
+/* Prevent unexpected horizontal overflow on mobile */
+setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Simple Past – Questions & Negatives | Keynote Grammar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* -------------------------------------------------
+   RESET + BASE
+------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0b3d91, #1a73e8);
+  color: #eaf6ff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-top: 110px;
+  padding-bottom: 160px;
+}
+
+/* -------------------------------------------------
+   BLOBS
+------------------------------------------------- */
+.blob {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: rgba(0,180,255,0.22);
+  filter: blur(110px);
+  border-radius: 55%;
+  animation: move 18s infinite alternate ease-in-out;
+  z-index: -2;
+}
+.blob:nth-child(2) {
+  left: 55%;
+  top: 20%;
+  background: rgba(0,255,200,0.25);
+  animation-duration: 22s;
+}
+.blob:nth-child(3) {
+  left: -10%;
+  bottom: -20%;
+  background: rgba(150,100,255,0.25);
+  animation-duration: 26s;
+}
+@keyframes move {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(-150px,120px); }
+}
+
+/* -------------------------------------------------
+   HEADER
+------------------------------------------------- */
+header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  padding: 14px 30px;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  margin-right: 14px;
+}
+header a:hover {
+  color: #ffd24d;
+}
+
+/* -------------------------------------------------
+   CONTAINER
+------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+.title {
+  font-size: 42px;
+  font-weight: 800;
+  text-align: center;
+  color: #ffd24d;
+  margin-bottom: 20px;
+}
+
+/* -------------------------------------------------
+   AUDIO BOX (with snake hover)
+------------------------------------------------- */
+.audio-box {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 30px;
+  position: relative;
+}
+.audio-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffd24d;
+  margin-bottom: 10px;
+}
+.lang-select {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.lang-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  background: rgba(255,255,255,0.18);
+  color: white;
+  cursor: pointer;
+}
+.lang-btn.active {
+  background: #ffd24d;
+  color: black;
+}
+
+/* -------------------------------------------------
+   SECTION (card)
+------------------------------------------------- */
+.section {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  padding: 26px;
+  margin-bottom: 34px;
+  position: relative;
+  transition: 0.3s;
+}
+
+/* -------------------------------------------------
+   SNAKE HOVER EFFECT
+------------------------------------------------- */
+.snake-target {
+  position: relative;
+  transition: 0.25s;
+}
+.snake-svg {
+  position: absolute;
+  top: -8px; left: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  pointer-events: none;
+  opacity: 0;
+  transition: 0.25s;
+}
+.snake-svg polyline {
+  fill: none;
+  stroke: white;
+  stroke-width: 3;
+  stroke-dasharray: 80 620;
+  stroke-dashoffset: 80;
+  transition: 0.8s ease;
+}
+.snake-target:hover .snake-svg {
+  opacity: 1;
+}
+.snake-target:hover .snake-svg polyline {
+  stroke-dashoffset: -620;
+}
+
+/* -------------------------------------------------
+   WHITE GLOW EFFECT (only on hover)
+------------------------------------------------- */
+.snake-target:hover {
+  background: white !important;
+  color: black !important;
+  box-shadow: 0 0 25px white;
+}
+.snake-target:hover * {
+  color: black !important;
+}
+
+/* -------------------------------------------------
+   IMAGES
+------------------------------------------------- */
+.img-box {
+  flex: 1 1 32%;
+  min-width: 320px;
+  height: 300px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.img-box img {
+  width: 150%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* -------------------------------------------------
+   TEXT & TABLES
+------------------------------------------------- */
+h2 { color: #00eaff; margin-bottom: 12px; }
+h3 { color: #ffd24d; margin: 12px 0 10px; }
+
+p, li {
+  line-height: 1.7;
+  font-size: 1rem;
+}
+ul { margin-left: 18px; margin-top: 10px; }
+
+table {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+th {
+  background: rgba(255,255,255,0.15);
+  color: #ffd24d;
+  font-weight: 700;
+}
+
+/* -------------------------------------------------
+   BUTTONS
+------------------------------------------------- */
+.nav {
+  text-align: center;
+  margin-top: 20px;
+}
+.nav a {
+  display: inline-block;
+  padding: 12px 26px;
+  background: #009dff;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  margin: 10px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+.nav a:hover {
+  background: #00caff;
+  transform: translateY(-3px);
+}
+
+/* -------------------------------------------------
+   FOOTER
+------------------------------------------------- */
+footer {
+  text-align: center;
+  padding: 20px;
+  opacity: 0.65;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BLOBS -->
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+  </div>
+  
+</header>
+
+<div class="container">
+
+  <h1 class="title">Simple Past — Questions & Negatives</h1>
+
+  <!-- AUDIO BOX -->
+  <div class="audio-box snake-target" data-en="simplepast_questions_english.mp3" data-ta="simplepast_questions_tamil.mp3">
+    <svg class="snake-svg" viewBox="0 0 260 60">
+      <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+    </svg>
+
+    <div class="audio-title">Audio Explanation</div>
+
+    <div class="lang-select">
+      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="ta">Tamil</button>
+    </div>
+
+    <audio class="audioPlayer" controls preload="none">
+      <source src="simplepast_questions_english.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- SECTION 1 — QUESTIONS -->
+  <div class="section snake-target" style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <svg class="snake-svg" viewBox="0 0 260 60">
+      <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+    </svg>
+
+    <div style="flex:1 1 60%; min-width:260px;">
+      <h2>1. Forming Questions in the Simple Past</h2>
+      <p>Use:</p>
+      <p style="font-weight:700; color:#ffd24d;">Did + subject + base form</p>
+
+      <h3>Examples</h3>
+      <ul>
+        <li>Did you watch a movie last night?</li>
+        <li>Did they visit the museum?</li>
+        <li>Did she bake a cake?</li>
+        <li>Did he repair his car yesterday afternoon?</li>
+      </ul>
+    </div>
+
+    <div class="img-box snake-target">
+      <svg class="snake-svg" viewBox="0 0 260 60">
+        <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+      </svg>
+      <img src="museum.png" alt="">
+    </div>
+
+  </div>
+
+  <!-- SECTION 2 — NEGATIVES -->
+  <div class="section snake-target" style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <svg class="snake-svg" viewBox="0 0 260 60">
+      <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+    </svg>
+
+    <div style="flex:1 1 60%; min-width:260px;">
+      <h2>2. Forming Negatives in the Simple Past</h2>
+      <p>Use:</p>
+      <p style="font-weight:700; color:#ffd24d;">Subject + did not + base form</p>
+
+      <h3>Examples</h3>
+      <ul>
+        <li>She did not bake a cake.</li>
+        <li>He did not repair his car.</li>
+        <li>We did not watch a movie.</li>
+        <li>They did not visit the museum.</li>
+      </ul>
+    </div>
+
+    <div class="img-box snake-target">
+      <svg class="snake-svg" viewBox="0 0 260 60">
+        <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+      </svg>
+      <img src="cake.png" alt="">
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section snake-target">
+
+    <svg class="snake-svg" viewBox="0 0 260 60">
+      <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+    </svg>
+
+    <h2>3. Summary</h2>
+
+    <table class="snake-target">
+      <svg class="snake-svg" viewBox="0 0 260 60">
+        <polyline points="0,0 260,0 260,260 0,260 0,0"></polyline>
+      </svg>
+
+      <tr>
+        <th>Form</th>
+        <th>Structure</th>
+        <th>Examples</th>
+      </tr>
+      <tr>
+        <td>Questions</td>
+        <td>Did + subject + base form</td>
+        <td>
+          Did she bake a cake?<br>
+          Did he repair his car?
+        </td>
+      </tr>
+      <tr>
+        <td>Negatives</td>
+        <td>Subject + did not + base form</td>
+        <td>
+          She did not bake a cake.<br>
+          He did not repair his car.
+        </td>
+      </tr>
+    </table>
+
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="nav">
+    <a href="lesson14_video.html">⭠ Back</a>
+    <a href="png14.html">Next ⭢</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 Keynote Grammar | Designed by Joy
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* Audio Selector */
+  document.querySelectorAll(".audio-box").forEach(box => {
+    const en = box.dataset.en;
+    const ta = box.dataset.ta;
+
+    const audio = box.querySelector(".audioPlayer");
+    const src = audio.querySelector("source");
+
+    box.querySelectorAll(".lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        box.querySelectorAll(".lang-btn").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+
+        src.src = btn.dataset.lang === "en" ? en : ta;
+        audio.load();
+        audio.play().catch(() => {});
+      });
+    });
+  });
+
+  /* Snake Hover Injection */
+  document.querySelectorAll(".snake-target").forEach(target => {
+    if (!target.querySelector(".snake-svg")) return;
+
+    target.addEventListener("mouseenter", () => {});
+    target.addEventListener("focus", () => {});
+
+    if (!target.hasAttribute("tabindex")) {
+      target.setAttribute("tabindex", "0");
+    }
+  });
+
+});
+</script>
+
+</body>
+</html>

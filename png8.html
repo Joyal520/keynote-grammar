@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrollable PNG with Hidden Buttons + Zoom</title>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background: #000;
+        overflow-y: scroll;
+    }
+
+    /* MAIN IMAGE WRAPPER (supports zoom) */
+    #imageWrapper {
+        transform-origin: center center;
+        transition: transform 0.25s ease;
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* Floating toolbar */
+    .bottom-buttons {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 18px;
+
+        background: rgba(0,0,0,0.55);
+        padding: 10px 18px;
+        border-radius: 14px;
+        backdrop-filter: blur(6px);
+
+        transition: opacity 0.4s ease;
+        opacity: 1;
+        z-index: 1000;
+    }
+
+    .btn {
+        padding: 12px 22px;
+        background: #111;
+        color: white;
+        border: 2px solid #f0c400;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: 0.25s;
+    }
+
+    .btn:hover {
+        background: #f0c400;
+        color: #000;
+        box-shadow: 0 0 18px rgba(255, 215, 0, 1);
+        transform: translateY(-3px);
+    }
+
+    /* toolbar hidden state */
+    .hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Hover sound -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<!-- Toolbar -->
+<div id="toolbar" class="bottom-buttons">
+    <button class="btn" onclick="zoomIn()">Zoom In +</button>
+    <button class="btn" onclick="zoomOut()">Zoom Out −</button>
+    <button class="btn" onclick="location.href='quiz8.html'">Take Quiz</button>
+    <button class="btn" onclick="location.href='lesson8.html'">Back</button>
+</div>
+
+<!-- Zoomable PNG -->
+<div id="imageWrapper">
+    <img src="page08.png" alt="Lesson Page">
+</div>
+
+<script>
+/* Hover sound */
+const hoverSound = document.getElementById("hoverSound");
+document.querySelectorAll(".btn").forEach(btn => {
+    btn.addEventListener("mouseenter", () => {
+        try {
+            hoverSound.currentTime = 0;
+            hoverSound.play();
+        } catch (e) {}
+    });
+});
+
+/* AUTO-HIDE TOOLBAR WHEN IDLE */
+let toolbar = document.getElementById("toolbar");
+let idleTimer;
+
+function resetToolbarTimer() {
+    toolbar.classList.remove("hidden");
+
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        toolbar.classList.add("hidden");
+    }, 2000); // hide after 2 seconds idle
+}
+
+document.addEventListener("mousemove", resetToolbarTimer);
+document.addEventListener("scroll", resetToolbarTimer);
+resetToolbarTimer();
+
+/* ZOOM FUNCTIONALITY */
+let zoomLevel = 1;
+const imageWrapper = document.getElementById("imageWrapper");
+
+function zoomIn() {
+    zoomLevel += 0.1;
+    applyZoom();
+}
+
+function zoomOut() {
+    zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+    applyZoom();
+}
+
+function applyZoom() {
+    imageWrapper.style.transform = `scale(${zoomLevel})`;
+}
+</script>
+
+</body>
+</html>

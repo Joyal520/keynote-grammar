@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Unscramble Game</title>
+    <style>
+        /* CSS STYLES */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+        }
+
+        /* Scrambled Phrase Box Styling */
+        .scrambled-phrase-box {
+            background-color: #e0f7fa; /* Light blue background */
+            border: 2px dashed #00bcd4;
+            padding: 20px 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        #scrambled-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00838f; /* Darker blue text */
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Controls and Input */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #user-guess {
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+
+        #user-guess:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* Button Styling */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .primary {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        .primary:hover {
+            background-color: #45a049;
+        }
+
+        .secondary {
+            background-color: #2196F3; /* Blue */
+            color: white;
+        }
+
+        .secondary:hover {
+            background-color: #1e88e5;
+        }
+
+        .btn:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Feedback Message */
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+        .correct {
+            color: #4CAF50; /* Green for correct */
+        }
+
+        .incorrect {
+            color: #F44336; /* Red for incorrect */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Word Unscramble Challenge</h1>
+        <p>Unscramble the words to reveal the original four or five-word sentence!</p>
+
+        <div class="scrambled-phrase-box">
+            <p id="scrambled-text">Loading...</p>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="user-guess" placeholder="Type your answer here..." autofocus>
+            <button id="check-button" class="btn primary">Check Answer</button>
+            <button id="next-button" class="btn secondary">Next Sentence</button>
+        </div>
+
+        <p id="feedback-message" class="message"></p>
+        <p>Sentence <span id="current-index">1</span> of 5</p>
+    </div>
+
+    <script>
+        const sentences = [
+            "The cat slept soundly",
+            "We walked quickly home",
+            "I like blue skies",
+            "She runs every day",
+            "He will help you"
+        ];
+
+        let currentIndex = 0;
+
+        // DOM elements
+        const scrambledTextElement = document.getElementById('scrambled-text');
+        const userGuessInput = document.getElementById('user-guess');
+        const checkButton = document.getElementById('check-button');
+        const nextButton = document.getElementById('next-button');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const currentIndexElement = document.getElementById('current-index');
+
+        // --- Core Functions ---
+
+        // Function to shuffle the words in a sentence
+        function scrambleSentence(sentence) {
+            const words = sentence.split(' ');
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]]; // Swap
+            }
+            return words.join(' ');
+        }
+
+        // Function to load the current sentence
+        function loadSentence() {
+            if (currentIndex < sentences.length) {
+                const currentSentence = sentences[currentIndex];
+                scrambledTextElement.textContent = scrambleSentence(currentSentence);
+                userGuessInput.value = '';
+                feedbackMessage.textContent = '';
+                userGuessInput.disabled = false;
+                checkButton.disabled = false;
+                nextButton.disabled = true;
+                currentIndexElement.textContent = currentIndex + 1;
+            } else {
+                scrambledTextElement.textContent = "🥳 Game Over! You finished all the sentences.";
+                userGuessInput.style.display = 'none';
+                checkButton.style.display = 'none';
+                nextButton.style.display = 'none';
+                feedbackMessage.textContent = 'Refresh to play again!';
+                currentIndexElement.textContent = '5'; // Keep displaying 5
+            }
+        }
+
+        // Function to check the user's guess
+        function checkAnswer() {
+            if (currentIndex >= sentences.length) return; // Prevent checks when game is over
+
+            // Normalize both strings for comparison (case-insensitive, trim whitespace)
+            const correctAnswer = sentences[currentIndex].toLowerCase().trim();
+            const userAnswer = userGuessInput.value.toLowerCase().trim();
+
+            if (userAnswer === correctAnswer) {
+                feedbackMessage.textContent = '✅ Correct! Well done.';
+                feedbackMessage.className = 'message correct';
+                userGuessInput.disabled = true;
+                checkButton.disabled = true;
+                nextButton.disabled = false;
+            } else {
+                feedbackMessage.textContent = '❌ Incorrect. Try again!';
+                feedbackMessage.className = 'message incorrect';
+            }
+        }
+
+        // Function to move to the next sentence
+        function nextSentence() {
+            currentIndex++;
+            loadSentence();
+            userGuessInput.focus();
+        }
+
+        // --- Event Listeners ---
+
+        checkButton.addEventListener('click', checkAnswer);
+        nextButton.addEventListener('click', nextSentence);
+
+        // Allow pressing Enter key in the input to check the answer
+        userGuessInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !checkButton.disabled) {
+                checkAnswer();
+            } else if (e.key === 'Enter' && !nextButton.disabled) {
+                nextSentence();
+            }
+        });
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', loadSentence);
+    </script>
+</body>
+</html>

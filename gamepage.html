@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Play Options — Grammar With Joy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ------------------------- Reset & Base ------------------------- */
+  :root{
+    --bg:#000d2b;
+    --glass: rgba(255,255,255,0.06);
+    --glass-strong: rgba(255,255,255,0.09);
+    --text:#fff;
+    --muted:#cbd5e1;
+    --accent: #ffcc33;
+    --card-radius:18px;
+    --glass-border: rgba(255,255,255,0.12);
+    --card-padding:20px;
+  }
+  body.light-mode{
+    --bg:#f2f6ff;
+    --glass: rgba(0,0,0,0.05);
+    --glass-strong: rgba(0,0,0,0.07);
+    --text:#001b2e;
+    --muted:#42566a;
+    --glass-border: rgba(0,0,0,0.08);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif; -webkit-font-smoothing:antialiased;}
+  html,body{height:100%}
+  body{
+    background: radial-gradient(1200px 600px at 10% 20%, rgba(0,153,255,0.07), transparent 8%),
+                radial-gradient(900px 500px at 90% 80%, rgba(255,102,153,0.05), transparent 8%),
+                linear-gradient(180deg,var(--bg) 0%, #020617 100%);
+    color:var(--text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ------------------------- Decorative animated blobs & liquid ------------------------- */
+  .bg-blobs, .bg-circles { position: fixed; inset: 0; pointer-events: none; z-index: -3; overflow: hidden; }
+  /* large blurred gradient blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.7;
+    transform: translate3d(0,0,0);
+    mix-blend-mode: screen;
+  }
+  .blob.b1{ width:520px; height:520px; background: linear-gradient(135deg,#ffb656,#ff74c1); left:-120px; top:-80px; animation:blobFloat1 28s ease-in-out infinite; }
+  .blob.b2{ width:420px; height:420px; background: linear-gradient(135deg,#00b4ff,#66c0ff); right:-100px; bottom:-140px; animation:blobFloat2 22s ease-in-out infinite; }
+  .blob.b3{ width:360px; height:360px; background: linear-gradient(135deg,#6a5cff,#ff6b6b); left:60%; top:30%; animation:blobFloat3 32s ease-in-out infinite; }
+
+  @keyframes blobFloat1 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(80px,-40px) scale(1.15)} 100%{transform:translate(-60px,60px) scale(0.95)} }
+  @keyframes blobFloat2 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(-70px,40px) scale(1.1)} 100%{transform:translate(60px,-60px) scale(0.95)} }
+  @keyframes blobFloat3 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,80px) scale(1.12)} 100%{transform:translate(-80px,-40px) scale(0.9)} }
+
+  /* drifting translucent circles (liquid bubbles) */
+  .bg-circles .circle {
+    position:absolute;border-radius:50%;opacity:0.18;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.28), rgba(255,255,255,0.02));
+    box-shadow: 0 6px 40px rgba(0,0,0,0.25);
+    filter: blur(6px);
+    mix-blend-mode: screen;
+    animation: drift linear infinite;
+  }
+  @keyframes drift {
+    0% { transform: translateY(0) translateX(0) scale(1); }
+    50% { transform: translateY(-40vh) translateX(8vw) scale(1.08); }
+    100% { transform: translateY(0) translateX(-6vw) scale(1); }
+  }
+
+  /* ------------------------- Header ------------------------- */
+  header{
+    position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+    padding:18px 36px;background:var(--glass);backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--glass-border);z-index:60;
+  }
+  header h1{font-size:1.05rem;font-weight:600;letter-spacing:0.2px}
+  nav{display:flex;gap:12px;align-items:center}
+  nav a{color:var(--text);text-decoration:none;font-weight:500;padding:8px 10px;position:relative}
+
+  /* simple nav hover glow */
+  nav a:hover{color:var(--accent)}
+
+  .mode-toggle{
+    background:var(--glass);border:1px solid var(--glass-border);padding:8px 14px;border-radius:999px;cursor:pointer;
+  }
+
+  /* ------------------------- Page Head ------------------------- */
+  .page-head{
+    padding:120px 24px 20px;max-width:1200px;margin:0 auto;
+  }
+  .page-head .intro{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    margin-bottom:22px;
+  }
+  .intro .title{
+    font-size:1.6rem;font-weight:600;
+  }
+  .intro p{color:var(--muted);margin-top:6px}
+
+  /* ------------------------- Grid ------------------------- */
+  .grid-wrap{max-width:1200px;margin:12px auto 120px;padding:0 20px}
+  .games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+  }
+
+  .game-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid var(--glass-border);
+    border-radius:var(--card-radius);
+    padding:var(--card-padding);
+    min-height:150px;
+    display:flex;flex-direction:column;
+    gap:12px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease;
+    backdrop-filter: blur(8px);
+  }
+  .game-card:hover{ transform: translateY(-8px); box-shadow: 0 18px 50px rgba(0,0,0,0.45); }
+
+  .thumb{
+    width:100%;
+    height:200px;   /* ← CHANGE THIS VALUE */
+    border-radius:12px;
+    background:#0b1830;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.03);
+}
+
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .game-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .game-title{font-weight:600;font-size:1rem}
+  .game-sub{font-size:0.85rem;color:var(--muted)}
+
+  /* Play now small button inside card */
+  .small-play{
+    background:var(--glass);border:1px solid var(--glass-border);padding:8px 12px;border-radius:999px;font-weight:600;
+  }
+
+  /* ------------------------- Modal ------------------------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;
+    z-index:120;padding:24px;
+  }
+  .modal{
+    width:min(880px,96vw);max-height:88vh;overflow:auto;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border:1px solid var(--glass-border);padding:18px;position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  }
+  .modal-grid{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+  .modal-thumb{width:100%;height:200px;border-radius:12px;overflow:hidden;background:#071028;border:1px solid rgba(0,0,0,0.1)}
+  .modal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .modal-content h3{margin-bottom:8px}
+  .modal-content p{color:var(--muted);margin-bottom:12px}
+  .modal-actions{display:flex;gap:12px;align-items:center;margin-top:16px}
+
+  .btn{
+    display:inline-block;background:var(--glass);border:1px solid var(--glass-border);padding:10px 16px;border-radius:12px;text-decoration:none;color:var(--text);font-weight:600;cursor:pointer;
+  }
+
+  .btn.primary{
+    background: linear-gradient(90deg, rgba(255,204,51,0.12), rgba(255,204,51,0.06));
+    border:1px solid rgba(255,204,51,0.22);
+  }
+
+  /* ------------------------- Snake Hover (4-side) ------------------------- */
+  .snake{
+    position:absolute;background:var(--accent);z-index:9;
+    transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .3s;
+    opacity:1;
+    pointer-events:none;
+  }
+  .snake.top{height:2px;left:0;right:0;top:0;transform:translateX(-100%);}
+  .snake.right{width:2px;top:0;bottom:0;right:0;transform:translateY(-100%);}
+  .snake.bottom{height:2px;left:0;right:0;bottom:0;transform:translateX(100%);}
+  .snake.left{width:2px;top:0;bottom:0;left:0;transform:translateY(100%);}
+
+  .has-snake:hover .snake.top{transform:translateX(0);}
+  .has-snake:hover .snake.bottom{transform:translateX(0);}
+  .has-snake:hover .snake.right{transform:translateY(0);}
+  .has-snake:hover .snake.left{transform:translateY(0);}
+
+  .snake{box-shadow:0 0 10px rgba(255,204,51,0.6)}
+  .has-snake{position:relative;overflow:hidden}
+
+  /* ------------------------- Responsive tweaks ------------------------- */
+  @media (max-width:720px){
+    .modal-grid{grid-template-columns:1fr;gap:12px}
+    .modal-thumb{height:180px}
+    .page-head .intro{flex-direction:column;align-items:flex-start}
+  }
+
+  /* small helpers */
+  .muted{color:var(--muted);font-size:0.9rem}
+  .center{display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+
+<!-- Background decorations -->
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="bg-circles" aria-hidden="true">
+  <!-- generate some drifting circles with inline styles for variety -->
+  <div class="circle" style="width:120px;height:120px;left:10%;bottom:5%;animation-duration:28s;opacity:0.12;"></div>
+  <div class="circle" style="width:80px;height:80px;left:30%;bottom:10%;animation-duration:22s;opacity:0.14;"></div>
+  <div class="circle" style="width:160px;height:160px;left:75%;top:10%;animation-duration:34s;opacity:0.09;"></div>
+  <div class="circle" style="width:100px;height:100px;left:55%;top:20%;animation-duration:26s;opacity:0.11;"></div>
+</div>
+
+<!-- Header -->
+<header>
+  <h1>Grammar With Joy — Play</h1>
+  <nav>
+    <a href="index.html" class="has-snake">Home</a>
+    <a href="topics.html" class="has-snake">Topics</a>
+    <a href="quiz.html" class="has-snake">Quizzes</a>
+    <a href="contact.html" class="has-snake">Contact</a>
+  </nav>
+
+  <div style="display:flex;gap:12px;align-items:center">
+    <button class="mode-toggle has-snake" id="modeToggle">Toggle mode</button>
+  </div>
+</header>
+
+<!-- Page head -->
+<section class="page-head">
+  <div class="intro">
+    <div>
+      <div class="title">Play Options</div>
+      <p class="muted">Choose a game and click to play and enjoy. </p>
+    </div>
+    <div class="muted">10 games ready</div>
+  </div>
+</section>
+
+<!-- Grid -->
+<section class="grid-wrap">
+  <div class="games-grid" id="gamesGrid">
+    <!-- Card 1: Bubble Pop -->
+    <article class="game-card has-snake" data-title="Bubble Pop" data-thumb="bubble.jpg" data-desc="Pop bubbles to score points. Simple and calming." tabindex="0" role="button">
+      <div class="thumb"><img src="bubble.jpg" alt="Bubble Pop thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Bubble Pop</div>
+          <div class="game-sub">Relaxing bubble pop</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+   <article class="game-card has-snake"
+  data-title="Cloud Glide"
+  data-thumb="cloud.png"
+  data-desc="Type the moving cloud words to pop them. Improve your reflex & typing speed."
+  tabindex="0"
+  role="button">
+
+  <div class="thumb">
+    <img src="cloud.png" alt="Cloud Glide thumbnail" loading="lazy">
+  </div>
+
+  <div class="game-meta">
+    <div>
+      <div class="game-title">Cloud Glide</div>
+      <div class="game-sub">Typing speed challenge</div>
+    </div>
+    <div class="center">
+      <span class="small-play has-snake">Play</span>
+    </div>
+  </div>
+</article>
+
+
+    
+
+   <article class="game-card has-snake"
+  data-title="Hangman"
+  data-file="hangman.html"
+  data-thumb="hangman.png"
+  data-desc="Guess the hidden word before the hangman appears."
+  tabindex="0"
+  role="button">
+
+  <div class="thumb">
+    <img src="hangman.png" alt="Hangman thumbnail" loading="lazy">
+  </div>
+
+  <div class="game-meta">
+    <div>
+      <div class="game-title">Hangman</div>
+      <div class="game-sub">Guess the word</div>
+    </div>
+    <div class="center">
+      <span class="small-play has-snake">Play</span>
+    </div>
+  </div>
+</article>
+
+
+    <article class="game-card has-snake" data-title="Preposition Maze" data-thumb="images/maze.png" data-desc="Navigate mazes using preposition clues." tabindex="0" role="button">
+      <div class="thumb"><img src="images/maze.png" alt="Preposition Maze thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Preposition Maze</div>
+          <div class="game-sub">Spatial language puzzles</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+    <article class="game-card has-snake" data-title="Vocabulary Shooter" data-thumb="images/shooter.png" data-desc="Shoot the correct word choices to score." tabindex="0" role="button">
+      <div class="thumb"><img src="images/shooter.png" alt="Vocabulary Shooter thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Vocabulary Shooter</div>
+          <div class="game-sub">Aim for correct words</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+    <article class="game-card has-snake" data-title="Tense Rush" data-thumb="images/tense.png" data-desc="Fast questions on tenses under a time limit." tabindex="0" role="button">
+      <div class="thumb"><img src="images/tense.png" alt="Tense Rush thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Tense Rush</div>
+          <div class="game-sub">Timed tense drills</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+    <article class="game-card has-snake" data-title="Match Master" data-thumb="images/match.png" data-desc="Match pairs quickly to win." tabindex="0" role="button">
+      <div class="thumb"><img src="images/match.png" alt="Match Master thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Match Master</div>
+          <div class="game-sub">Pair matching game</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+    <article class="game-card has-snake" data-title="Spell Sprint" data-thumb="images/sprint.png" data-desc="Spell words quickly in a sprint." tabindex="0" role="button">
+      <div class="thumb"><img src="images/sprint.png" alt="Spell Sprint thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Spell Sprint</div>
+          <div class="game-sub">Speedy spelling</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+
+    <article class="game-card has-snake" data-title="Grammar Memory" data-thumb="images/memory.png" data-desc="Memory matching with grammar pairs." tabindex="0" role="button">
+      <div class="thumb"><img src="images/memory.png" alt="Grammar Memory thumbnail" loading="lazy"></div>
+      <div class="game-meta">
+        <div>
+          <div class="game-title">Grammar Memory</div>
+          <div class="game-sub">Memory & grammar</div>
+        </div>
+        <div class="center"><span class="small-play has-snake">Play</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div id="modalTitle" style="font-weight:700;font-size:1.1rem">Game</div>
+      <button id="modalClose" class="btn has-snake">Close</button>
+    </div>
+
+    <div class="modal-grid">
+      <div>
+        <div class="modal-thumb" id="modalThumb"><img src="images/bubble.png" alt="thumbnail"></div>
+      </div>
+
+      <div class="modal-content">
+        <h3 id="modalGameTitle">Bubble Pop</h3>
+        <p id="modalGameDesc" class="muted">Game description goes here.</p>
+
+        <div class="modal-actions">
+          <button id="playNow" class="btn primary has-snake">Play Now</button>
+          <a id="openFull" class="btn has-snake" href="#" target="_blank" rel="noopener">Open in new page</a>
+        </div>
+
+        <div style="margin-top:14px" class="muted"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hover sound -->
+<audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
+<!-- Click sound (optional) -->
+<audio id="clickSound" src="click.mp3" preload="auto"></audio>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+/* ------------------------- Utilities ------------------------- */
+const hoverSound = document.getElementById('hoverSound');
+const clickSound = document.getElementById('clickSound');
+
+function playHover(){
+  try{ hoverSound.currentTime = 0; hoverSound.play().catch(()=>{}); }catch(e){}
+}
+function playClick(){
+  try{ clickSound.currentTime = 0; clickSound.play().catch(()=>{}); }catch(e){}
+}
+
+/* ------------------------- Inject snake spans into all .has-snake elements ------------------------- */
+function injectSnakeLines(){
+  const targets = document.querySelectorAll('.has-snake');
+  targets.forEach(el=>{
+    if(el.dataset.snakeInjected) return;
+    const top = document.createElement('span'); top.className='snake top';
+    const right = document.createElement('span'); right.className='snake right';
+    const bottom = document.createElement('span'); bottom.className='snake bottom';
+    const left = document.createElement('span'); left.className='snake left';
+    el.appendChild(top); el.appendChild(right); el.appendChild(bottom); el.appendChild(left);
+    el.dataset.snakeInjected = '1';
+    // hover sound & keyboard support
+    el.addEventListener('mouseenter', ()=> playHover());
+    el.addEventListener('focus', ()=> playHover(), {passive:true});
+    el.addEventListener('click', ()=> playClick());
+    el.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); playClick(); el.click(); }
+    });
+  });
+}
+
+/* ------------------------- Modal logic ------------------------- */
+const grid = document.getElementById('gamesGrid');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalGameTitle');
+const modalDesc = document.getElementById('modalGameDesc');
+const modalThumb = document.getElementById('modalThumb');
+const modalClose = document.getElementById('modalClose');
+const playNow = document.getElementById('playNow');
+const openFull = document.getElementById('openFull');
+
+let currentGame = null;
+
+function openModal(gameData, anchorEl){
+  currentGame = gameData;
+  modalTitle.textContent = gameData.title;
+  modalDesc.textContent = gameData.desc;
+  modalThumb.innerHTML = `<img src="${gameData.thumb}" alt="${escapeHTML(gameData.title)} thumbnail">`;
+
+  // Set correct page link (Bubble Pop has unique page 2dgame.html)
+  if (gameData.title === "Bubble Pop") {
+    openFull.href = "2dgame.html";
+  } else {
+    openFull.href = "play/" + slugify(gameData.title) + ".html";
+  }
+
+  modalBackdrop.style.display = 'flex';
+  modalBackdrop.setAttribute('aria-hidden','false');
+
+  // GSAP intro
+  gsap.fromTo(modalBackdrop, {opacity:0},{opacity:1,duration:0.18});
+  gsap.fromTo('.modal',{scale:0.96, opacity:0},{scale:1,opacity:1,duration:0.34, ease:'power2.out'});
+
+  // animate the tapped tile (if provided)
+  if(anchorEl){
+    gsap.fromTo(anchorEl,{scale:1},{scale:0.96,duration:0.08,yoyo:true,repeat:1,ease:'power1.out'});
+  }
+}
+
+function closeModal(){
+  gsap.to('.modal',{scale:0.98,opacity:0,duration:0.18,ease:'power1.in', onComplete:()=>{
+    modalBackdrop.style.display='none';
+    modalBackdrop.setAttribute('aria-hidden','true');
+  }});
+}
+
+/* ------------------------- Helpers ------------------------- */
+function slugify(s){ return s.toLowerCase().replace(/[^\w]+/g,'-').replace(/^-|-$/g,''); }
+function escapeHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ------------------------- Attach card event listeners ------------------------- */
+function wireCards(){
+  const cards = document.querySelectorAll('.game-card');
+  cards.forEach(card=>{
+    const title = card.dataset.title || card.querySelector('.game-title')?.textContent || 'Game';
+    const thumb = card.dataset.thumb || 'images/bubble.png';
+    const desc = card.dataset.desc || 'Play this game.';
+    const data = {title, thumb, desc};
+    // click / enter
+    card.addEventListener('click', (ev)=>{
+      openModal(data, card);
+    });
+    card.addEventListener('keydown', (ev)=>{ if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openModal(data, card); }});
+    // small play button inside card should also trigger
+    const small = card.querySelector('.small-play');
+    if(small){
+      small.addEventListener('click', (ev)=>{ ev.stopPropagation(); playClick(); openModal(data, card);});
+    }
+  });
+}
+
+/* ------------------------- Modal controls ------------------------- */
+modalClose.addEventListener('click', ()=>{ playClick(); closeModal(); });
+modalBackdrop.addEventListener('click', (ev)=>{ if(ev.target === modalBackdrop){ closeModal(); }});
+playNow.addEventListener('click', ()=>{ 
+  playClick();
+
+  // Bubble Pop special page
+  if (currentGame.title === "Bubble Pop") {
+      window.location.href = "2dgame.html";
+      return;
+  }
+
+  // Other games load their dynamic pages
+  window.location.href = "play/" + slugify(currentGame.title) + ".html";
+});
+
+
+/* ------------------------- Keyboard accessibility ------------------------- */
+document.addEventListener('keydown', (ev)=>{
+  if(ev.key === 'Escape' && modalBackdrop.style.display === 'flex'){ closeModal(); }
+});
+
+/* ------------------------- Mode toggle ------------------------- */
+document.getElementById('modeToggle').addEventListener('click', ()=>{
+  document.body.classList.toggle('light-mode');
+});
+
+/* ------------------------- Initialization ------------------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  injectSnakeLines();
+  wireCards();
+
+  // ensure images fallback if missing (defensive)
+  document.querySelectorAll('.thumb img').forEach(img=>{
+    img.onerror = ()=>{ img.src = 'images/placeholder.png'; };
+  });
+
+  // Add slight random offsets/durations to circles so drift animation isn't identical
+  document.querySelectorAll('.bg-circles .circle').forEach((c,i)=>{
+    c.style.left = (5 + i*18) + '%';
+    c.style.top = (10 + (i*7)) + '%';
+    c.style.animationDuration = (22 + i*6) + 's';
+    c.style.opacity = 0.08 + i*0.02;
+  });
+});
+</script>
+
+</body>
+</html>

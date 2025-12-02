@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson: There Is / There Are - Keynote Grammar</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: auto;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      --header-h: 64px;
+      --footer-h: 56px;
+
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #001f3f, #004d99);
+      color: white;
+
+      padding-top: calc(var(--header-h) + 20px);
+      padding-bottom: calc(var(--footer-h) + 160px) !important;
+
+      display: block;
+      position: relative;
+    }
+
+    /* Floating background bubbles */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      animation: float 14s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-50px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffcc33;
+      margin-bottom: 10px;
+    }
+
+    p.intro {
+      text-align: center;
+      color: #d9e7ff;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    /* --------------------------------
+       WHITE SNAKE GLOW SYSTEM
+       -------------------------------- */
+    .snake-box {
+      position: relative;
+      transition: 0.25s ease;
+    }
+
+    .snake-box:hover {
+      background: #ffffff !important;
+      color: #000 !important;
+      transform: scale(1.02);
+      box-shadow:
+        0 0 15px rgba(255, 255, 255, 0.5),
+        0 0 40px rgba(255, 255, 255, 0.35);
+    }
+
+    .snake-box:hover * {
+      color: #000 !important;
+    }
+
+    .snake-svg {
+      position: absolute;
+      top: -7px;
+      left: -7px;
+      width: calc(100% + 14px);
+      height: calc(100% + 14px);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    .snake-svg polyline {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 4;
+      stroke-dasharray: 90 650;
+      stroke-dashoffset: 90;
+      transition: stroke-dashoffset .9s ease;
+    }
+
+    .snake-box:hover .snake-svg {
+      opacity: 1;
+    }
+
+    .snake-box:hover .snake-svg polyline {
+      stroke-dashoffset: -650;
+    }
+
+    /* Topic layout */
+    .topic {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .topic.reverse {
+      flex-direction: row-reverse;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .image-box {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .img-box {
+      width: 220px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    /* INFO BOXES */
+    .info-box {
+      background: rgba(255, 255, 255, 0.12);
+      border-left: 5px solid #ffcc33;
+      padding: 15px 18px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      transition: 0.25s;
+    }
+
+    /* Hover becomes snake-box (white glow) */
+    .snake-box.info-box:hover {
+      border-left-color: #000;
+    }
+
+    .info-title {
+      font-weight: 600;
+      color: #ffe680;
+      margin-bottom: 6px;
+    }
+
+    /* Audio Box (NEW + matching all other lessons) */
+    .audio-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .audio-title {
+      font-weight: 700;
+      color: #ffcc33;
+      margin-bottom: 8px;
+    }
+
+    .lang-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .lang-btn {
+      flex: 1;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      border: none;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: #ffcc33;
+      color: black;
+    }
+
+    /* Buttons */
+    .btns {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 50px;
+      margin: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.25s;
+    }
+
+    .btn:hover {
+      background: white;
+      color: black;
+      box-shadow: 0 0 25px white;
+      transform: scale(1.04);
+    }
+
+    @media(max-width: 768px) {
+      .topic,
+      .topic.reverse {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hover Sound -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <!-- Background Bubbles -->
+  <div class="bubbles">
+    <div class="bubble" style="width:120px;height:120px;left:10%;top:20%;animation-delay:0s;"></div>
+    <div class="bubble" style="width:180px;height:180px;left:60%;top:10%;animation-delay:2s;"></div>
+    <div class="bubble" style="width:100px;height:100px;left:80%;top:40%;animation-delay:4s;"></div>
+    <div class="bubble" style="width:140px;height:140px;left:30%;top:60%;animation-delay:1s;"></div>
+  </div>
+
+  <div class="container">
+
+    <h1>There Is / There Are</h1>
+    <p class="intro">We use <strong>There is / There are</strong> to show that something exists or is in a place.</p>
+
+    <!-- AUDIO BOX (ADDED) -->
+    <div class="audio-box snake-box" data-en="there_english.mp3" data-ta="there_tamil.mp3">
+      <div class="audio-title">Audio Explanation</div>
+
+      <div class="lang-select">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ta">Tamil</button>
+      </div>
+
+      <audio class="audioPlayer" controls>
+        <source src="there_english.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- THERE IS -->
+    <section class="topic snake-box">
+      <div class="content">
+        <h2>There Is (Present)</h2>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Uses:</div>
+          <p>Used for singular nouns to show something exists or is in a place.</p>
+        </div>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Examples:</div>
+          <ul>
+            <li>There is a dog on the sofa.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="image-box snake-box">
+        <img src="dogsofa.png" class="img-box">
+      </div>
+    </section>
+
+    <!-- THERE ARE -->
+    <section class="topic reverse snake-box">
+      <div class="content">
+        <h2>There Are (Present)</h2>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Uses:</div>
+          <p>Used for plural nouns to show things or people exist or are in a place.</p>
+        </div>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Examples:</div>
+          <ul>
+            <li>There are three apples in the basket.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="image-box snake-box">
+        <img src="apple.png" class="img-box">
+      </div>
+    </section>
+
+    <!-- THERE WAS -->
+    <section class="topic snake-box">
+      <div class="content">
+        <h2>There Was (Past)</h2>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Uses:</div>
+          <p>Used for singular nouns to show something existed in the past.</p>
+        </div>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Examples:</div>
+          <ul>
+            <li>There was a car in the garage.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="image-box snake-box">
+        <img src="car.png" class="img-box">
+      </div>
+    </section>
+
+    <!-- THERE WERE -->
+    <section class="topic reverse snake-box">
+      <div class="content">
+        <h2>There Were (Past)</h2>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Uses:</div>
+          <p>Used for plural nouns in the past.</p>
+        </div>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Examples:</div>
+          <ul>
+            <li>There were many stars in the sky.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="image-box snake-box">
+        <img src="st.jpg" class="img-box">
+      </div>
+    </section>
+
+    <!-- THERE WILL BE -->
+    <section class="topic snake-box">
+      <div class="content">
+        <h2>There Will Be (Future)</h2>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Uses:</div>
+          <p>Used for future events or situations.</p>
+        </div>
+
+        <div class="info-box snake-box">
+          <div class="info-title">Examples:</div>
+          <ul>
+            <li>There will be a concert in the park next Friday.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="image-box snake-box">
+        <img src="concert.jpg" class="img-box">
+      </div>
+    </section>
+
+    <!-- Buttons -->
+    <div class="btns">
+      <a href="lesson_there_video.html" class="btn snake-box">🎬 Watch Video</a>
+      <a href="png10.html" class="btn snake-box">🧩 Next</a>
+      <a href="topics.html" class="btn snake-box">🏠 Back to Topics</a>
+    </div>
+  </div>
+
+  <!-- SNAKE SVG & AUDIO Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      /* Hover Sound */
+      const hoverSound = document.getElementById("hoverSound");
+
+      function playHover() {
+        try {
+          hoverSound.currentTime = 0;
+          hoverSound.play();
+        } catch { }
+      }
+
+      /* Snake Injection */
+      document.querySelectorAll(".snake-box").forEach(box => {
+        if (!box.querySelector(".snake-svg")) {
+          const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          svg.classList.add("snake-svg");
+          svg.setAttribute("viewBox", "0 0 260 60");
+          svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+
+          const cs = getComputedStyle(box);
+          if (cs.position === "static") box.style.position = "relative";
+
+          box.prepend(svg);
+        }
+
+        box.addEventListener("pointerenter", playHover);
+      });
+
+      /* Audio System */
+      document.querySelectorAll(".audio-box").forEach(box => {
+        const audio = box.querySelector(".audioPlayer");
+        const src = audio.querySelector("source");
+
+        const en = box.getAttribute("data-en");
+        const ta = box.getAttribute("data-ta");
+
+        box.querySelectorAll(".lang-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            box.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            src.src = (btn.dataset.lang === "en") ? en : ta;
+            audio.load();
+          });
+        });
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

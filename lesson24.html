@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conjunctions — Keynote Grammar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET + VARIABLES */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+:root{
+  --header-h:64px;
+  --footer-h:56px;
+  --bg1:#001f3f; --bg2:#003c8f; --bg3:#004d99;
+  --accent:#ffcc33;
+  --soft-white-1:rgba(255,255,255,0.45);
+  --soft-white-2:rgba(255,255,255,0.22);
+}
+
+/* STRUCTURE */
+html,body{width:100%;height:100%}
+body{
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  color:#fff;
+  min-height:100%;
+  padding-top:calc(var(--header-h) + 16px);
+  padding-bottom:calc(var(--footer-h) + 200px);
+  overflow-x:hidden;
+}
+
+/* BLOBS */
+.blobs{position:fixed;inset:0;pointer-events:none;z-index:-3}
+.blob{
+  position:absolute;width:380px;height:380px;border-radius:40%;
+  filter:blur(70px);opacity:.32;mix-blend-mode:screen;
+  animation:blobMove 14s infinite alternate ease-in-out;
+}
+.blob.b1{background:#ff6b6b;left:-6%;top:12%}
+.blob.b2{background:#70a1ff;left:60%;top:28%;animation-duration:16s}
+.blob.b3{background:#ffd166;left:22%;top:62%;animation-duration:18s}
+@keyframes blobMove{0%{transform:translateY(0)}100%{transform:translateY(-40px)}}
+
+/* BUBBLES */
+.bubbles{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.bubble{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,.06);filter:blur(18px);
+  animation:float 14s infinite ease-in-out;
+}
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-28px)}
+  100%{transform:translateY(0)}
+}
+
+/* HEADER */
+header{
+  position:fixed;top:0;left:0;width:100%;height:var(--header-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:rgba(0,0,0,.35);
+  border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);
+  z-index:1100;
+}
+header h1{font-size:1.05rem;color:#fff;font-weight:600}
+header nav{display:flex;gap:12px}
+header nav a{
+  color:#fff;text-decoration:none;font-weight:600;padding:6px 8px;border-radius:6px;
+}
+header nav a:hover{color:var(--accent)}
+
+/* FOOTER */
+footer{
+  position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);
+  display:flex;justify-content:center;align-items:center;
+  background:rgba(0,0,0,.32);backdrop-filter:blur(8px);
+  color:#fff;border-top:1px solid rgba(255,255,255,.06);
+  font-size:.9rem;z-index:1100;
+}
+
+/* MAIN CONTAINER */
+.container{
+  width:100%;max-width:1000px;margin:28px auto;
+  background:rgba(255,255,255,.08);
+  padding:30px;padding-bottom:140px;
+  border-radius:16px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+
+/* TITLES */
+h1{text-align:center;color:var(--accent);margin-bottom:12px}
+.lead{text-align:center;color:#d9e7ff;margin-bottom:18px}
+
+/* AUDIO BOX */
+.audio-box{
+  max-width:760px;margin:0 auto 22px;padding:14px;border-radius:12px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+}
+.lang-select{display:flex;gap:10px;margin-bottom:10px}
+.lang-btn{
+  flex:1;padding:8px;border:none;border-radius:8px;
+  background:rgba(255,255,255,.14);color:#fff;font-weight:600;cursor:pointer;
+}
+.lang-btn.active{background:var(--accent);color:#000}
+
+/* SECTION */
+.section{
+  padding:18px;border-radius:12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  margin-top:18px;
+}
+
+/* TABLE */
+table{
+  width:100%;border-collapse:collapse;margin-top:14px;
+  background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;
+}
+th,td{
+  padding:12px;border-bottom:1px solid rgba(255,255,255,.10);
+  color:#eef7ff;text-align:left;
+}
+th{background:rgba(255,255,255,.15);color:#ffeb99;font-weight:600}
+
+/* BUTTONS */
+.btns{text-align:center;margin-top:32px}
+.btn{
+  display:inline-block;margin:6px;padding:10px 22px;border-radius:50px;
+  background:rgba(255,255,255,.15);color:white;text-decoration:none;
+  font-weight:600;transition:.18s;
+}
+.btn:hover{transform:translateY(-3px)}
+
+/*** SNAKE GLOW ***/
+.snake-target{position:relative;transition:all .2s}
+.snake-target:hover{
+  background:#fff !important;color:#000 !important;
+  transform:scale(1.02);border-color:#000 !important;
+  box-shadow:0 0 18px var(--soft-white-1),0 0 38px var(--soft-white-2);
+}
+.snake-target:hover *{color:#000 !important}
+.snake-svg{
+  position:absolute;top:-8px;left:-8px;
+  width:calc(100% + 16px);height:calc(100% + 16px);
+  pointer-events:none;opacity:0;transition:.22s;
+}
+.snake-svg polyline{
+  fill:none;stroke:#fff;stroke-width:3;
+  stroke-dasharray:80 600;stroke-dashoffset:80;
+  transition:stroke-dashoffset .85s ease
+}
+.snake-target:hover .snake-svg{opacity:1}
+.snake-target:hover .snake-svg polyline{stroke-dashoffset:-600}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .container{margin:18px 12px 260px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- BLOBS -->
+<div class="blobs">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<!-- BUBBLES -->
+<div class="bubbles">
+  <div class="bubble" style="width:120px;height:120px;left:12%;top:18%"></div>
+  <div class="bubble" style="width:160px;height:160px;left:75%;top:6%"></div>
+  <div class="bubble" style="width:100px;height:100px;left:48%;top:56%"></div>
+</div>
+
+<!-- HOVER SOUND -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<header>
+  <h1>Grammar With Joy</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+    
+  </nav>
+</header>
+
+<main class="container" role="main">
+  
+  <h1>Lesson 24: Conjunctions</h1>
+  <p class="lead">Conjunctions join words, phrases, or sentences. They help ideas connect smoothly.</p>
+
+  <!-- AUDIO BOX -->
+  <div class="audio-box snake-target" data-en="conjunctions1_english.mp3" data-ta="conjunctions1_tamil.mp3"></div>
+
+  <!-- SECTION -->
+  <section class="section snake-target">
+    <p>A <strong>conjunction</strong> is a word used to join words, phrases, or sentences.</p>
+    <p><strong>Example:</strong> I wanted to play, <strong>but</strong> it started to rain.</p>
+
+    <h2 style="margin-top:18px;color:var(--accent)">Most Common Conjunctions</h2>
+
+    <table>
+      <tr><th>Conjunction</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>and</td><td>adds ideas</td><td>She ate and drank.</td></tr>
+      <tr><td>but</td><td>shows contrast</td><td>He is small but strong.</td></tr>
+      <tr><td>or</td><td>gives a choice</td><td>Tea or coffee?</td></tr>
+      <tr><td>so</td><td>shows result</td><td>It rained, so we stayed in.</td></tr>
+      <tr><td>because</td><td>shows reason</td><td>I left early because I was tired.</td></tr>
+      <tr><td>since</td><td>reason / time</td><td>Since it’s late, go home.</td></tr>
+      <tr><td>as</td><td>reason / time</td><td>As it was dark, we stopped.</td></tr>
+      <tr><td>when</td><td>shows time</td><td>Call me when you arrive.</td></tr>
+      <tr><td>while</td><td>two actions together</td><td>She cooked while listening to music.</td></tr>
+      <tr><td>whenever</td><td>any time</td><td>Visit me whenever you can.</td></tr>
+    </table>
+  </section>
+
+  <!-- BUTTONS -->
+  <div class="btns">
+    <a href="lesson24_video.html" class="btn snake-target">🎬 Watch Video</a>
+    <a href="png24.html" class="btn snake-target">🧩 Next</a>
+    <a href="topics.html" class="btn snake-target">🏠 Back to Topics</a>
+  </div>
+
+</main>
+
+<footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+<script>
+(function(){
+  document.addEventListener("DOMContentLoaded",()=>{
+
+    /* hover sound */
+    const hover=document.getElementById("hoverSound");
+    function playHover(){try{hover.currentTime=0;hover.play().catch(()=>{})}catch(e){}}
+
+    /* audio box */
+    document.querySelectorAll(".audio-box").forEach(box=>{
+      const en=box.dataset.en;
+      const ta=box.dataset.ta;
+
+      box.innerHTML=`
+        <div style="color:var(--accent);font-weight:700;margin-bottom:8px">Audio Explanation</div>
+        <div class="lang-select">
+          <button class="lang-btn active" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="ta">Tamil</button>
+        </div>
+        <audio class="audioPlayer" controls preload="none">
+          <source src="${en}" type="audio/mpeg">
+        </audio>
+      `;
+
+      const audio=box.querySelector(".audioPlayer");
+      const src=audio.querySelector("source");
+
+      box.querySelectorAll(".lang-btn").forEach(btn=>{
+        btn.addEventListener("click",()=>{
+          box.querySelectorAll(".lang-btn").forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+          src.src = btn.dataset.lang === "en" ? en : ta;
+          audio.load(); audio.play().catch(()=>{});
+        });
+      });
+    });
+
+    /* snake injection */
+    function injectSnake(t){
+      if(t.querySelector(".snake-svg")) return;
+      const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+      svg.setAttribute("class","snake-svg");
+      svg.setAttribute("viewBox","0 0 260 60");
+      svg.innerHTML=`<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>`;
+      if(getComputedStyle(t).position==="static") t.style.position="relative";
+      t.insertBefore(svg,t.firstChild);
+    }
+
+    document.querySelectorAll(".snake-target").forEach(el=>{
+      injectSnake(el);
+      el.addEventListener("pointerenter",playHover);
+      el.addEventListener("focus",playHover);
+      if(!el.hasAttribute("tabindex")) el.setAttribute("tabindex","0");
+    });
+
+    document.querySelectorAll("header nav a").forEach(a=>{
+      a.addEventListener("pointerenter",playHover);
+    });
+
+  });
+})();
+</script>
+
+</body>
+</html>

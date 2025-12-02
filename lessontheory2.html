@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Theory Lesson: Singular and Plural Nouns</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #001833, #00254d, #003366);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 20px 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffcc33;
+    }
+
+    /* Main Card */
+    main {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      margin-top: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffcc33;
+      margin-bottom: 20px;
+    }
+
+    p.intro {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 30px;
+    }
+
+    /* Rules */
+    .rule {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+    }
+
+    .rule h3 {
+      color: #ffcc33;
+      margin-bottom: 10px;
+    }
+
+    /* Horizontal examples */
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .examples span {
+      padding: 10px 25px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      font-weight: 500;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    /* Hover Glow + Pop */
+    .examples span:hover,
+    .btn:hover {
+      background: yellow;
+      color: black;
+      transform: scale(1.12);
+      box-shadow: 0 0 20px yellow;
+    }
+
+    /* Buttons */
+    .btn-container {
+      text-align: center;
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      position: fixed;
+      bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hover Sound -->
+  <audio id="hover-sound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sound = document.getElementById("hover-sound");
+      const items = document.querySelectorAll(".examples span, .btn");
+
+      items.forEach(el => {
+        el.addEventListener("mouseenter", () => {
+          sound.currentTime = 0;
+          sound.play();
+        });
+      });
+    });
+  </script>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+      <a href="quiz.html">Quizzes</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Lesson 2.2: Singular and Plural Nouns (Theory)</h2>
+
+    <p class="intro">
+      Singular nouns refer to one thing, while plural nouns refer to more than one.
+      These are the main rules for forming plural nouns.
+    </p>
+
+    <!-- RULE 1 -->
+    <div class="rule">
+      <h3>1️⃣ Regular Nouns – Add -s</h3>
+      <div class="examples">
+        <span>chair → chairs</span>
+        <span>house → houses</span>
+        <span>phone → phones</span>
+      </div>
+    </div>
+
+    <!-- RULE 2 -->
+    <div class="rule">
+      <h3>2️⃣ Ending with s, sh, ch, x, o – Add -es</h3>
+      <div class="examples">
+        <span>bus → buses</span>
+        <span>bush → bushes</span>
+        <span>watch → watches</span>
+        <span>fox → foxes</span>
+        <span>tomato → tomatoes</span>
+      </div>
+    </div>
+
+    <!-- RULE 3 -->
+    <div class="rule">
+      <h3>3️⃣ Ending with -y (after consonant) → ies</h3>
+      <div class="examples">
+        <span>city → cities</span>
+        <span>baby → babies</span>
+        <span>fly → flies</span>
+      </div>
+    </div>
+
+    <!-- RULE 4 -->
+    <div class="rule">
+      <h3>4️⃣ Ending with -y (after vowel) → add -s</h3>
+      <div class="examples">
+        <span>day → days</span>
+        <span>toy → toys</span>
+        <span>key → keys</span>
+      </div>
+    </div>
+
+    <!-- RULE 5 -->
+    <div class="rule">
+      <h3>5️⃣ Ending with f or fe → ves</h3>
+      <div class="examples">
+        <span>wolf → wolves</span>
+        <span>knife → knives</span>
+        <span>life → lives</span>
+      </div>
+    </div>
+
+    <!-- RULE 6 -->
+    <div class="rule">
+      <h3>6️⃣ Irregular Forms</h3>
+      <div class="examples">
+        <span>man → men</span>
+        <span>woman → women</span>
+        <span>child → children</span>
+        <span>foot → feet</span>
+        <span>tooth → teeth</span>
+        <span>mouse → mice</span>
+      </div>
+    </div>
+
+    <!-- RULE 7 -->
+    <div class="rule">
+      <h3>7️⃣ Same in Singular and Plural</h3>
+      <div class="examples">
+        <span>fish → fish</span>
+        <span>sheep → sheep</span>
+        <span>deer → deer</span>
+        <span>salmon → salmon</span>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btn-container">
+      <a href="video_lesson2.html" class="btn">← Back to Video</a>
+      <a href="quiz2.html" class="btn">Take Quiz →</a>
+    </div>
+
+  </main>
+
+  <footer>
+    © 2025 Grammar With Joy | Designed by R. J. Roshan
+  </footer>
+
+</body>
+</html>

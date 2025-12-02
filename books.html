@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Books | Grammar With Joy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000d2b; --text:#fff; --glass:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12); --accent:#ffcc33;
+  }
+  body.light-mode{ --bg:#f6f9ff; --text:#012033; --glass:rgba(0,0,0,0.06); --border:rgba(0,0,0,0.12); }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;}
+  body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:120px;transition:background .3s,color .3s;}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:var(--glass);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:30}
+  header h1{font-size:1.1rem;font-weight:600}
+  nav a{color:var(--text);text-decoration:none;margin:0 10px;font-weight:500}
+  .container{max-width:1100px;margin:120px auto 80px;padding:0 20px}
+  .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .search{flex:1;min-width:220px}
+  .search input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text)}
+  .controls{display:flex;gap:10px;align-items:center}
+  button, .btn{background:var(--accent);color:#111;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
+  .btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+  .library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  /* Card style & animation */
+  .book-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;padding:14px;border:1px solid var(--border);overflow:hidden;
+    display:flex;gap:12px;align-items:flex-start;transition:transform .25s,box-shadow .25s;
+    box-shadow:0 6px 30px rgba(0,0,0,0.25);
+  }
+  .book-card:hover{transform:translateY(-10px) rotate(-0.5deg);box-shadow:0 16px 50px rgba(0,0,0,0.45)}
+  .cover{width:96px;height:128px;border-radius:8px;flex:0 0 96px;background:#ddd;background-size:cover;background-position:center;border:1px solid rgba(0,0,0,0.06)}
+  .meta{flex:1;display:flex;flex-direction:column;gap:8px}
+  .meta h3{font-size:1rem;margin:0}
+  .meta p{font-size:.9rem;opacity:0.9;margin:0}
+  .meta .small{font-size:.82rem;opacity:0.8}
+  .meta .actions{margin-top:auto;display:flex;gap:8px;align-items:center}
+  a.action{padding:8px 10px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block}
+  a.preview{background:transparent;color:var(--text);border:1px solid var(--border)}
+  a.download{background:var(--accent);color:#111}
+  .floating{animation:floaty 6s ease-in-out infinite}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(2,6,23,0.7);display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(6px)}
+  .modal .panel{width:90%;max-width:1000px;height:80vh;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .modal .panel header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--glass)}
+  .modal iframe{flex:1;border:0;width:100%}
+  /* Add form */
+  .add-form{background:var(--glass);padding:14px;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  label{font-size:.85rem;opacity:0.9}
+  input[type="text"], textarea{padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);width:100%}
+  input[type="file"]{color:var(--text)}
+  .small-muted{font-size:.82rem;opacity:0.8}
+  /* footer */
+  footer{position:fixed;bottom:0;left:0;right:0;padding:14px;text-align:center;background:var(--glass);border-top:1px solid var(--border)}
+  /* responsive tweaks */
+  @media (max-width:640px){ .cover{width:78px;height:106px} header{padding:12px} .page-title{font-size:1.6rem} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Grammar With Joy — Library</h1>
+  <nav>
+    <a href="library.html">Library</a>
+    <a href="books.html" style="opacity:.85">Books</a>
+    <a href="topics.html">Topics</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="toolbar">
+    <div class="search">
+      <label class="small-muted" for="q">Search books (title, author, description)</label>
+      <input id="q" placeholder="Search Keynote Grammar, Basics, author..." />
+    </div>
+
+    <div class="controls">
+      <button id="btnAdd" class="btn">+ Add book</button>
+      <button id="btnClear" class="btn secondary" title="Clear library (localStorage)">Clear library</button>
+      <button id="toggleMode" class="btn secondary">Toggle mode</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit form (hidden by default) -->
+  <div id="formWrap" style="display:none;margin-bottom:18px">
+    <div class="add-form">
+      <div class="row">
+        <div style="flex:1">
+          <label>Title</label>
+          <input id="bookTitle" type="text" placeholder="Keynote Grammar Basics" />
+        </div>
+        <div style="width:220px">
+          <label>Author</label>
+          <input id="bookAuthor" type="text" placeholder="R. J. Roshan" />
+        </div>
+      </div>
+
+      <div>
+        <label>Description</label>
+        <textarea id="bookDesc" rows="2" placeholder="Short summary..."></textarea>
+      </div>
+
+      <div class="row">
+        <div style="flex:1">
+          <label>Cover image (optional) — PNG/JPEG</label>
+          <input id="bookCover" type="file" accept="image/*" />
+        </div>
+        <div style="flex:1">
+          <label>PDF file (required)</label>
+          <input id="bookPdf" type="file" accept="application/pdf" />
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button id="btnSave" class="btn">Save book</button>
+        <button id="btnCancel" class="btn secondary">Cancel</button>
+      </div>
+      <div class="small-muted">Files added here are stored in your browser (LocalStorage) as data URLs — for production host the PDFs on server or cloud storage and add direct links.</div>
+    </div>
+  </div>
+
+  <div id="grid" class="library-grid"></div>
+</div>
+
+<!-- Preview modal -->
+<div id="previewModal" style="display:none" class="modal" aria-hidden="true">
+  <div class="panel">
+    <header>
+      <div id="previewTitle">Preview</div>
+      <div style="display:flex;gap:8px">
+        <a id="previewDownload" class="action download" href="#" download>Download</a>
+        <button id="closePreview" class="btn secondary">Close</button>
+      </div>
+    </header>
+    <iframe id="previewFrame" src="" title="PDF preview"></iframe>
+  </div>
+</div>
+
+<footer>&copy; 2025 Grammar With Joy | Designed by R. J. Roshan</footer>
+
+<script>
+/* ---------- Client-side Library System ----------
+
+Features:
+- Preloaded default book entry (KeynoteGrammar Basics.pdf)
+- Add book with cover + pdf (stored as data URLs in localStorage)
+- Search / filter (title, author, description)
+- Preview modal uses iframe for PDF preview
+- Download works for stored data URLs and external PDF links
+- Clear library button wipes localStorage (use with care)
+
+Notes:
+- LocalStorage size limits vary by browser (~5-10MB). Large PDFs will bloat storage.
+- For production, store PDFs on a server or cloud storage and save URLs instead.
+
+--------------------------------------------------*/
+
+const LS_KEY = 'gwj_library_v1';
+const defaultCoverSVG = encodeURIComponent(`
+<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'>
+  <defs>
+    <linearGradient id='g' x1='0' x2='1'>
+      <stop offset='0' stop-color='#2b6cff'/>
+      <stop offset='1' stop-color='#4ec7a3'/>
+    </linearGradient>
+  </defs>
+  <rect width='100%' height='100%' rx='18' fill='url(#g)'/>
+  <g fill='#fff' font-family='Poppins, sans-serif'>
+    <text x='50%' y='30%' text-anchor='middle' font-size='44' font-weight='700'>KEYNOTE</text>
+    <text x='50%' y='40%' text-anchor='middle' font-size='38' font-weight='600'>GRAMMAR</text>
+    <rect x='52' y='480' width='496' height='14' rx='7' fill='rgba(255,255,255,0.12)'/>
+    <text x='50%' y='68%' text-anchor='middle' font-size='20'>Basics — R. J. Roshan</text>
+    <circle cx='110' cy='650' r='18' fill='rgba(255,255,255,0.15)'/>
+    <text x='110' y='655' font-size='18' fill='#fff' text-anchor='middle' font-weight='700'>A</text>
+    <g transform='translate(330,620)'>
+      <rect x='0' y='0' width='150' height='60' rx='10' fill='rgba(255,255,255,0.12)'/>
+      <text x='75' y='37' text-anchor='middle' font-size='18' fill='#fff'>ABC</text>
+    </g>
+  </g>
+</svg>`);
+
+function svgDataUrl(){
+  return 'data:image/svg+xml;utf8,' + defaultCoverSVG;
+}
+
+/* ----- persistence ----- */
+function saveLibrary(list){
+  localStorage.setItem(LS_KEY, JSON.stringify(list));
+}
+function readLibrary(){
+  const raw = localStorage.getItem(LS_KEY);
+  if(!raw) {
+    // seed with default book entry that points to local file KeynoteGrammar Basics.pdf (place next to this html)
+    const seed = [{
+      id: genId(),
+      title: 'Keynote Grammar Basics',
+      author: 'R. J. Roshan',
+      description: 'A beginner-friendly grammar foundation guide by R. J. Roshan.',
+      cover: svgDataUrl(),
+      pdf: 'KeynoteGrammar Basics.pdf' // server-side file; keep space sensitive exactly as your filename
+    }];
+    saveLibrary(seed);
+    return seed;
+  }
+  try { return JSON.parse(raw); } catch(e){ return [];}
+}
+
+/* ----- helpers ----- */
+function genId(){ return 'b_' + Math.random().toString(36).slice(2,9); }
+const grid = document.getElementById('grid');
+let library = readLibrary();
+let currentFilter = '';
+
+/* ----- render ----- */
+function render(){
+  grid.innerHTML = '';
+  const q = currentFilter.trim().toLowerCase();
+  const list = library.filter(b=>{
+    if(!q) return true;
+    return (b.title||'').toLowerCase().includes(q) ||
+           (b.author||'').toLowerCase().includes(q) ||
+           (b.description||'').toLowerCase().includes(q);
+  });
+  if(list.length === 0){
+    grid.innerHTML = '<div style="padding:30px;background:var(--glass);border-radius:12px;border:1px solid var(--border);text-align:center">No books found. Use "Add book" to insert one.</div>';
+    return;
+  }
+  for(const book of list){
+    const card = document.createElement('div');
+    card.className = 'book-card floating';
+    const cover = document.createElement('div');
+    cover.className = 'cover';
+    cover.style.backgroundImage = `url("${escapeAttr(book.cover||svgDataUrl())}")`;
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const h = document.createElement('h3'); h.textContent = book.title || 'Untitled';
+    const auth = document.createElement('div'); auth.className='small-muted'; auth.textContent = book.author || 'Unknown';
+    const desc = document.createElement('p'); desc.textContent = book.description || '';
+    const actions = document.createElement('div'); actions.className='actions';
+    const preview = document.createElement('a'); preview.href='#'; preview.className='action preview'; preview.textContent='Preview';
+    preview.addEventListener('click', e=>{
+      e.preventDefault(); openPreview(book);
+    });
+    const dl = document.createElement('a'); dl.className='action download'; dl.textContent='Download';
+    dl.href = book.pdf;
+    // if book.pdf is data URL, set download attribute
+    if((book.pdf||'').startsWith('data:')) dl.setAttribute('download', `${sanitizeFileName(book.title||'book')}.pdf`);
+    // add edit & delete small buttons
+    const editBtn = document.createElement('button'); editBtn.className='btn secondary'; editBtn.style.padding='8px 10px'; editBtn.textContent='Edit';
+    editBtn.addEventListener('click', ()=> openEditForm(book));
+    const delBtn = document.createElement('button'); delBtn.className='btn secondary'; delBtn.style.padding='8px 10px'; delBtn.textContent='Delete';
+    delBtn.addEventListener('click', ()=> { if(confirm('Delete this book?')) removeBook(book.id); });
+
+    actions.appendChild(preview);
+    actions.appendChild(dl);
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    meta.appendChild(h);
+    meta.appendChild(auth);
+    meta.appendChild(desc);
+    meta.appendChild(actions);
+
+    card.appendChild(cover);
+    card.appendChild(meta);
+    grid.appendChild(card);
+  }
+}
+
+/* ----- preview modal ----- */
+const previewModal = document.getElementById('previewModal');
+const previewFrame = document.getElementById('previewFrame');
+const previewTitle = document.getElementById('previewTitle');
+const previewDownload = document.getElementById('previewDownload');
+document.getElementById('closePreview').addEventListener('click', closePreview);
+previewModal.addEventListener('click', e => { if(e.target === previewModal) closePreview(); });
+
+function openPreview(book){
+  previewTitle.textContent = (book.title || 'Preview');
+  previewFrame.src = book.pdf;
+  previewDownload.href = book.pdf;
+  if((book.pdf||'').startsWith('data:')) previewDownload.setAttribute('download', `${sanitizeFileName(book.title||'book')}.pdf`);
+  else previewDownload.removeAttribute('download');
+  previewModal.style.display = 'flex';
+}
+function closePreview(){
+  previewModal.style.display = 'none';
+  previewFrame.src = '';
+}
+
+/* ----- add/edit form handling ----- */
+const btnAdd = document.getElementById('btnAdd');
+const formWrap = document.getElementById('formWrap');
+const btnCancel = document.getElementById('btnCancel');
+const btnSave = document.getElementById('btnSave');
+const bookTitle = document.getElementById('bookTitle');
+const bookAuthor = document.getElementById('bookAuthor');
+const bookDesc = document.getElementById('bookDesc');
+const bookCover = document.getElementById('bookCover');
+const bookPdf = document.getElementById('bookPdf');
+let editingId = null;
+
+btnAdd.addEventListener('click', ()=> openEditForm());
+btnCancel.addEventListener('click', ()=> { formWrap.style.display='none'; clearForm(); });
+btnSave.addEventListener('click', saveForm);
+
+function openEditForm(book){
+  formWrap.style.display = 'block';
+  bookTitle.focus();
+  if(book){
+    editingId = book.id;
+    bookTitle.value = book.title || '';
+    bookAuthor.value = book.author || '';
+    bookDesc.value = book.description || '';
+    // cover/pdf inputs cannot be prefilled for security reasons - user must re-upload if they want to change
+  } else {
+    editingId = null;
+    clearForm();
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function clearForm(){
+  bookTitle.value = '';
+  bookAuthor.value = '';
+  bookDesc.value = '';
+  bookCover.value = '';
+  bookPdf.value = '';
+  editingId = null;
+}
+
+function saveForm(){
+  const title = bookTitle.value.trim();
+  const author = bookAuthor.value.trim();
+  const desc = bookDesc.value.trim();
+  // validation
+  if(!title){ alert('Please add a title.'); bookTitle.focus(); return; }
+  // PDF required when adding new book; for edits, keep existing if not provided
+  const coverFile = bookCover.files[0];
+  const pdfFile = bookPdf.files[0];
+
+  // For edits: find existing
+  if(editingId){
+    const idx = library.findIndex(b=>b.id===editingId);
+    if(idx === -1) { alert('Book not found.'); formWrap.style.display='none'; return; }
+    const target = library[idx];
+    target.title = title; target.author = author; target.description = desc;
+    // handle uploads asynchronously
+    const proms = [];
+    if(coverFile) proms.push(readFileAsDataURL(coverFile).then(data=> target.cover = data ));
+    if(pdfFile) proms.push(readFileAsDataURL(pdfFile).then(data=> target.pdf = data ));
+    Promise.all(proms).then(()=> { library[idx]=target; saveLibrary(library); render(); formWrap.style.display='none'; clearForm(); });
+    if(proms.length===0){ saveLibrary(library); render(); formWrap.style.display='none'; clearForm(); }
+    return;
+  }
+
+  // New book: pdf required
+  if(!pdfFile){ alert('Please choose a PDF file.'); bookPdf.focus(); return; }
+
+  // read files and then store
+  const toSave = { id: genId(), title, author, description: desc, cover: svgDataUrl(), pdf: '' };
+  const readers = [];
+  if(coverFile) readers.push(readFileAsDataURL(coverFile).then(data=> toSave.cover = data));
+  readers.push(readFileAsDataURL(pdfFile).then(data=> toSave.pdf = data));
+  Promise.all(readers).then(()=>{
+    library.unshift(toSave);
+    saveLibrary(library);
+    render();
+    formWrap.style.display='none';
+    clearForm();
+  }).catch(err=> {
+    console.error(err);
+    alert('Failed to read files. Are they too large?');
+  });
+}
+
+/* ----- util functions ----- */
+function readFileAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=> resolve(r.result);
+    r.onerror = ()=> reject(r.error);
+    r.readAsDataURL(file);
+  });
+}
+function escapeAttr(s){ return (s||'').replace(/"/g,'%22'); }
+function sanitizeFileName(name){
+  return (name||'file').replace(/[^\w\-\.]+/g,'_').slice(0,90);
+}
+
+/* ----- remove book ----- */
+function removeBook(id){
+  library = library.filter(b=>b.id !== id);
+  saveLibrary(library);
+  render();
+}
+
+/* ----- search ----- */
+const qInput = document.getElementById('q');
+qInput.addEventListener('input', ()=> { currentFilter = qInput.value; render(); });
+
+/* ----- mode toggle & clear ----- */
+document.getElementById('toggleMode').addEventListener('click', ()=> document.body.classList.toggle('light-mode'));
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  if(!confirm('Clear the entire library from LocalStorage? This cannot be undone.')) return;
+  localStorage.removeItem(LS_KEY);
+  library = readLibrary();
+  render();
+});
+
+/* ----- edit helper ----- */
+function openEditForm(book){
+  // overload: when book param is provided, open edit for that book
+  if(book){
+    document.getElementById('formWrap').style.display='block';
+    editingId = book.id;
+    bookTitle.value = book.title;
+    bookAuthor.value = book.author;
+    bookDesc.value = book.description;
+    bookCover.value = '';
+    bookPdf.value = '';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  // otherwise normal adding
+  editingId = null;
+  document.getElementById('formWrap').style.display='block';
+  clearForm();
+}
+
+/* ----- initialise ----- */
+render();
+
+</script>
+</body>
+</html>

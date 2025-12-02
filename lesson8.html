@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Be Verbs — am / is / are / was / were / will be — Keynote Grammar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+
+/* GLOBAL */
+:root{
+  --header-h:64px;
+  --footer-h:56px;
+  --gold:#ffd24d;
+  --white:#ffffff;
+  --glass:rgba(255,255,255,0.07);
+  --glass-border:rgba(255,255,255,0.12);
+  /* B1 soft-medium white glow */
+  --glow-b1-1: rgba(255,255,255,0.45);
+  --glow-b1-2: rgba(255,255,255,0.25);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  min-height: 120vh;
+  background: linear-gradient(135deg, #001f3f, #003c8f, #004d99);
+  color: #fff;
+
+  padding-top: calc(var(--header-h) + 18px);
+
+  /* THIS pushes the bottom content away from the footer */
+  padding-bottom: 160px !important;
+
+  /* EXTRA bottom space for buttons */
+  margin-bottom: 80px !important;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+/* LAYOUT */
+.wrap{width:100%;max-width:980px;margin-bottom:60px}
+.card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+/* FIX: Push bottom content above the footer */
+.wrap {
+  padding-bottom: 220px !important;
+}
+
+main.card {
+  padding-bottom: 180px !important;
+}
+
+.actions {
+  margin-bottom: 40px !important;
+}
+
+
+/* FLOATING DOTS */
+.bg-anim{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.dot{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,0.08);filter:blur(26px);
+  animation:float 10s infinite ease-in-out;
+}
+@keyframes float{
+ 0%{transform:translateY(0) scale(1)}
+ 50%{transform:translateY(-40px) scale(1.18)}
+ 100%{transform:translateY(0) scale(1)}
+}
+
+/* HEADER */
+header{
+  position:fixed;inset:0 0 auto 0;height:var(--header-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);
+  z-index:1200;
+}
+header nav{display:flex;gap:12px}
+header nav a{color:#fff;text-decoration:none;font-weight:600}
+header nav a:hover{color:var(--gold)}
+
+/* FOOTER */
+footer{
+  position:fixed;inset:auto 0 0 0;height:var(--footer-h);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(255,255,255,0.08);
+  font-size:0.9rem;z-index:1200;
+}
+
+/* LAYOUT */
+.wrap{width:100%;max-width:980px;margin-bottom:60px}
+.card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+/* TITLE */
+.title{text-align:center}
+.title h1{color:var(--gold);font-size:1.8rem;margin-bottom:6px}
+
+/* AUDIO BOX (small box - will have glow & snake on hover) */
+.audio-box{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  padding:14px;border-radius:14px;margin:18px auto;
+  max-width:720px;position:relative;overflow:visible;
+  transition:transform .22s ease;
+}
+.audio-title{color:var(--gold);font-weight:700;margin-bottom:8px}
+.lang-select{display:flex;gap:10px;margin-bottom:8px}
+.lang-btn{
+  flex:1;padding:8px;border-radius:8px;
+  background:rgba(255,255,255,0.08);border:none;
+  color:white;font-weight:700;cursor:pointer;
+}
+.lang-btn.active{background:var(--gold);color:#000}
+
+/* SNAKE SVG (injected) - thick, bright (Option 2) */
+.snake-svg{
+  position:absolute;top:-8px;left:-8px;
+  width:calc(100% + 16px);height:calc(100% + 16px);
+  pointer-events:none;opacity:0;transition:opacity .25s ease;
+}
+.snake-svg polyline{
+  fill:none;stroke:white;stroke-width:4;
+  stroke-dasharray:90 650;stroke-dashoffset:90;
+  transition:stroke-dashoffset .85s ease;
+}
+
+/* SMALL-BOX HOVER (snake-target) - B1 glow ON HOVER ONLY */
+.snake-target:hover{
+  transform:scale(1.02);
+  border-color:#000 !important;
+  box-shadow:
+    0 0 14px var(--glow-b1-1),
+    0 0 35px var(--glow-b1-2);
+}
+.snake-target:hover *{ color:#000 !important; }
+
+/* Show snake on hover */
+.snake-target:hover .snake-svg{ opacity:1; }
+.snake-target:hover .snake-svg polyline{ stroke-dashoffset:-650; }
+
+/* TABLE (table wrapper is a small box; set no scrollbars) */
+.table-wrap{
+  overflow:visible; /* prevent scrollbars */
+  margin-top:8px;
+  position:relative;
+}
+table{width:100%;border-collapse:collapse;table-layout:auto}
+th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.1)}
+th{color:#ffedbf;background:rgba(255,255,255,0.05)}
+/* table row hover uses same soft B1 glow but applied to the row (visual only) */
+tbody tr{transition:all .18s ease}
+
+/* FULL TABLE glow + black text */
+.table-wrap:hover {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  box-shadow:
+    0 0 14px var(--glow-b1-1),
+    0 0 35px var(--glow-b1-2);
+  transform: scale(1.02);
+}
+
+/* turn all text inside table black */
+.table-wrap:hover * {
+  color: #000 !important;
+  background: transparent !important;
+}
+
+
+/* CHIPS */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.chip{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  padding:14px;border-radius:12px;text-align:center;
+  font-weight:600;cursor:pointer;position:relative;
+  transition:.25s;
+}
+
+/* Buttons (also snake-target) */
+.actions{
+  display:flex;gap:12px;justify-content:center;
+  flex-wrap:wrap;margin-top:40px;margin-bottom:10px;
+}
+.btn{
+  padding:12px 26px;border-radius:999px;
+  background:rgba(255,255,255,0.15);
+  color:#fff;text-decoration:none;font-weight:600;
+  position:relative;overflow:visible;transition:0.25s;
+}
+.btn:hover{
+  /* Buttons keep strong white hover as requested */
+  background:white;color:black;
+  box-shadow:0 0 35px white;transform:scale(1.04);
+}
+.btn.primary{background:var(--gold);color:#002244}
+.btn.primary:hover{background:white;color:black}
+
+/* chip + table-wrap + audio-box have snake-target class (glow on hover) */
+.chip:hover{ background:#fff !important; color:#000 !important; box-shadow:0 0 14px var(--glow-b1-1), 0 0 35px var(--glow-b1-2); transform:scale(1.02)}
+
+/* ensure the big main card does NOT get glow */
+.card { transition: none; }
+
+/* Responsive */
+@media(max-width:720px){.grid-3{grid-template-columns:1fr}}
+
+/* SAFETY */
+img,table,.card{max-width:100%}
+</style>
+</head>
+
+<body>
+
+<!-- BG DOTS -->
+<div class="bg-anim">
+  <div class="dot" style="width:120px;height:120px;left:6%;top:70%;animation-delay:0s"></div>
+  <div class="dot" style="width:180px;height:180px;left:65%;top:80%;animation-delay:2s"></div>
+  <div class="dot" style="width:90px;height:90px;left:40%;top:75%;animation-delay:4s"></div>
+</div>
+
+<!-- SOUND -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<header>
+  <h1 style="font-size:1.1rem">Grammar With Joy</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+  </nav>
+</header>
+
+<div style="height:40px;"></div>
+
+
+<div class="wrap">
+  <main class="card" role="main" aria-labelledby="page-title">
+
+    <div class="title">
+      <h1 id="page-title">Lesson 08: Be Verbs — am / is / are / was / were / will be</h1>
+      <p class="lead">Be verbs show a state of being — past, present, or future.</p>
+    </div>
+
+    <!-- AUDIO BOX -->
+    <!-- audio-box is a small box and will get snake + white glow on hover -->
+    <div class="audio-box snake-target" data-en="beverbs_english.mp3" data-ta="beverbs_tamil.mp3" aria-label="Audio explanation"></div>
+
+    <!-- PRESENT -->
+    <section>
+      <h2>🧭 Present Be Verbs (Now)</h2>
+
+      <!-- table-wrap is a small box and will get snake + white glow on hover -->
+      <div class="table-wrap snake-target" role="table" aria-label="Present be verbs table">
+        <table>
+          <thead><tr><th>Subject</th><th>Be Verb</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>I</td><td>am</td><td>I am a teacher.</td></tr>
+            <tr><td>He / She / It</td><td>is</td><td>She is my friend.</td></tr>
+            <tr><td>You / We / They</td><td>are</td><td>They are happy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAST -->
+    <section>
+      <h2>🕰️ Past Be Verbs (Before Now)</h2>
+
+      <div class="table-wrap snake-target" role="table" aria-label="Past be verbs table">
+        <table>
+          <thead><tr><th>Subject</th><th>Be Verb</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>I / He / She / It</td><td>was</td><td>I was tired.</td></tr>
+            <tr><td>You / We / They</td><td>were</td><td>They were at school.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FUTURE -->
+    <section>
+      <h2>⏳ Future Be Verb (After Now)</h2>
+
+      <div class="table-wrap snake-target" role="table" aria-label="Future be verbs table">
+        <table>
+          <thead><tr><th>Subject</th><th>Be Verb</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>All Subjects</td><td>will be</td><td>I will be a doctor. / They will be there.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- QUICK TRICK -->
+    <section>
+      <h2>🔁 Quick Trick to Remember</h2>
+      <div class="grid-3">
+        <!-- chips are small boxes and will have snake + white glow on hover -->
+        <div class="chip snake-target" role="listitem">Now<br>am / is / are</div>
+        <div class="chip snake-target" role="listitem">Before<br>was / were</div>
+        <div class="chip snake-target" role="listitem">After<br>will be</div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <p style="margin-top:12px">
+      <strong>Examples:</strong>
+      <ul style="margin-top:6px;line-height:1.6">
+        <li>I am happy today.</li>
+        <li>I was happy yesterday.</li>
+        <li>I will be happy tomorrow.</li>
+      </ul>
+    </p>
+
+    <!-- ACTION BUTTONS (buttons are snake-targets so they get snake + white glow on hover too) -->
+    <div class="actions">
+      <a class="btn primary snake-target" href="lesson8_video.html" aria-label="Watch video">🎬 Watch Video</a>
+      <a class="btn snake-target" href="png8.html" aria-label="Take quiz">🧩 Next</a>
+      <a class="btn snake-target" href="topics.html" aria-label="Back to topics">🏠 Back to Topics</a>
+    </div>
+
+  </main>
+</div>
+
+<footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+<script>
+/* AUDIO + SNAKE + HOVER SOUND
+   - Injects snake SVG into every .snake-target element (no change to the main card)
+   - Builds the audio UI inside .audio-box elements (English / Tamil toggle)
+   - Plays hover sound on pointerenter for snake-target elements and nav links
+*/
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* Hover sound */
+  const hover = document.getElementById('hoverSound');
+
+  function playHover() {
+    if (!hover) return;
+    try { hover.currentTime = 0; hover.play().catch(() => {}); } catch (e) {}
+  }
+
+  /* AUDIO: build UI in every .audio-box */
+  document.querySelectorAll('.audio-box').forEach(box => {
+    const en = box.dataset.en || 'beverbs_english.mp3';
+    const ta = box.dataset.ta || 'beverbs_tamil.mp3';
+
+    box.innerHTML = `
+      <div class="audio-title">Audio Explanation</div>
+      <div class="lang-select" role="tablist" aria-label="Audio language selector">
+        <button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>
+        <button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>
+      </div>
+      <audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">
+        <source src="${en}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    `;
+
+    const audio = box.querySelector('.audioPlayer');
+    const src = audio.querySelector('source');
+    box.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        box.querySelectorAll('.lang-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+        const lang = btn.dataset.lang;
+        src.src = (lang === 'en') ? en : ta;
+        audio.load();
+        // try to play; user may need to tap depending on browser autoplay policies
+        audio.play().catch(()=>{});
+      });
+    });
+  });
+
+  /* SNAKE INJECTION */
+  function injectSnake(target) {
+    if (!target || target.querySelector('.snake-svg')) return;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.classList.add('snake-svg');
+    svg.setAttribute('viewBox','0 0 260 60');
+    svg.setAttribute('preserveAspectRatio','none');
+    svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+    // make sure target can contain absolute-positioned svg
+    const cs = getComputedStyle(target);
+    if (cs.position === 'static') target.style.position = 'relative';
+    target.insertBefore(svg, target.firstChild);
+  }
+
+  // inject snake into all targets
+  document.querySelectorAll('.snake-target').forEach(el => {
+    injectSnake(el);
+    // hover sound on pointerenter
+    el.addEventListener('pointerenter', playHover);
+    // also play sound for keyboard focus for accessibility
+    el.addEventListener('focus', playHover, {passive:true});
+  });
+
+  // nav links hover sound
+  document.querySelectorAll('header nav a').forEach(a => {
+    a.addEventListener('pointerenter', playHover);
+  });
+
+  // Ensure table rows (which are not separate elements) show hover sound via table-wrap pointerenter
+  document.querySelectorAll('.table-wrap').forEach(tw => {
+    tw.addEventListener('pointerenter', playHover);
+  });
+
+  // Prevent unexpected horizontal overflow on some mobile browsers
+  setTimeout(() => { document.documentElement.style.width = '100%'; }, 50);
+});
+</script>
+
+</body>
+</html>

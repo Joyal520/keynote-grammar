@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 2: Singular and Plural Nouns</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* PAGE BACKGROUND */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #000814, #001d3d, #003566);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 100px 20px 80px;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffcc33;
+    }
+
+    /* MAIN CARD */
+    main {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      margin-top: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffcc33;
+      margin-bottom: 20px;
+    }
+
+    p.intro {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #d0d0d0;
+      margin-bottom: 30px;
+    }
+
+    /* AUDIO BOX */
+    .audio-box {
+      background: rgba(255,255,255,0.12);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .audio-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffcc33;
+      margin-bottom: 10px;
+    }
+
+    .lang-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .lang-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .lang-btn.active {
+      background: #ffcc33;
+      color: black;
+    }
+
+    /* RULE CARDS */
+    .rule {
+      background: rgba(255,255,255,0.10);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.25);
+      transition: 0.3s;
+    }
+
+    .rule h3 {
+      color: #ffcc33;
+      margin-bottom: 10px;
+    }
+
+    /* EXAMPLES */
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .examples span {
+      padding: 10px 25px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    /* WHITE GLOW FOR CARDS + EXAMPLES */
+    .rule:hover,
+    .examples span:hover {
+      background: #ffffff !important;
+      color: #000 !important;
+      transform: scale(1.06);
+      box-shadow: 0 0 8px #ffffff80, 0 0 14px #ffffff40;
+      border-color: #fff;
+    }
+
+    .rule:hover * {
+      color: #000 !important;
+    }
+
+    .examples span:hover * {
+      color: #000 !important;
+    }
+
+    /* BUTTONS */
+  .btns{text-align:center;margin-top:30px}
+  .btn{
+    display:inline-block;padding:10px 20px;border-radius:50px;background:rgba(255,255,255,0.15);
+    color:white;text-decoration:none;font-weight:600;margin:6px;transition:all .18s;
+  }
+  .btn:hover{transform:translateY(-3px)}
+
+    .btn {
+      padding: 12px 30px;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    /* WHITE GLOW FOR BUTTONS */
+    .btn:hover {
+      background: #ffffff !important;
+      color: #000 !important;
+      transform: scale(1.06);
+      box-shadow: 0 0 20px #fff, 0 0 60px #fff;
+      border-color: #fff;
+    }
+
+    /* FOOTER */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      position: fixed;
+      bottom: 0;
+      z-index: 5;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media(max-width: 600px) {
+      main { padding: 25px; }
+      header { padding: 15px 20px; }
+      header h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hover Sound -->
+  <audio id="hover-sound" src="buttonhovering.mp3" preload="auto"></audio>
+
+  <script>
+    /* Hover Sound Binding */
+    document.addEventListener("DOMContentLoaded", () => {
+      const sound = document.getElementById("hover-sound");
+      const items = document.querySelectorAll(".examples span, .btn, .rule");
+
+      items.forEach(el => {
+        el.addEventListener("mouseenter", () => {
+          sound.currentTime = 0;
+          sound.play();
+        });
+      });
+    });
+  </script>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+      
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- AUDIO BOX -->
+    
+    <script>
+      /* Audio Component Auto Builder */
+      document.addEventListener("DOMContentLoaded", () => {
+        const boxes = document.querySelectorAll(".audio-box");
+
+        boxes.forEach(box => {
+          const en = box.dataset.en;
+          const ta = box.dataset.ta;
+
+          box.innerHTML = `
+            <div class="audio-title">Audio Explanation</div>
+            <div class="lang-select">
+              <button class="lang-btn active" data-lang="en">English</button>
+              <button class="lang-btn" data-lang="ta">Tamil</button>
+            </div>
+            <audio class="audio-player" controls>
+              <source src="${en}" type="audio/mpeg">
+            </audio>
+          `;
+
+          const audio = box.querySelector(".audio-player");
+          const src = audio.querySelector("source");
+          const buttons = box.querySelectorAll(".lang-btn");
+
+          buttons.forEach(b => {
+            b.addEventListener("click", () => {
+              buttons.forEach(x => x.classList.remove("active"));
+              b.classList.add("active");
+
+              src.src = (b.dataset.lang === "en") ? en : ta;
+              audio.load();
+              audio.play().catch(() => {});
+            });
+          });
+        });
+      });
+    </script>
+
+    <h2>Singular and Plural Nouns </h2>
+
+    
+
+    <p class="intro">
+      Singular nouns refer to one thing, while plural nouns refer to more than one.
+      These rules help you form plurals correctly.
+    </p>
+
+    <div class="audio-box" data-en="plural_english.mp3" data-ta="plural_tamil.mp3"></div>
+
+    <!-- RULE 1 -->
+    <div class="rule">
+      <h3>1️⃣ Regular Nouns – Add -s</h3>
+      <div class="examples">
+        <span>chair → chairs</span>
+        <span>house → houses</span>
+        <span>phone → phones</span>
+      </div>
+    </div>
+
+    <!-- RULE 2 -->
+    <div class="rule">
+      <h3>2️⃣ Ending with s, sh, ch, x, o – Add -es</h3>
+      <div class="examples">
+        <span>bus → buses</span>
+        <span>bush → bushes</span>
+        <span>watch → watches</span>
+        <span>fox → foxes</span>
+        <span>tomato → tomatoes</span>
+      </div>
+    </div>
+
+    <!-- RULE 3 -->
+    <div class="rule">
+      <h3>3️⃣ Ending with -y (after consonant) → ies</h3>
+      <div class="examples">
+        <span>city → cities</span>
+        <span>baby → babies</span>
+        <span>fly → flies</span>
+      </div>
+    </div>
+
+    <!-- RULE 4 -->
+    <div class="rule">
+      <h3>4️⃣ Ending with -y (after vowel) → add -s</h3>
+      <div class="examples">
+        <span>day → days</span>
+        <span>toy → toys</span>
+        <span>key → keys</span>
+      </div>
+    </div>
+
+    <!-- RULE 5 -->
+    <div class="rule">
+      <h3>5️⃣ Ending with f or fe → ves</h3>
+      <div class="examples">
+        <span>wolf → wolves</span>
+        <span>knife → knives</span>
+        <span>life → lives</span>
+      </div>
+    </div>
+
+    <!-- RULE 6 -->
+    <div class="rule">
+      <h3>6️⃣ Irregular Forms</h3>
+      <div class="examples">
+        <span>man → men</span>
+        <span>woman → women</span>
+        <span>child → children</span>
+        <span>foot → feet</span>
+        <span>tooth → teeth</span>
+        <span>mouse → mice</span>
+      </div>
+    </div>
+
+    <!-- RULE 7 -->
+    <div class="rule">
+      <h3>7️⃣ Same in Singular and Plural</h3>
+      <div class="examples">
+        <span>fish → fish</span>
+        <span>sheep → sheep</span>
+        <span>deer → deer</span>
+        <span>salmon → salmon</span>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+   
+    <div class="btns">
+      <a href="videolesson2.html" class="btn snake-target">← Back</a>
+      <a href="png2.html" class="btn snake-target">🧩 Next</a>
+      <a href="topics.html" class="btn snake-target">🏠 Topics</a>
+    </div>
+
+
+  </main>
+
+  <footer>
+    © 2025 Grammar With Joy | Designed by R. J. Roshan
+  </footer>
+
+</body>
+</html>

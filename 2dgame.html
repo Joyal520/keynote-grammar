@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Calm Bubbles — Pop Challenge</title>
+<style>
+  :root{
+    --dark:#000713;
+    --accent:#78c8ff;
+    --pass:#00ff9d;
+    --fail:#ff6b6b;
+  }
+  html, body {
+    height: 100%; margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--dark);
+    overflow: hidden; color: #d6e9ff;
+  }
+
+  /* DRIFT BACKGROUND */
+  #layer1, #layer2 {
+    position: fixed; width: 140%; height: 140%;
+    top:-20%; left:-20%; z-index:-3;
+  }
+  #layer1 {
+    background: radial-gradient(circle at 20% 30%, #00172f, #000716, #000411);
+    animation: drift1 22s linear infinite alternate;
+  }
+  #layer2 {
+    background: radial-gradient(circle at 70% 60%, #00263f, #000815);
+    opacity:.38;
+    animation: drift2 30s linear infinite alternate-reverse;
+  }
+  @keyframes drift1 { from{transform:translate(0,0) scale(1);} to{transform:translate(-30px,-20px) scale(1.07);} }
+  @keyframes drift2 { from{transform:translate(-20px,-10px) scale(1.02);} to{transform:translate(20px,30px) scale(1.09);} }
+
+  /* CURSOR */
+  #cursor {
+    position: fixed; width:18px; height:18px; border-radius:50%;
+    background: rgba(120,200,255,0.8);
+    box-shadow:0 0 14px rgba(120,200,255,1);
+    pointer-events:none; transform:translate(-50%,-50%);
+    z-index:999; transition:transform .06s;
+  }
+  .trail {
+    position: fixed; width:12px; height:12px; border-radius:50%;
+    background: rgba(120,180,255,0.4);
+    transform: translate(-50%,-50%);
+    pointer-events:none; animation: fadeTrail .8s forwards;
+    z-index:998;
+  }
+  @keyframes fadeTrail {
+    from { opacity:.6; transform:scale(1); }
+    to   { opacity:0; transform:scale(2.6); }
+  }
+
+  /* HUD */
+  #hud {
+    position: fixed; top:16px; left:50%; transform:translateX(-50%);
+    text-align:center; z-index:900;
+  }
+  #timer{ font-size:22px; color:#ffd561; font-weight:800; }
+  #score{ font-size:18px; margin-top:5px; color:var(--accent); font-weight:700; }
+
+  /* FLOATING CONTROLS (hidden during play now) */
+  #controls { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:900; }
+  #controls button { display:none; }
+
+  /* SNAKE HOVER BUTTON EFFECT */
+  .snake-btn {
+    position: relative; overflow:hidden;
+    padding:14px 28px; border-radius:12px; border:none;
+    font-weight:800; cursor:pointer;
+    background: rgba(0,90,140,0.4);
+    color:#d6f2ff; letter-spacing:1px;
+  }
+  .snake-btn::before {
+    content:""; position:absolute;
+    width:150%; height:4px;
+    background:linear-gradient(90deg, #00d8ff, #78eaff, #00d8ff);
+    top:0; left:-150%;
+    animation: none;
+  }
+  .snake-btn:hover::before {
+    animation: snakeRun 1.2s linear infinite;
+  }
+  @keyframes snakeRun {
+    from{ left:-150%; }
+    to  { left:150%; }
+  }
+
+  /* GLASSMORPHIC START & END SCREENS */
+  .overlay {
+    position:fixed; inset:0;
+    backdrop-filter: blur(10px);
+    background:rgba(0,0,0,0.45);
+    display:flex; justify-content:center; align-items:center;
+    z-index:1200;
+  }
+
+  .glass-card {
+    padding:28px; width:480px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    text-align:center;
+    backdrop-filter: blur(14px);
+    box-shadow:0 0 30px rgba(0,0,0,0.55);
+    animation: fadeUp .7s ease both;
+  }
+  @keyframes fadeUp {
+    from { transform:translateY(40px); opacity:0; }
+    to   { transform:translateY(0); opacity:1; }
+  }
+
+  .title { font-size:36px; margin-bottom:12px; color:#fff; font-weight:800; }
+
+  .subtext {
+    font-size:18px; color:#d2e8ff;
+    line-height:1.6; margin-bottom:24px;
+  }
+
+  /* BUBBLES */
+  .bubble {
+    position:absolute; border-radius:50%;
+    cursor:pointer;
+    opacity:.88; user-select:none;
+    box-shadow:0 10px 25px rgba(0,0,0,0.45);
+  }
+  .bubble.pop { animation: popGlow .45s ease-out forwards; }
+  @keyframes popGlow {
+    0% { transform:scale(1); opacity:1; }
+    100%{ transform:scale(2.2); opacity:0; }
+  }
+
+  /* FIREWORKS CANVAS */
+  #fwCanvas {
+    width:380px; height:240px;
+    margin:12px auto 0; display:block;
+  }
+</style>
+</head>
+<body>
+
+<div id="layer1"></div><div id="layer2"></div>
+<div id="cursor"></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div id="timer">Time: 60</div>
+  <div id="score">Score: 0</div>
+</div>
+
+<!-- FLOATING CONTROLS (removed from gameplay) -->
+<div id="controls">
+  <button id="retryFloating"></button>
+  <button id="quitFloating"></button>
+  <button id="nextFloating"></button>
+</div>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="overlay">
+  <div class="glass-card">
+    <div class="title">Calm Bubbles</div>
+    <div class="subtext">
+      ⏱️ You have <b>60 seconds</b><br>
+      🟣 Pop as many bubbles as you can<br>
+      🎯 Reach <b>50 pops</b> to pass the level<br>
+      🎧 Relaxing ambient background, floating visuals
+    </div>
+    <button id="startBtn" class="snake-btn" style="background:#00c8ff;color:#002233;">
+      Start Game
+    </button>
+  </div>
+</div>
+
+<!-- END SCREEN -->
+<div id="endScreen" class="overlay" style="display:none">
+  <div class="glass-card">
+    <div id="endTitle" class="title"></div>
+    <div id="finalMessage" class="subtext"></div>
+    <canvas id="fwCanvas" width="380" height="240"></canvas>
+
+    <button id="retryBtn" class="snake-btn" style="margin-top:14px;">Retry</button>
+    <button id="nextBtn" class="snake-btn" style="display:none;background:#00ff9d;color:#003322;margin-top:10px;">Next Topic</button>
+    <button id="quitBtn" class="snake-btn" style="margin-top:12px;background:#ff5555;">Quit</button>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<script>
+/* -------------------------
+    GAME CONFIG (EASIER)
+------------------------- */
+const COUNT = 14;
+const SIZE_MIN = 60;
+const SIZE_MAX = 120;
+const DRIFT = 70;
+const TARGET = 50;
+const TIME = 60;
+
+let score = 0;
+let timeLeft = TIME;
+let running = false;
+let timerInterval = null;
+
+const cursor = document.getElementById("cursor");
+const timerEl = document.getElementById("timer");
+const scoreEl = document.getElementById("score");
+const startScreen = document.getElementById("startScreen");
+const endScreen = document.getElementById("endScreen");
+const endTitle = document.getElementById("endTitle");
+const finalMessage = document.getElementById("finalMessage");
+const app = document.getElementById("app");
+const fwCanvas=document.getElementById("fwCanvas");
+const fwCtx=fwCanvas.getContext("2d");
+
+/* -------------------------
+    BACKGROUND MUSIC
+------------------------- */
+const bgMusic = new Audio("softbackground1.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.45;
+
+/* play on first click */
+document.addEventListener("click",()=>bgMusic.play(),{once:true});
+
+/* Stop music at 50 pops */
+function stopMusic(){
+  bgMusic.pause();
+  bgMusic.currentTime=0;
+}
+
+/* -------------------------
+    POP SOUND
+------------------------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+}
+
+function popSound(){
+  ensureAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = "triangle";
+  o.frequency.value = 550 + Math.random()*200;
+  g.gain.value = 0.0001;
+
+  o.connect(g); g.connect(audioCtx.destination);
+  const t = audioCtx.currentTime;
+  g.gain.linearRampToValueAtTime(0.12, t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001, t+0.22);
+  o.start(t); o.stop(t+0.3);
+}
+
+/* -------------------------
+    FIREWORK SOUND
+------------------------- */
+function fireworkSound(){
+  ensureAudio();
+  const base = audioCtx.currentTime;
+
+  [220,330,500,660].forEach((freq,i)=>{
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    o.type="sine";
+    o.frequency.value=freq;
+    g.gain.value=0.001;
+
+    o.connect(g); g.connect(audioCtx.destination);
+
+    g.gain.linearRampToValueAtTime(0.15, base+i*0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, base+i*0.05+0.3);
+
+    o.start(base+i*0.05);
+    o.stop(base+i*0.05+0.32);
+  });
+}
+
+/* -------------------------
+    CURSOR TRAIL
+------------------------- */
+document.addEventListener("mousemove", e=>{
+  cursor.style.left = e.clientX+"px";
+  cursor.style.top = e.clientY+"px";
+  spawnTrail(e.clientX,e.clientY);
+});
+
+function spawnTrail(x,y){
+  const t=document.createElement("div");
+  t.className="trail";
+  t.style.left=x+"px";
+  t.style.top=y+"px";
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),900);
+}
+
+/* -------------------------
+    BUBBLES
+------------------------- */
+function createBubble(){
+  const b=document.createElement("div");
+  b.className="bubble";
+  const size = SIZE_MIN + Math.random()*(SIZE_MAX-SIZE_MIN);
+  b.style.width=size+"px";
+  b.style.height=size+"px";
+
+  const colors=[
+    "rgba(140,200,255,0.36)",
+    "rgba(100,220,255,0.36)",
+    "rgba(200,255,230,0.36)",
+    "rgba(255,220,245,0.36)"
+  ];
+  b.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+  const x=Math.random()*(window.innerWidth-size-80)+40;
+  const y=Math.random()*(window.innerHeight-size-80)+40;
+  b.style.left=x+"px";
+  b.style.top=y+"px";
+
+  const dx=(Math.random()-0.5)*DRIFT;
+  const dy=(Math.random()-0.5)*DRIFT;
+
+  let start=performance.now();
+
+  function float(now){
+    const t=(now-start)/3000;
+    b.style.transform =
+      `translate(${Math.sin(t*2*Math.PI)*dx}px,${Math.cos(t*2*Math.PI)*dy}px)`;
+    if(b.parentElement) requestAnimationFrame(float);
+  }
+  requestAnimationFrame(float);
+
+  b.addEventListener("click",()=>popBubble(b));
+  return b;
+}
+
+function popBubble(b){
+  if(!running) return;
+
+  popSound();
+  b.classList.add("pop");
+  score++;
+  scoreEl.textContent = "Score: "+score;
+
+  setTimeout(()=>{
+    b.remove();
+    if(running) app.appendChild(createBubble());
+  },420);
+
+  if(score >= TARGET){
+    stopMusic();
+    finishGame(true);
+  }
+}
+
+/* -------------------------
+    START ROUND
+------------------------- */
+document.getElementById("startBtn").onclick=()=>{
+  startScreen.style.display="none";
+  ensureAudio();
+  begin();
+};
+
+function begin(){
+  running=true;
+  score=0;
+  scoreEl.textContent="Score: 0";
+  timeLeft=TIME;
+  timerEl.textContent="Time: "+timeLeft;
+
+  document.querySelectorAll(".bubble").forEach(b=>b.remove());
+
+  for(let i=0;i<COUNT;i++) app.appendChild(createBubble());
+
+  timerInterval=setInterval(()=>{
+    if(!running)return;
+    timeLeft--;
+    timerEl.textContent="Time: "+timeLeft;
+    if(timeLeft<=0){
+      stopMusic();
+      finishGame(score>=TARGET);
+    }
+  },1000);
+}
+
+/* -------------------------
+    FINISH GAME
+------------------------- */
+function finishGame(passed){
+  running=false;
+  clearInterval(timerInterval);
+
+  endScreen.style.display="flex";
+
+  endTitle.textContent = passed ? "Level Passed!" : "Try Again";
+  finalMessage.textContent =
+    passed
+    ? `Excellent! You popped ${score} bubbles.`
+    : `You popped ${score}. You need ${TARGET} to pass.`;
+
+  if(passed){
+    nextBtn.style.display="inline-block";
+    nextFloating.style.display="inline-block";
+    runFireworks();
+    fireworkSound();
+  }else{
+    nextBtn.style.display="none";
+    nextFloating.style.display="none";
+    clearFireworks();
+  }
+}
+
+/* -------------------------
+    FIREWORKS
+------------------------- */
+let fwActive=false;
+let particles=[];
+
+function runFireworks(){
+  fwActive=true;
+  particles=[];
+  for(let i=0;i<6;i++){
+    setTimeout(()=>spawnBurst(100+Math.random()*200,70+Math.random()*100),i*250);
+  }
+  requestAnimationFrame(fwLoop);
+}
+
+function clearFireworks(){
+  fwActive=false;
+  particles=[];
+  fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+}
+
+function spawnBurst(cx,cy){
+  for(let i=0;i<30;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=2+Math.random()*3;
+    particles.push({
+      x:cx, y:cy,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed,
+      life:60,
+      hue:180+Math.random()*100
+    });
+  }
+}
+
+function fwLoop(){
+  fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.vy+=0.04;
+    p.x+=p.vx; p.y+=p.vy;
+    p.life--;
+    const a=Math.max(0,p.life/60);
+
+    fwCtx.beginPath();
+    fwCtx.fillStyle=`hsla(${p.hue},80%,60%,${a})`;
+    fwCtx.arc(p.x,p.y,3,0,Math.PI*2);
+    fwCtx.fill();
+
+    if(p.life<=0) particles.splice(i,1);
+  }
+  if(fwActive || particles.length>0) requestAnimationFrame(fwLoop);
+}
+
+/* -------------------------
+    BUTTON LOGIC
+------------------------- */
+document.getElementById("retryBtn").onclick=()=>{
+  endScreen.style.display="none";
+  begin();
+};
+document.getElementById("quitBtn").onclick=()=>location.href="index.html";
+document.getElementById("nextBtn").onclick=()=>location.href="lesson23-capital-letters.html";
+</script>
+
+</body>
+</html>

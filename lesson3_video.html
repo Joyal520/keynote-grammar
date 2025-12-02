@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Lesson 03: Pronouns</title>
+    <meta name="description" content="Grammar With Joy - Learn about plurals in English with this video lesson.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #0d1b2a, #1b3b6f);
+            color: #fff;
+            padding: 110px 20px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------------- BACKGROUND SPHERES ---------------- */
+        .dynamic-spheres {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .sphere {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.45;
+            filter: blur(50px);
+            animation: float linear infinite alternate;
+        }
+
+        .lightblue { width: 230px; height: 230px; background: radial-gradient(circle, #4da6ff, #1e5aa8); top: 5%; left: 6%; animation-duration: 22s; }
+        .cyan      { width: 160px; height: 160px; background: radial-gradient(circle, #66b3ff, #1e5aa8); top: 25%; right: 8%; animation-duration: 28s; }
+        .blue      { width: 110px; height: 110px; background: radial-gradient(circle, #3385cc, #002b55); bottom: 25%; left: 38%; animation-duration: 18s; }
+        .darkblue  { width: 260px; height: 260px; background: radial-gradient(circle, #1a3d66, #0d1b2a); bottom: 5%; right: 25%; animation-duration: 26s; }
+
+        @keyframes float {
+            0% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(50px,40px) scale(1.08); }
+            100% { transform: translate(-40px,70px) scale(0.95); }
+        }
+
+        /* ---------------- HEADER ---------------- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 18px 25px;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 20;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+        }
+
+        nav a {
+            color: #fff;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        nav a:hover { color: #00c6ff; }
+
+        /* ---------------- HAMBURGER ---------------- */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: #fff;
+            transition: 0.3s;
+            border-radius: 4px;
+        }
+
+        /* Mobile Nav Hidden */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 65px;
+            right: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            padding: 20px 0;
+            flex-direction: column;
+            text-align: center;
+            gap: 18px;
+            z-index: 15;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        /* ---------------- VIDEO CARD ---------------- */
+        .video-container {
+            position: relative;
+            z-index: 5;
+            max-width: 900px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 22px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+            text-align: center;
+        }
+
+        .video-container h2 {
+            font-size: 2rem;
+            color: #00c6ff;
+            margin-bottom: 15px;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            padding-bottom: 56.25%;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0,0,0,0.4);
+            margin-bottom: 25px;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ---------------- BUTTONS ---------------- */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            background: rgba(255,255,255,0.15);
+            padding: 12px 28px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            transition: .25s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: yellow;
+            color: black;
+            box-shadow: 0 0 18px yellow;
+            transform: scale(1.1);
+        }
+
+        .btn-next {
+            background: #00c6ff;
+            border-color: #00c6ff;
+        }
+
+        .btn-next:hover {
+            background: yellow;
+            color: black;
+        }
+
+        /* ---------------- FOOTER ---------------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.15);
+            z-index: 20;
+        }
+
+        /* ---------------- MOBILE RESPONSIVENESS ---------------- */
+        @media (max-width: 768px) {
+            nav { display: none; }
+            .hamburger { display: flex; }
+
+            .video-container {
+                padding: 20px;
+            }
+
+            .video-container h2 { font-size: 1.6rem; }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn { width: 100%; }
+
+            .sphere { filter: blur(35px); opacity: 0.3; }
+            .lightblue { width: 150px; height: 150px; }
+            .cyan      { width: 110px; height: 110px; }
+            .blue      { width: 70px;  height: 70px; }
+            .darkblue  { width: 180px; height: 180px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Hover Sound -->
+<audio id="hover-sound" src="buttonhovering.mp3" preload="auto"></audio>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sound = document.getElementById("hover-sound");
+
+    document.querySelectorAll(".btn, nav a, .mobile-nav a").forEach(el => {
+        el.addEventListener("mouseenter", () => {
+            sound.currentTime = 0;
+            sound.play();
+        });
+    });
+});
+</script>
+
+<!-- Background Spheres -->
+<div class="dynamic-spheres">
+    <div class="sphere lightblue"></div>
+    <div class="sphere cyan"></div>
+    <div class="sphere blue"></div>
+    <div class="sphere darkblue"></div>
+</div>
+
+<!-- Header -->
+<header>
+    <h1>Grammar With Joy</h1>
+
+    <!-- Desktop Nav -->
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="topics.html">Topics</a>
+        <a href="quiz.html">Quizzes</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <!-- Hamburger -->
+    <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="topics.html">Topics</a>
+    <a href="quiz.html">Quizzes</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+</div>
+
+<script>
+function toggleMenu() {
+    const nav = document.getElementById("mobileNav");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
+<main>
+    <div class="video-container">
+        <h2>Lesson 03: Pronouns</h2>
+        <p>Learn about pronouns in English.</p>
+
+        <div class="video-wrapper">
+            <video controls poster="https://placehold.co/640x360/00c6ff/FFFFFF?text=Pronouns">
+                <source src="Pronouns.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="topics.html" class="btn">&larr; Back to Topics</a>
+            <a href="lesson3.html" class="btn btn-next">Next Session &rarr;</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    © 2025 Grammar With Joy | Designed by R. J. Roshan
+</footer>
+
+</body>
+</html>

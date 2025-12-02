@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Future Tense — Keynote Grammar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* RESET & THEME */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
+    :root {
+      --header-h: 64px;
+      --footer-h: 56px;
+      --max-w: 1000px;
+      --bg1: #001f3f;
+      --bg2: #003066;
+      --accent: #ffcc33;
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.12);
+      --soft-white-1: rgba(255,255,255,0.45);
+      --soft-white-2: rgba(255,255,255,0.22);
+    }
+
+    html,body { height: 100%; min-height: 100%; }
+    body {
+      background: linear-gradient(135deg, #0b3d91, #1a73e8);
+      color: #eaf6ff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-top: calc(var(--header-h) + 18px);
+     padding-bottom: calc(var(--footer-h) + 40px);
+
+      overflow-x: hidden;
+      -webkit-touch-callout: none;
+    }
+
+    /* BACKGROUND VISUALS */
+    .blobs { position: fixed; inset: 0; z-index: -3; pointer-events: none; }
+    .blob {
+      position: absolute; width: 380px; height: 380px; border-radius: 40%;
+      filter: blur(70px); opacity: .32; mix-blend-mode: screen;
+      animation: blobMove 14s infinite alternate ease-in-out;
+    }
+    .blob.b1 { background: linear-gradient(45deg,#ff9f43,#ff6b6b); left:-6%; top:8%; }
+    .blob.b2 { background: linear-gradient(45deg,#70a1ff,#7bed9f); left:60%; top:12%; animation-duration:18s; }
+    .blob.b3 { background: linear-gradient(45deg,#ffd166,#ffcc33); left:30%; top:60%; animation-duration:16s; }
+    @keyframes blobMove { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.05); } }
+
+    .bubbles { position: fixed; inset: 0; z-index:-2; pointer-events:none; }
+    .bubble { position:absolute; border-radius:50%; background: rgba(255,255,255,0.06); filter: blur(18px); animation: floaty 14s infinite; }
+    @keyframes floaty { 0%{transform:translateY(0)} 50%{transform:translateY(-30px)} 100%{transform:translateY(0)} }
+
+    /* HEADER / FOOTER */
+    header {
+      position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 12px 18px; background: rgba(0,0,0,0.36); backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 1200;
+    }
+    header h1 { font-size: 1rem; color: #fff; font-weight: 600; }
+    nav { display:flex; gap: 12px; }
+    nav a { color:#fff; text-decoration:none; font-weight:600; padding:6px 8px; border-radius:6px; }
+    nav a:hover { color: var(--accent); }
+
+    footer {
+      position: fixed; inset: auto 0 0 0; height: var(--footer-h);
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(0,0,0,0.34); backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255,255,255,0.06); color:#fff; font-size:0.9rem; z-index:1200;
+    }
+
+    /* LAYOUT CONTAINER */
+    .wrap { width:100%; max-width: var(--max-w); margin: 22px auto 40px; padding: 0 14px; }
+    .container {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius:14px; padding: 26px; box-shadow: 0 12px 36px rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+      transition: none; /* main container must NOT glow */
+    }
+
+    /* PAGE TITLES */
+    h1.page-title { text-align:center; color: var(--accent); margin-bottom:8px; font-size:1.6rem; }
+    p.lead { text-align:center; color: #e6f4ff; margin-bottom:14px; }
+
+    /* SNAKE TARGET - small boxes, tables, audio, images get white-glow + snake border */
+    .snake-target {
+      position: relative; /* needed for injected SVG */
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .12s ease;
+      border-radius: 12px;
+    }
+
+    /* White glow on hover for small elements only */
+    .snake-target:hover {
+      background: #ffffff !important;
+      color: #000 !important;
+      transform: translateY(-4px) scale(1.01);
+      box-shadow:
+        0 8px 30px var(--soft-white-2),
+        0 0 50px var(--soft-white-1);
+      border-color: #000 !important;
+    }
+    .snake-target:hover * { color: #000 !important; }
+
+    /* AUDIO BOX */
+    .audio-box {
+      max-width: 780px;
+      margin: 14px auto 18px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .audio-title { color: var(--accent); font-weight:700; margin-bottom:8px; }
+    .lang-select { display:flex; gap:8px; margin-bottom:8px; }
+    .lang-btn {
+      flex:1; padding:8px; border-radius:8px; border: none; cursor:pointer;
+      background: rgba(255,255,255,0.06); color:#fff; font-weight:700;
+    }
+    .lang-btn.active { background: var(--accent); color:#000; }
+
+    /* SECTIONS WITH IMAGE (image on right) */
+    .section { display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap; margin-top:18px; }
+    .section-card {
+      background: rgba(255,255,255,0.04);
+      padding: 16px; border-radius:12px; border: 1px solid rgba(255,255,255,0.10);
+      flex: 1 1 60%; min-width: 240px; color: #eaf3ff;
+    }
+    .img-box {
+      flex: 1 1 36%; min-width: 180px; height: 200px; border-radius:12px;
+      background: rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center;
+      overflow:hidden; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .img-box img { width:100%; height:200%; object-fit:cover; display:block; transition: transform .18s ease, box-shadow .18s ease; }
+
+    /* Make the image itself a snake-target so hover glows white (image -> white + black text) */
+    .img-box.snake-target:hover img { transform: scale(1.03); }
+
+    /* TABLES */
+    .table-wrap { margin-top:12px; overflow: visible; border-radius:10px; }
+    table {
+      width:100%; border-collapse:collapse;
+      background: rgba(255,255,255,0.03); border-radius:10px; overflow:hidden;
+    }
+    th, td {
+      padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left; color: #eaf3ff; vertical-align: top;
+    }
+    th { background: rgba(255,255,255,0.06); color: #ffeb99; font-weight:600; }
+
+    /* When tables (which are snake-targets) are hovered they will turn white and text becomes black */
+    .snake-target table:hover,
+    .snake-target:hover table {
+      background: #fff !important;
+    }
+    .snake-target:hover th,
+    .snake-target:hover td,
+    .snake-target:hover p,
+    .snake-target:hover li { color: #000 !important; }
+
+    /* Example boxes */
+    .example-box {
+      background: rgba(255,255,255,0.03); border-radius:8px; padding:10px; border:1px solid rgba(255,255,255,0.08);
+      color: #eaf3ff; margin-top:10px;
+    }
+
+    /* BUTTONS */
+    .btns { display:flex; gap:12px; justify-content:center; margin-top:26px; flex-wrap:wrap; }
+    .btn {
+      display:inline-block; padding:10px 18px; border-radius:999px; background: rgba(255,255,255,0.12);
+      color:#fff; text-decoration:none; font-weight:700; transition: all .18s ease; min-width:150px; text-align:center;
+    }
+    .btn:hover { background:#fff; color:#000; box-shadow:0 6px 20px var(--soft-white-2); transform: translateY(-4px); }
+    .btn.primary { background: var(--accent); color: #001f3f; }
+    .btn.primary:hover { background:#fff; color:#000; }
+
+    /* Accessibility focus */
+    .snake-target:focus-within { outline: 2px solid rgba(255,255,255,0.12); outline-offset: 3px; }
+
+    /* RESPONSIVE */
+    @media(max-width: 880px) {
+      .section { flex-direction: column; }
+      .img-box { height: 180px; }
+      .container { padding: 18px; }
+    }
+    @media(max-width:520px) {
+      .img-box { height: 150px; }
+      .btn { min-width: 120px; padding:10px 14px; }
+    }
+
+    /* SNAKE SVG styles (injected) */
+    .snake-svg { position:absolute; top:-8px; left:-8px; width: calc(100% + 16px); height: calc(100% + 16px); pointer-events:none; opacity:0; transition: opacity .18s ease; }
+    .snake-svg polyline { fill:none; stroke:#fff; stroke-width:3; stroke-dasharray:40 460; stroke-dashoffset:40; transition: stroke-dashoffset .75s ease-in-out; }
+    .snake-target:hover .snake-svg { opacity:1; }
+    .snake-target:hover .snake-svg polyline { stroke-dashoffset:-460; }
+
+    @media (max-height: 700px) {
+  body {
+    padding-bottom: calc(var(--footer-h) + 20px);
+  }
+  .btns {
+    margin-bottom: 80px;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Background visuals -->
+  <div class="blobs" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="bubbles" aria-hidden="true">
+    <div class="bubble" style="width:120px;height:120px;left:6%;top:12%"></div>
+    <div class="bubble" style="width:160px;height:160px;left:75%;top:6%"></div>
+    <div class="bubble" style="width:100px;height:100px;left:48%;top:34%"></div>
+  </div>
+
+  <!-- Hover sound file (play on hover) -->
+  <audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+  <!-- Optional audio covering/ambient sound for clicks or audio UI feedback -->
+  <audio id="audioCover" src="audio_cover.mp3" preload="auto"></audio>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="topics.html">Topics</a>
+      
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <div class="container" role="main" aria-labelledby="lesson-title">
+      <h1 id="lesson-title" class="page-title">Lesson 16: Simple Future Tense</h1>
+      <p class="lead">We use the simple future to talk about actions that will happen in the future.</p>
+
+      <!-- AUDIO BOX (immediately under title) -->
+      <div class="audio-box snake-target" data-en="simplefuture_english.mp3" data-ta="simplefuture_tamil.mp3" aria-label="Audio explanation for Simple Future">
+        <!-- JavaScript will build the player and buttons here -->
+      </div>
+
+      <!-- SECTION: Use (image to the right) -->
+      <section class="section" aria-labelledby="use-title">
+        <div class="section-card snake-target" id="use-card" tabindex="0">
+          <h2 id="use-title">1. Use</h2>
+          <p>We use the <strong>simple future</strong> to talk about actions that will happen in the future.</p>
+          <ul>
+            <li>I will call you later.</li>
+            <li>She will finish the work tomorrow.</li>
+            <li>They will travel next month.</li>
+            <li>It will rain tonight.</li>
+          </ul>
+
+          <div class="example-box" aria-hidden="true">
+            <strong>Tip:</strong> Use "will" for predictions, promises, instant decisions and offers.
+          </div>
+        </div>
+
+        <div class="img-box snake-target" tabindex="0" aria-hidden="true">
+          <img src="rain.gif" alt="It will rain tonight">
+        </div>
+      </section>
+
+      <!-- SECTION: Formulation -->
+      <section class="section" aria-labelledby="formulation-title">
+        <div class="section-card snake-target" id="form-card" tabindex="0">
+          <h2 id="formulation-title">2. Formulation</h2>
+          <p><strong>Subject + will + base verb</strong></p>
+
+          <div class="table-wrap snake-target" role="table" aria-label="Simple future formulation table">
+            <table>
+              <thead>
+                <tr><th>Subject</th><th>Helping Verb</th><th>Verb Form</th><th>Example</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>I</td><td>will</td><td>base verb</td><td>I will study.</td></tr>
+                <tr><td>You</td><td>will</td><td>base verb</td><td>You will learn fast.</td></tr>
+                <tr><td>He / She / It</td><td>will</td><td>base verb</td><td>She will come soon.</td></tr>
+                <tr><td>We</td><td>will</td><td>base verb</td><td>We will start now.</td></tr>
+                <tr><td>They</td><td>will</td><td>base verb</td><td>They will win.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+      </section>
+
+      <!-- SECTION: Questions & Negatives -->
+      <section class="section" aria-labelledby="questions-title">
+        <div class="section-card snake-target" id="q-card" tabindex="0">
+          <h2 id="questions-title">3. Questions</h2>
+          <p><strong>Will + subject + base verb?</strong></p>
+
+          <div class="table-wrap snake-target" role="table" aria-label="Simple future question examples">
+            <table>
+              <thead><tr><th>Question Form</th><th>Example</th></tr></thead>
+              <tbody>
+                <tr><td>Will I…?</td><td>Will I pass the test?</td></tr>
+                <tr><td>Will you…?</td><td>Will you join the party?</td></tr>
+                <tr><td>Will he…?</td><td>Will he arrive on time?</td></tr>
+                <tr><td>Will they…?</td><td>Will they finish the work today?</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 style="margin-top:14px;">4. Negative Form</h2>
+          <p><strong>Subject + will not (won't) + base verb</strong></p>
+
+          <div class="table-wrap snake-target" role="table" aria-label="Simple future negative examples">
+            <table>
+              <thead><tr><th>Subject</th><th>Negative</th><th>Example</th></tr></thead>
+              <tbody>
+                <tr><td>I</td><td>will not / won't</td><td>I will not sleep late.</td></tr>
+                <tr><td>She</td><td>will not / won't</td><td>She will not join us.</td></tr>
+                <tr><td>They</td><td>will not / won't</td><td>They will not leave early.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+      </section>
+
+      <!-- ACTION BUTTONS -->
+      <div class="btns" aria-label="Lesson actions">
+        <a class="btn primary snake-target" href="lesson_simplefuture_video.html">🎬 Watch Video</a>
+        <a class="btn snake-target" href="png16.html">🧩 Next</a>
+        <a class="btn snake-target" href="topics.html">🏠 Back to Topics</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>© 2025 Keynote Grammar — Grammar With Joy</footer>
+
+  <script>
+    (function () {
+      // Safe play hover sound
+      const hoverSound = document.getElementById('hoverSound');
+      const audioCover = document.getElementById('audioCover');
+
+      function playHover() {
+        if (!hoverSound) return;
+        try { hoverSound.currentTime = 0; hoverSound.play().catch(()=>{}); } catch(e){}
+      }
+
+      // Build audio UI and language toggles in every .audio-box
+      document.querySelectorAll('.audio-box').forEach(box => {
+        const en = box.dataset.en || 'simplefuture_english.mp3';
+        const ta = box.dataset.ta || 'simplefuture_tamil.mp3';
+
+        box.innerHTML = [
+          '<div class="audio-title">Audio explanation</div>',
+          '<div class="lang-select" role="tablist" aria-label="Audio language selector">',
+            '<button class="lang-btn active" data-lang="en" role="tab" aria-selected="true">English</button>',
+            '<button class="lang-btn" data-lang="ta" role="tab" aria-selected="false">Tamil</button>',
+          '</div>',
+          '<audio class="audioPlayer" controls preload="none" aria-label="Lesson audio">',
+            `<source src="${en}" type="audio/mpeg">`,
+            'Your browser does not support the audio element.',
+          '</audio>'
+        ].join('');
+
+        const audio = box.querySelector('.audioPlayer');
+        const src = audio.querySelector('source');
+        const btns = box.querySelectorAll('.lang-btn');
+
+        btns.forEach(b => {
+          b.addEventListener('click', () => {
+            // tiny cover sound to indicate interaction (optional)
+            try { if (audioCover) { audioCover.currentTime = 0; audioCover.play().catch(()=>{}); } } catch(e){}
+            btns.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+            b.classList.add('active'); b.setAttribute('aria-selected','true');
+            const lang = b.dataset.lang;
+            src.src = (lang === 'en') ? en : ta;
+            audio.load();
+            // try to play; if blocked the user can press play
+            audio.play().catch(()=>{});
+          });
+        });
+      });
+
+      // Inject snake SVG into all .snake-target elements
+      function injectSnake(target) {
+        if (!target || target.querySelector('.snake-svg')) return;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'snake-svg');
+        svg.setAttribute('viewBox', '0 0 260 60');
+        svg.setAttribute('preserveAspectRatio', 'none');
+        svg.innerHTML = '<polyline points="0,0 260,0 260,60 0,60 0,0"></polyline>';
+        if (getComputedStyle(target).position === 'static') target.style.position = 'relative';
+        target.insertBefore(svg, target.firstChild);
+      }
+
+      // Attach hover sound + inject svg + keyboard focus
+      const targets = Array.from(document.querySelectorAll('.snake-target'));
+      targets.forEach(el => {
+        injectSnake(el);
+        el.addEventListener('pointerenter', playHover);
+        el.addEventListener('focus', playHover, { passive: true });
+        // ensure keyboard focusable
+        if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      });
+
+      // nav links also produce hover sound
+      document.querySelectorAll('nav a, .btn').forEach(el => el.addEventListener('pointerenter', playHover));
+
+      // Table area hover sound
+      document.querySelectorAll('.table-wrap').forEach(el => el.addEventListener('pointerenter', playHover));
+
+      // Avoid small mobile layout issues
+      setTimeout(()=>{ document.documentElement.style.width = '100%'; }, 50);
+    })();
+  </script>
+</body>
+</html>

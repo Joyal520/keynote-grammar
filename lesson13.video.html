@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Lesson: The Present Continuous Tense</title>
+    <meta name="description" content="Grammar With Joy - Learn how to use the Present Continuous Tense with this video lesson.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            padding: 100px 20px 60px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dynamic Spheres */
+        .dynamic-spheres {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sphere {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(40px);
+            animation: sphere-move linear infinite alternate;
+        }
+
+        .sphere.pink {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, #ff33cc, #ff0099);
+            top: 10%; left: 5%;
+            animation-duration: 25s;
+        }
+
+        .sphere.cyan {
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, #33ccff, #0099ff);
+            top: 30%; right: 10%;
+            animation-duration: 32s;
+        }
+
+        .sphere.orange {
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, #ffcc33, #ffa500);
+            bottom: 20%; left: 40%;
+            animation-duration: 20s;
+        }
+
+        .sphere.purple {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, #cc33ff, #9900ff);
+            bottom: 5%; right: 30%;
+            animation-duration: 28s;
+        }
+
+        @keyframes sphere-move {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(150px, 50px) scale(1.1); }
+            66% { transform: translate(-100px, 200px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f9f9f9;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #f9f9f9;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffcc33;
+        }
+
+        .video-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 5;
+        }
+
+        .video-container h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #ffcc33;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #fff;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s;
+            flex-grow: 0;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(1.05);
+        }
+
+        .btn-next {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .btn-next:hover {
+            background: #059669;
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 0.9rem;
+            position: fixed;
+            bottom: 0;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Animated Spheres -->
+    <div class="dynamic-spheres">
+        <div class="sphere pink"></div>
+        <div class="sphere cyan"></div>
+        <div class="sphere orange"></div>
+        <div class="sphere purple"></div>
+    </div>
+
+    <header>
+        <h1>Grammar With Joy</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="topics.html">Topics</a>
+            <a href="quiz.html">Quizzes</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="video-container">
+            <h2>Lesson 13: The Present Continuous Tense</h2>
+            <p style="color:#e0e0e0;margin-bottom:20px;">
+                Learn how to use the <strong>Present Continuous Tense</strong> — used to describe actions that are happening right now or around the current moment. Understand its structure, usage, and common examples in real-life contexts.
+            </p>
+
+            <div class="video-wrapper">
+                <video controls poster="https://placehold.co/640x360/0099ff/FFFFFF?text=The+Present+Continuous+Tense">
+                    <source src="PresentContinuousTense.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="topics.html" class="btn">&larr; Back to Topics</a>
+                <a href="lesson13.html" class="btn btn-next">Continue to next Session &rarr;</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Grammar With Joy | Designed by R. J. Roshan
+    </footer>
+</body>
+</html>

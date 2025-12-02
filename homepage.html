@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grammar With Joy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #001f3f, #003366, #004080);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #f9f9f9;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #f9f9f9;
+      margin: 0 15px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffcc33;
+    }
+
+    .hero {
+      text-align: center;
+      margin-top: 120px;
+      padding: 60px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      color: #fff;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      max-width: 700px;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      color: #e0e0e0;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px 30px;
+      border-radius: 25px;
+      color: #fff;
+      font-weight: 500;
+      text-decoration: none;
+      margin: 10px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.05);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin: 60px 20px;
+      max-width: 1000px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      text-align: center;
+      padding: 30px;
+      color: #fff;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 0.9rem;
+      position: fixed;
+      bottom: 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Grammar With Joy</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="topics.html">Topics</a>
+      <a href="quiz.html">Quizzes</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Welcome to Grammar With Joy 🌸</h2>
+      <p>Master English grammar in a fun, interactive, and engaging way! Learn grammar, practice quizzes, and explore AI-powered lessons built from the Keynote Grammar book.</p>
+      <a href="signup.html" class="btn">Start Learning</a>
+      <a href="taketest.html" class="btn">Test Your Level</a>
+    </section>
+
+    <section class="features">
+      <div class="card">
+        <h3>📘 Learn</h3>
+        <p>Explore interactive grammar lessons from nouns to tenses, all simplified for easy understanding.</p>
+      </div>
+      <div class="card">
+        <h3>🎮 Play</h3>
+        <p>Test your knowledge through exciting quizzes, games, and challenges that make learning fun!</p>
+      </div>
+      <div class="card">
+        <h3>🏆 Track</h3>
+        <p>Monitor your progress and celebrate your achievements as you improve your grammar skills.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Grammar With Joy | Designed by R. J. Roshan
+  </footer>
+
+</body>
+</html>
