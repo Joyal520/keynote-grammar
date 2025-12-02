@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keynote Grammar - Topics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- Base ---------- */
+    :root{
+      --bg1:#0f0c29;
+      --bg2:#302b63;
+      --accent:#ffcc33;
+      --glow: rgba(255,215,0,0.95);
+      --glass: rgba(255,255,255,0.12);
+      --glass-strong: rgba(255,255,255,0.20);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      color:#fff;
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      background:linear-gradient(-45deg,var(--bg1),var(--bg2),#24243e,#4a00e0);
+      background-size:400% 400%;
+      animation: gradientFlow 18s ease infinite;
+      overflow-x:hidden;
+    }
+    @keyframes gradientFlow{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    /* ---------- Header ---------- */
+    header{
+      position:fixed;inset:0 auto auto 0;width:100%;display:flex;justify-content:space-between;align-items:center;
+      padding:18px 20px;background:rgba(0,0,0,0.28);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:50;
+    }
+    header h1{font-size:1.05rem;font-weight:600;color:var(--accent)}
+    nav a{color:#fff;text-decoration:none;margin-left:14px;font-weight:500;opacity:.95}
+    nav a:hover{color:var(--accent)}
+
+    /* ---------- Layout ---------- */
+    .container{padding:120px 20px 60px;max-width:1150px;margin:0 auto}
+    .topics-container{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:22px;
+    }
+
+    /* ---------- Flip Card ---------- */
+    .flip-card{
+      perspective:1000px;
+      height:170px; /* desktop baseline */
+    }
+    .flip-inner{
+      position:relative;width:100%;height:100%;
+      transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.9,.2,1);
+    }
+
+    /* Flip on hover (desktop) */
+    .flip-card:hover .flip-inner{transform:rotateY(180deg)}
+
+    /* Also allow explicit flipped state from JS (tap/click) */
+    .flip-card.is-flipped .flip-inner{transform:rotateY(180deg)}
+
+    /* sides */
+    .flip-front,.flip-back{
+      position:absolute;inset:0;border-radius:18px;padding:22px;
+      display:flex;align-items:center;justify-content:center;text-align:center;
+      backface-visibility:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border:1px solid var(--glass-strong);
+      box-shadow:0 6px 18px rgba(0,0,0,0.45);
+      transition:box-shadow .25s, transform .25s;
+      overflow:hidden;
+    }
+
+    .flip-front h3{color:var(--accent);font-size:1.05rem;font-weight:600}
+    .flip-back{transform:rotateY(180deg);background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));border-color: rgba(255,215,0,0.10)}
+
+    .flip-back a{
+      display:inline-block;padding:10px 22px;border-radius:22px;background:rgba(255,255,255,0.06);
+      color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.12);font-weight:600;
+    }
+    .flip-back a:active,.flip-back a:hover{transform:scale(1.06)}
+
+    /* ---------- Glow on flip ---------- */
+    @keyframes glowPulse{
+      0%{box-shadow:0 6px 18px rgba(0,0,0,0.45)}
+      30%{box-shadow:0 0 18px rgba(255,215,0,0.25),0 0 36px rgba(255,215,0,0.18)}
+      60%{box-shadow:0 0 28px rgba(255,215,0,0.45),0 0 60px rgba(255,215,0,0.25)}
+      100%{box-shadow:0 0 20px rgba(255,215,0,0.35),0 0 40px rgba(255,215,0,0.18)}
+    }
+
+    /* ============================
+   ELECTRIC BORDER FOR ALL CARDS
+   ============================ */
+.flip-card {
+  position: relative;
+}
+
+.flip-card::before,
+.flip-card::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 18px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Outer soft glow */
+.flip-card::before {
+  background: radial-gradient(circle, rgba(0, 140, 255, 0.35), transparent 70%);
+  filter: blur(14px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+/* Electric animated border */
+.flip-card::after {
+  background: conic-gradient(
+      #00aaff,
+      #005eff,
+      #4b7fff,
+      #9ebdff,
+      #005eff,
+      #00aaff
+  );
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+
+  padding: 3px;
+  opacity: 0;
+  animation: electricBorder 2.2s linear infinite;
+  transition: opacity .25s ease;
+}
+
+@keyframes electricBorder {
+  0% { filter: hue-rotate(0deg) blur(0.8px); }
+  50% { filter: hue-rotate(180deg) blur(1.4px); }
+  100% { filter: hue-rotate(360deg) blur(0.8px); }
+}
+
+/* Show electric effect on hover OR when flipped */
+.flip-card:hover::after,
+.flip-card.is-flipped::after {
+  opacity: 1;
+}
+
+.flip-card:hover::before,
+.flip-card.is-flipped::before {
+  opacity: 1;
+}
+
+
+    /* Apply glow to both sides when flipped (visual continuity) */
+    .flip-card.is-flipped .flip-front,
+    .flip-card.is-flipped .flip-back,
+    .flip-card:hover .flip-front,
+    .flip-card:hover .flip-back{
+      animation:glowPulse .9s ease both;
+      border-color:var(--glow);
+    }
+
+    /* subtle highlight on inner content when flipped */
+    .flip-card.is-flipped .flip-back a,
+    .flip-card:hover .flip-back a{
+      box-shadow:0 6px 14px rgba(0,0,0,0.5);
+      border-color: rgba(255,215,0,0.6);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Hover: back side becomes white */
+.flip-card:hover .flip-back {
+  background: #ffffff !important;
+  color: #000 !important;
+  border-color: #ffffff;
+}
+
+/* Hover: button becomes black with white text */
+.flip-card:hover .flip-back a {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+}
+/* When flipped, show the white background & black button */
+.flip-card.is-flipped .flip-back {
+  background: #ffffff !important;
+  color: #000 !important;
+  border-color: #ffffff;
+}
+
+.flip-card.is-flipped .flip-back a {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+}
+
+
+    /* ---------- Responsive adjustments ---------- */
+    @media (max-width:900px){
+      .container{padding:110px 16px 50px}
+      .flip-card{height:160px}
+    }
+    @media (max-width:700px){
+      .topics-container{gap:16px}
+      .flip-card{height:150px}
+      .flip-front h3{font-size:0.98rem}
+      .flip-back a{font-size:0.95rem;padding:9px 18px}
+    }
+    @media (max-width:480px){
+      .container{padding:100px 12px 36px}
+      .topics-container{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+      .flip-card{height:auto;min-height:120px}
+      .flip-front,.flip-back{padding:16px}
+      .flip-front h3{font-size:0.95rem}
+      .flip-back a{font-size:0.9rem;padding:8px 14px}
+    }
+
+    /* ---------- Accessibility focus ---------- */
+    .flip-card:focus{outline:none}
+    .flip-card .focusable{
+      position:absolute;inset:0;border-radius:18px;background:transparent;border:0;padding:0;margin:0;
+    }
+
+    /* Light-blue hover glow for TOPIC CARDS (front + back) */
+.flip-card:hover .flip-front,
+.flip-card:hover .flip-back {
+  box-shadow: 0 0 22px rgba(0, 180, 255, 0.9), 
+              0 0 38px rgba(0, 180, 255, 0.6);
+  border-color: rgba(0, 180, 255, 0.95);
+}
+/* Blue glow when card stays flipped */
+.flip-card.is-flipped .flip-front,
+.flip-card.is-flipped .flip-back {
+  box-shadow: 0 0 22px rgba(0, 180, 255, 0.9),
+              0 0 38px rgba(0, 180, 255, 0.6);
+  border-color: rgba(0, 180, 255, 0.95);
+}
+
+
+    /* ---------- Particle canvas & mouse light ---------- */
+    #particle-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+    #mouse-light{
+      position:fixed;left:0;top:0;width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,0,0.18), transparent 60%);
+      mix-blend-mode:screen;transform:translate(-50%,-50%);z-index:0;pointer-events:none;opacity:0;transition:opacity .22s ease;
+    }
+
+    /* ensure nav & header above effects */
+    header, .container{z-index:20;position:relative}
+
+    /* small visual tweak for links (touch targets) */
+    .flip-back a{touch-action:manipulation}
+  </style>
+</head>
+<body>
+
+  <!-- Animated gradient is handled via body background -->
+  <canvas id="particle-canvas"></canvas>
+  <div id="mouse-light" aria-hidden="true"></div>
+
+  <!-- Flip sound -->
+  <audio id="flipSound" src="Flippingcard.mp3" preload="auto"></audio>
+
+  <header>
+    <h1>Keynote Grammar</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="start.html">Test Centre</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main class="container" role="main">
+    <section class="topics-container" aria-label="Grammar topics">
+      <!-- 26 flip cards -->
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lessonvideo1.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 1 – Sentence</h3></div>
+          <div class="flip-back"><a href="video_lesson1.html" aria-label="Start Unit 1 lesson">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="video_lesson2.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 2 – Singular & Plural Nouns</h3></div>
+          <div class="flip-back"><a href="video_lesson2.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson3_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 3 – Pronouns</h3></div>
+          <div class="flip-back"><a href="lesson3_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson4_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 4 – Possessives</h3></div>
+          <div class="flip-back"><a href="lesson4_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson5_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 5 – Demonstratives</h3></div>
+          <div class="flip-back"><a href="lesson5_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson6_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 6 – Adjectives</h3></div>
+          <div class="flip-back"><a href="lesson6_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson7_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 7 – Action Verbs</h3></div>
+          <div class="flip-back"><a href="lesson7_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson8_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 8 – Be Verbs</h3></div>
+          <div class="flip-back"><a href="lesson8_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson9_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 9 – Have</h3></div>
+          <div class="flip-back"><a href="lesson9_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson10_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 10 – There Is / There Are</h3></div>
+          <div class="flip-back"><a href="lesson10_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson11_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 11 – Verb Forms</h3></div>
+          <div class="flip-back"><a href="lesson11_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson12_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 12 – The Simple Present Tense</h3></div>
+          <div class="flip-back"><a href="lesson12_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson13_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 13 – The Present Continuous Tense</h3></div>
+          <div class="flip-back"><a href="lesson13_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson14_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 14 – The Simple Past Tense</h3></div>
+          <div class="flip-back"><a href="lesson14_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson15_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 15 – The Past Continuous Tense</h3></div>
+          <div class="flip-back"><a href="lesson15_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson16_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 16 – The Simple Future Tense</h3></div>
+          <div class="flip-back"><a href="lesson16_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson17_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 17 – Modal Verbs</h3></div>
+          <div class="flip-back"><a href="lesson17_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson18_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 18 – The Passive Voice</h3></div>
+          <div class="flip-back"><a href="lesson18_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson19_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 19 – Adverbs</h3></div>
+          <div class="flip-back"><a href="lesson19_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson20_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 20 – Articles</h3></div>
+          <div class="flip-back"><a href="lesson20_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson21_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 21 – Prepositions (Time)</h3></div>
+          <div class="flip-back"><a href="lesson21_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson22_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 22 – Prepositions (Place)</h3></div>
+          <div class="flip-back"><a href="lesson22_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson23_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 23 – Prepositions (Direction & Movement)</h3></div>
+          <div class="flip-back"><a href="lesson23_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson24_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 24 – Conjunctions (Coordinating)</h3></div>
+          <div class="flip-back"><a href="lesson24_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson25_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 25 – Conjunctions (Subordinating)</h3></div>
+          <div class="flip-back"><a href="lesson25_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+      <div class="flip-card" tabindex="0" role="button" aria-pressed="false" data-link="lesson26_video.html">
+        <div class="flip-inner">
+          <div class="flip-front"><h3>Unit 26 – Capital Letters</h3></div>
+          <div class="flip-back"><a href="lesson26_video.html">Start Lesson</a></div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    /* ---------- Feature flags & environment checks ---------- */
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const mouseLight = document.getElementById('mouse-light');
+
+    // disable mouse-light on touch devices (pointless & can cause layout repaint)
+    if(isTouch){
+      mouseLight.style.display = 'none';
+    } else {
+      // show mouse light on desktop move
+      document.addEventListener('mousemove', e => {
+        mouseLight.style.left = e.pageX + 'px';
+        mouseLight.style.top  = e.pageY + 'px';
+        mouseLight.style.opacity = 1;
+      });
+    }
+
+    /* ---------- Particle system with density control ---------- */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext && canvas.getContext('2d');
+    function setupCanvas(){
+      if(!ctx) return;
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    setupCanvas();
+    window.addEventListener('resize', () => {
+      setupCanvas();
+      // recalc particle count on resize if desired
+    });
+
+    // particle count reduced on small screens
+    const particleCount = innerWidth < 480 ? 28 : innerWidth < 900 ? 50 : 80;
+    const particles = [];
+    class Particle{
+      constructor(){
+        this.reset();
+        this.size = Math.random()*2 + 0.8;
+      }
+      reset(){
+        this.x = Math.random()*innerWidth;
+        this.y = Math.random()*innerHeight;
+        this.vx = (Math.random()-0.5)*0.6;
+        this.vy = (Math.random()-0.5)*0.6;
+      }
+      move(){
+        this.x += this.vx;
+        this.y += this.vy;
+        if(this.x < -10) this.x = innerWidth + 10;
+        if(this.x > innerWidth + 10) this.x = -10;
+        if(this.y < -10) this.y = innerHeight + 10;
+        if(this.y > innerHeight + 10) this.y = -10;
+      }
+      draw(){
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+    if(ctx){
+      for(let i=0;i<particleCount;i++) particles.push(new Particle());
+      function connect(){
+        for(let i=0;i<particles.length;i++){
+          for(let j=i+1;j<particles.length;j++){
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 120){
+              ctx.strokeStyle = 'rgba(255,255,255,'+((1-dist/120)*0.07)+')';
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x,particles[i].y);
+              ctx.lineTo(particles[j].x,particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      function animate(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p=>{p.move();p.draw()});
+        connect();
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    /* ---------- Flip behaviour (hover + tap/click) ---------- */
+    const flipSound = document.getElementById('flipSound');
+
+    function playFlipSound(){
+      if(!flipSound) return;
+      // quick restart so repeated flips play
+      try{
+        flipSound.currentTime = 0;
+        flipSound.play().catch(()=>{/* user gesture may be required; ignore */});
+      }catch(e){}
+    }
+
+    // Manage cards
+    const cards = Array.from(document.querySelectorAll('.flip-card'));
+    cards.forEach(card => {
+      // click/tap toggles flip (for mobile and desktop click)
+      card.addEventListener('click', (ev) => {
+        // avoid toggling when clicking the inner link itself (let link navigate)
+        if(ev.target.tagName.toLowerCase() === 'a') return;
+        card.classList.toggle('is-flipped');
+        const pressed = card.classList.contains('is-flipped');
+        card.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        playFlipSound();
+      });
+
+      // keyboard support (Enter / Space toggles)
+      card.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Enter' || ev.key === ' '){
+          ev.preventDefault();
+          card.classList.toggle('is-flipped');
+          const pressed = card.classList.contains('is-flipped');
+          card.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+          playFlipSound();
+        }
+      });
+
+      // desktop: play sound when hover triggers flip (optional)
+      if(!isTouch){
+        card.addEventListener('mouseenter', () => {
+          // if it's already flipped via click, do not replay
+          if(card.classList.contains('is-flipped')) return;
+          // short delay to align sound with visual; play immediately is fine
+          playFlipSound();
+        });
+      }
+
+      // Make the actual link on the back also accessible by clicking the card:
+      // If user double-clicks or taps the card while it's flipped, follow the link.
+      card.addEventListener('dblclick', () => {
+        if(!card.classList.contains('is-flipped')) return;
+        const link = card.querySelector('.flip-back a');
+        if(link) window.location.href = link.getAttribute('href');
+      });
+    });
+
+    /* Optional: close other cards when one is opened (uncomment if you want exclusive open)
+    function closeOthers(openCard){
+      cards.forEach(c=>{
+        if(c!==openCard) c.classList.remove('is-flipped'), c.setAttribute('aria-pressed','false');
+      });
+    }
+    // To enable exclusive open, call closeOthers(card) inside the click handler before toggling.
+    */
+
+    /* ---------- Unlock audio on first user gesture for some browsers ---------- */
+    function unlockAudioOnGesture(){
+      try{
+        flipSound.play().then(()=>{ flipSound.pause(); flipSound.currentTime = 0; });
+      }catch(e){}
+      document.removeEventListener('click', unlockAudioOnGesture);
+      document.removeEventListener('touchstart', unlockAudioOnGesture);
+    }
+    document.addEventListener('click', unlockAudioOnGesture);
+    document.addEventListener('touchstart', unlockAudioOnGesture);
+  </script>
+
+  <!-- ============================
+     REPTILE CURSOR (On Top)
+     ============================ -->
+<style>
+  #reptile-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999; /* on top of EVERYTHING */
+    pointer-events: none;
+  }
+
+  .reptile-seg {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    background: linear-gradient(135deg, #49ffa6, #24d38b);
+    box-shadow: 0 0 10px rgba(0,255,150,0.8),
+                0 0 20px rgba(0,255,150,0.5);
+    opacity: 0.95;
+    transform-origin: center;
+    will-change: transform, left, top;
+  }
+
+  .reptile-head {
+    background: radial-gradient(circle at 30% 30%, #d1ffe8, #20c76c);
+    width: 32px !important;
+    height: 32px !important;
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(0,255,150,0.8),
+                0 0 22px rgba(0,255,150,0.5);
+  }
+  .reptile-head:after {
+    content:"";
+    position:absolute;
+    width:6px; height:6px;
+    background:black;
+    border-radius:50%;
+    right:8px; top:10px;
+    box-shadow:0 0 4px white;
+  }
+
+
+</style>
+
+<div id="reptile-layer"></div>
+
+<script>
+(function(){
+  const root = document.getElementById("reptile-layer");
+  const hideCursor = true;
+
+  if(hideCursor) document.body.style.cursor = "none";
+
+  /* CONFIG */
+  const SEG_COUNT = 18;
+  const FOLLOW = 0.25;
+  const WOBBLE = 5;
+  const SPEED = 0.015;
+
+  let segments = [];
+  let pos = [];
+  let angle = [];
+  let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+
+  /* CREATE SEGMENTS */
+  for(let i=0; i<SEG_COUNT; i++){
+    const seg = document.createElement("div");
+    seg.className = i===0 ? "reptile-head" : "reptile-seg";
+
+    const size = i===0 ? 32 : 22 * Math.pow(0.92, i);
+    seg.style.width = size+"px";
+    seg.style.height = size+"px";
+
+    root.appendChild(seg);
+    segments.push(seg);
+    pos.push({ x: mouse.x, y: mouse.y });
+    angle.push(0);
+  }
+
+  /* MOUSE MOVE */
+  window.addEventListener("mousemove", e=>{
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  /* MAIN LOOP */
+  function loop(t){
+    /* move head */
+    let head = pos[0];
+    head.x += (mouse.x - head.x) * 0.4;
+    head.y += (mouse.y - head.y) * 0.4;
+
+    let time = t * SPEED;
+
+    /* chain movement */
+    for(let i=1; i<SEG_COUNT; i++){
+      const prev = pos[i-1];
+      const curr = pos[i];
+
+      let dx = prev.x - curr.x;
+      let dy = prev.y - curr.y;
+      let dist = Math.hypot(dx, dy) || 1;
+
+      let spacing = (parseFloat(segments[i-1].style.width)||20) * 0.65;
+
+      let nx = dx / dist;
+      let ny = dy / dist;
+
+      let wob = Math.sin(time * (1 + i*0.2) + i) * (WOBBLE*(1-i/SEG_COUNT));
+
+      let targetX = prev.x - nx * spacing + (-ny)*wob;
+      let targetY = prev.y - ny * spacing + (nx)*wob;
+
+      curr.x += (targetX - curr.x) * FOLLOW;
+      curr.y += (targetY - curr.y) * FOLLOW;
+
+      angle[i] = Math.atan2(prev.y - curr.y, prev.x - curr.x);
+    }
+
+    /* apply to DOM */
+    for(let i=0; i<SEG_COUNT; i++){
+      const seg = segments[i];
+      const p = pos[i];
+      const size = parseFloat(seg.style.width);
+
+      seg.style.left = (p.x - size/2) + "px";
+      seg.style.top  = (p.y - size/2) + "px";
+
+      let a = i===0
+        ? Math.atan2(mouse.y - p.y, mouse.x - p.x)
+        : angle[i];
+
+      seg.style.transform = `rotate(${a}rad)`;
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
