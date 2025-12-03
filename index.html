@@ -218,9 +218,9 @@ body.light-mode .hero,body.light-mode .card,body.light-mode header,body.light-mo
   </section>
 
   <section class="features">
-    <div class="card snake-hover" onclick="location.href='sentence builder/sentencehome.html'">
+    <div class="card snake-hover" onclick="location.href='sentencehome.html'">
       <svg class="snake-svg" height="200" width="340"><polyline points="0,0 340,0 340,200 0,200 0,0"/></svg>
-      <h3>Level 1 — Sentence Builder</h3>
+      <h3>Sentence Builder</h3>
       <p>Build sentences with clicks, sounds, and fun animations.</p>
       <p style="margin-top:12px;color:#7cafff;font-weight:600;">★★★ Unlocked</p>
     </div>
@@ -245,7 +245,7 @@ body.light-mode .hero,body.light-mode .card,body.light-mode header,body.light-mo
 </a>
 
 <!-- Hover/Tap Sound (mobile-safe) -->
-<audio id="hoverSound" src="https://assets.codepen.io/605876/hover-click.mp3" preload="auto"></audio>
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
 <script>
 let soundUnlocked = false;
 document.body.addEventListener('click', function unlock(){ soundUnlocked = true; }, {once:true});
