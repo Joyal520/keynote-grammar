@@ -159,8 +159,41 @@ button{font-size:14px;padding:8px 12px;border-radius:8px;border:none;cursor:poin
 .star.active{color:var(--accent)}
 
 /* bank and answer */
-.bank-answer{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
-.word-bank,.answer-zone{flex:1 1 320px;min-height:140px;border-radius:10px;padding:12px;border:2px dashed rgba(255,255,255,0.04);background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent);position:relative;overflow:auto}
+/* FIX MOBILE SPACING */
+.bank-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.word-bank,
+.answer-zone {
+  width: 100%;
+  min-height: 60px;      /* MUCH smaller, fixes giant gap */
+  border-radius: 10px;
+  padding: 12px;
+  border: 2px dashed rgba(255,255,255,0.04);
+  background: linear-gradient(180deg,rgba(255,255,255,0.015),transparent);
+  position: relative;
+  overflow: auto;
+}
+
+#bankArea,
+#answerArea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 40px;
+  margin-top: 6px;
+}
+
+.actions {
+  margin-top: 8px;       /* reduce spacing above Undo */
+  padding: 0 8px;
+}
+
 .zone-title{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
 
 /* punctuation hint badge */
@@ -330,6 +363,8 @@ body,html{overflow-x:hidden}
 
 <!-- optional click sound - place rightclick.mp3 in same folder or remove audio usage -->
 <audio id="clickSound" src="rightclick.mp3" preload="auto"></audio>
+<audio id="levelUpSound" src="level-up.mp3" preload="auto"></audio>
+
 
 <script>
 
@@ -1069,7 +1104,17 @@ function playTone(freq, type='sine', len=0.12, gain=0.12){
 }
 function playCorrect(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(880,'sine',0.09,0.08); setTimeout(()=>playTone(1100,'sine',0.09,0.06),90); setTimeout(()=>playTone(1320,'sine',0.09,0.05),180) }
 function playWrong(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(160,'sawtooth',0.26,0.12) }
-function playComplete(){ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); playTone(660,'triangle',0.09,0.12); setTimeout(()=>playTone(880,'triangle',0.09,0.12),120); setTimeout(()=>playTone(1320,'triangle',0.14,0.12),240) }
+function playComplete(){
+  if(!engine || !engine.soundOn) return;
+
+  const s = document.getElementById('levelUpSound');
+  if(!s) return;
+
+  try {
+    s.currentTime = 0;
+    s.play().catch(() => {});
+  } catch(e){}
+}
 
 /* Utility normalize - remove punctuation, lowercase, compress spaces */
 function normalise(s){
