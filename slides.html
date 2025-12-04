@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Slides | Grammar With Joy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* RESET */
+*{
+  margin:0;padding:0;box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+/* LIGHT & DARK MODE COLORS */
+:root {
+  --bg: #000d2b;
+  --text: #ffffff;
+  --glass: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.18);
+  --btn: rgba(255,255,255,0.2);
+  --blob1: #ffb656;
+  --blob2: #0099ff;
+  --blob3: #ff0080;
+}
+
+body.light-mode {
+  --bg: #f2f6ff;
+  --text: #001b2e;
+  --glass: rgba(0,0,0,0.08);
+  --border: rgba(0,0,0,0.15);
+  --btn: rgba(0,0,0,0.15);
+  --blob1: #ffd28a;
+  --blob2: #66c0ff;
+  --blob3: #ff74c1;
+}
+
+/* BODY */
+body{
+  background: var(--bg);
+  color: var(--text);
+  overflow-x:hidden;
+  position: relative;
+  min-height:100vh;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* MOVING BLOBS */
+.blob{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(70px);
+  opacity:0.7;
+  z-index:-2;
+  animation:float 18s infinite alternate ease-in-out;
+}
+.blob1{width:420px;height:420px;background:var(--blob1);top:-80px;left:-120px;animation-duration:25s;}
+.blob2{width:380px;height:380px;background:var(--blob2);bottom:-100px;right:-150px;animation-duration:20s;}
+.blob3{width:300px;height:300px;background:var(--blob3);top:40%;left:70%;animation-duration:30s;}
+
+@keyframes float{
+  0%{transform:translate(0,0) scale(1);}
+  50%{transform:translate(60px,-40px) scale(1.2);}
+  100%{transform:translate(-60px,60px) scale(0.9);}
+}
+
+/* FLOATING ALPHABETS */
+.alphabet {
+  position: absolute;
+  font-size: 2rem;
+  user-select: none;
+  animation: floatUp linear infinite;
+  opacity: 0.85;
+  z-index: -1;
+}
+@keyframes floatUp {
+  0% { transform: translateY(110vh); opacity: 0.8; }
+  100% { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* PARTICLES */
+.particle{
+  position:fixed;
+  width:6px;height:6px;
+  background:white;
+  border-radius:50%;
+  opacity:0.7;
+  filter:blur(3px);
+  pointer-events:none;
+  animation: rise 6s linear infinite;
+}
+@keyframes rise{
+  0%{transform:translateY(0) scale(0.5); opacity:0.6;}
+  100%{transform:translateY(-120vh) scale(1.2); opacity:0;}
+}
+
+/* CURSOR LIGHT */
+.cursor-light{
+  position:fixed;
+  width:250px;height:250px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15), rgba(255,255,255,0));
+  pointer-events:none;
+  mix-blend-mode:screen;
+  z-index:-1;
+  filter:blur(40px);
+  transform:translate(-50%,-50%);
+}
+
+/* HEADER */
+header{
+  position:fixed;top:0;width:100%;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 50px;
+  background: var(--glass);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(15px);
+  z-index:20;
+}
+header h1{font-size:1.5rem;font-weight:600;}
+
+nav a{
+  color:var(--text);
+  text-decoration:none;
+  margin:0 15px;
+  font-weight:500;
+  transition:0.3s;
+}
+nav a:hover{
+  color:#ffcc33;
+  box-shadow:0 0 15px rgba(255,255,0,0.8);
+}
+
+/* MODE TOGGLE */
+.mode-toggle{
+  cursor:pointer;padding:8px 18px;border-radius:40px;
+  background:var(--btn);color:var(--text);
+  border:1px solid var(--border);
+  transition:0.3s;
+}
+.mode-toggle:hover{
+  background:rgba(255,255,0,0.45);
+}
+
+/* PAGE TITLE */
+.page-title{
+  text-align:center;
+  margin-top:160px;
+  font-size:2.3rem;
+  margin-bottom:40px;
+}
+
+/* GRID */
+.slides-grid{
+  max-width:1100px;
+  margin:0 auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+}
+
+/* SLIDE CARD */
+.slide-card{
+  background:var(--glass);
+  padding:35px 25px;
+  border-radius:22px;
+  border:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  box-shadow:0 5px 40px rgba(0,0,0,0.25);
+  transition:0.3s;
+  text-align:center;
+}
+.slide-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 10px 50px rgba(0,0,0,0.4);
+}
+
+/* BUTTON */
+.btn{
+  display:inline-block;
+  background:var(--btn);
+  border:1px solid var(--border);
+  padding:10px 22px;
+  border-radius:25px;
+  color:var(--text);
+  text-decoration:none;
+  font-size:0.9rem;
+  margin:8px;
+  transition:0.3s;
+}
+.btn:hover{
+  background:rgba(255,255,0,0.45);
+  transform:scale(1.05);
+}
+
+/* FOOTER */
+footer{
+  width:100%;
+  text-align:center;
+  padding:20px;
+  background:var(--glass);
+  border-top:1px solid var(--border);
+  position:fixed;
+  bottom:0;
+  z-index:20;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- BLOBS -->
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<!-- PARTICLES -->
+<script>
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'vw';
+  p.style.top=(Math.random()*100+100)+'vh';
+  p.style.animationDuration=(4+Math.random()*3)+'s';
+  document.body.appendChild(p);
+}
+</script>
+
+<!-- ALPHABETS -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const body = document.body;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const colors = ["#4ecca3","#ff6b6b","#feca57","#57a7f3","#a55eea","#ffffff"];
+
+  function spawn(){
+    const s=document.createElement("span");
+    s.className="alphabet";
+    s.textContent=chars[Math.floor(Math.random()*chars.length)];
+    s.style.left=Math.random()*100+"vw";
+    s.style.animationDuration=(10+Math.random()*10)+"s";
+    s.style.color=colors[Math.floor(Math.random()*colors.length)];
+    body.appendChild(s);
+    setTimeout(()=>s.remove(),20000);
+  }
+  setInterval(spawn,200);
+});
+</script>
+
+<!-- CURSOR LIGHT -->
+<div class="cursor-light"></div>
+<script>
+document.addEventListener("mousemove",(e)=>{
+  const c=document.querySelector(".cursor-light");
+  c.style.left=e.clientX+"px";
+  c.style.top=e.clientY+"px";
+});
+</script>
+
+<header>
+  <h1>Grammar With Joy</h1>
+
+  <nav>
+    <a href="topics.html">Topics</a>
+    <a href="start.html">Test centre</a>
+    <a href="library.html">Library</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <button class="mode-toggle" onclick="toggleMode()">Toggle Mode</button>
+</header>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle("light-mode");
+}
+</script>
+
+<h2 class="page-title">Slides</h2>
+
+<div class="slides-grid">
+
+<!-- 26 SLIDES WITH PREVIEW + DOWNLOAD -->
+<!-- START AUTO-GENERATED CONTENT -->
+
+<div class="slide-card"><h3>Unit 1 – Sentence</h3><a href="English_Sentence_Building_Blocks.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 2 – Singular & Plural Nouns</h3><a href="The_Plural_Noun_Toolbox.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 3 – Pronouns</h3><a href="Pronouns_Doers_and_Receivers.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 4 – Possessives</h3><a href="Possessive_Adjective_Pronoun_Showdown.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 5 – Demonstratives</h3><a href="The_Pointing_Words_Map.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 6 – Adjectives</h3><a href="The_Power_of_Adjectives.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 7 – Action Verbs</h3><a href="The_Sentence_Engine.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 8 – Be Verbs</h3><a href="The_Verb_Be_A_Timeless_Guide.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 9 – Have</h3><a href="Grammar_Quest_Production_Map.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 10 – There Is / There Are</h3><a href="Mastering_Existential_There.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 11 – Verb Forms</h3><a href="The_Verbs_Toolkit.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 12 – The Simple Present Tense</h3><a href="The_Simple_Present_Tense_Blueprint.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 13 – The Present Continuous Tense</h3><a href="Action_Now.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 14 – The Simple Past Tense</h3><a href="Mastering_the_Simple_Past_Tense.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 15 – The Past Continuous Tense</h3><a href="Mastering_Past_Continuous.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 16 – The Simple Future Tense</h3><a href="The_Will_Power_Hour.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 17 – Modal Verbs</h3><a href="Unlock_English_Modal_Verb_Toolkit.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 18 – The Passive Voice</h3><a href="The_Director_s_Voice.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 19 – Adverbs</h3><a href="slides/slide19_preview.html" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 20 – Articles</h3><a href="A_An_Sound_Rule.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 21 – Prepositions (Time)</h3><a href="Time_Prepositions_A_Guide_to_Precision.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 22 – Prepositions (Place)</h3><a href="Spatial_Grammar_Mastery.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 23 – Prepositions (Direction & Movement)</h3><a href="Explorer_s_Guide_to_Movement.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 24 – Conjunctions (Coordinating)</h3><a href="Architecture_of_Ideas.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 25 – Conjunctions (Subordinating)</h3><a href="Sentence_Architecture.pdf" class="btn">Start Slideshow</a></div>
+<div class="slide-card"><h3>Unit 26 – Capital Letters</h3><a href="The_Clarity_Code.pdf" class="btn">Start Slideshow</a></div>
+
+
+<!-- END AUTO-GENERATED CONTENT -->
+</div>
+
+<footer>
+  &copy; 2025 Grammar With Joy | Designed by R. J. Roshan
+</footer>
+
+<!-- HOVER SOUND -->
+<audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const hoverSound = document.getElementById("hoverSound");
+    const items = document.querySelectorAll(".btn, nav a, .mode-toggle, .slide-card");
+
+    items.forEach(item => {
+        item.addEventListener("mouseenter", () => {
+            hoverSound.currentTime = 0;
+            hoverSound.play();
+        });
+    });
+});
+</script>
+
+</body>
+</html>
