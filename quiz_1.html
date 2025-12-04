@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+
+
   :root{
     --bg1:#00172b; --bg2:#013a63;
     --yellow:#ffd24d; --muted:#cfe9ff; --ok:#2ecc71; --bad:#ff6b6b;
@@ -82,6 +84,103 @@
   .final-actions{display:flex;gap:12px;justify-content:center;margin-top:14px}
 
   canvas#fw{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:9999}
+
+
+  /* =============================
+   MOBILE RESPONSIVE FIXES
+   ============================= */
+@media(max-width: 768px){
+
+  body{
+    padding: 10px;
+  }
+
+  .container{
+    max-width: 100%;
+  }
+
+  .card{
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .title{
+    font-size: 1.1rem;
+  }
+
+  .meta{
+    font-size: 0.8rem;
+  }
+
+  /* Progress bar resizes */
+  .progress{
+    width: 150px;
+    height: 8px;
+  }
+
+  .score{
+    font-size: 0.9rem;
+  }
+
+  .qtext{
+    font-size: 1rem;
+    min-height: 40px;
+  }
+
+  /* Choices stack better */
+  .choice{
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  /* Matching grid stacks into ONE column */
+  .match-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .pair-box{
+    gap: 8px;
+  }
+
+  /* Sentence builder tokens scale */
+  .token{
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .built{
+    min-height: 40px;
+    padding: 8px;
+  }
+
+  /* Buttons tighter */
+  .btn{
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .final-score{
+    font-size: 1.6rem;
+  }
+
+  .final-actions{
+    flex-direction: column;
+  }
+}
+
+/* Extra small phones */
+@media(max-width: 420px){
+  .progress{ width: 120px; }
+
+  .title{ font-size: 1rem; }
+  .meta{ font-size: 0.75rem; }
+
+  .choice{ font-size: 0.85rem; }
+  .qtext{ font-size: 0.95rem; }
+
+  .token{ padding: 6px 10px; font-size: 0.85rem; }
+}
+
 </style>
 </head>
 
