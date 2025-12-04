@@ -325,6 +325,46 @@ html[data-theme="light"] {
 .kg-toast.good { background: linear-gradient(90deg,#2ec99b,#16a085); color:#071019; }
 .kg-toast.warn { background: linear-gradient(90deg,#ffb3b3,#ff6b6b); color:#300; }
 
+@keyframes slowPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.pulse {
+  animation: slowPulse 5s ease-in-out infinite;
+}
+
+#auroraCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+
+.word-tile.glow-click {
+  position: relative;
+}
+
+.word-tile.glow-click::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(255,255,200,0.55), transparent 70%);
+  transform: scale(0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.45s ease-out, opacity 0.45s ease-out;
+}
+
+.word-tile.glow-active::after {
+  transform: scale(1.8);
+  opacity: 1;
+}
 
 
 
@@ -337,6 +377,9 @@ body,html{overflow-x:hidden}
 
 
 <body>
+
+  <canvas id="auroraCanvas"></canvas>
+
 <div class="app" id="appRoot">
   <div class="header">
     <div>
@@ -487,15 +530,15 @@ const QUIZ_DATA = {
         { scrambled:["are","they","at","home"], answer:"Are they at home?", type:"yesno" },
         { scrambled:["do","we","start","now"], answer:"Do we start now?", type:"yesno" },
         { scrambled:["did","he","call","you"], answer:"Did he call you?", type:"yesno" },
-        { scrambled:["can","you","open","door"], answer:"Can you open the door?", type:"yesno" }
+        { scrambled:["can","you","open","the door"], answer:"Can you open the door?", type:"yesno" }
       ],
       [
         { scrambled:["where","are","you","going"], answer:"Where are you going?", type:"wh" },
         { scrambled:["what","did","she","buy"], answer:"What did she buy?", type:"wh" },
-        { scrambled:["who","is","at","door"], answer:"Who is at the door?", type:"wh" },
+        { scrambled:["who","is","at","the door"], answer:"Who is at the door?", type:"wh" },
         { scrambled:["when","will","we","meet"], answer:"When will we meet?", type:"wh" },
         { scrambled:["why","is","he","late"], answer:"Why is he late?", type:"wh" },
-        { scrambled:["which","one","do","you"], answer:"Which one do you?", type:"wh" },
+        { scrambled:["which","is","your","choice"], answer:"Which is your choice?", type:"wh" },
         { scrambled:["how","did","they","come"], answer:"How did they come?", type:"wh" },
         { scrambled:["whose","book","is","this"], answer:"Whose book is this?", type:"wh" },
         { scrambled:["what","are","you","doing"], answer:"What are you doing?", type:"wh" },
@@ -522,8 +565,8 @@ const QUIZ_DATA = {
         { scrambled:["will","he","come","soon"], answer:"Will he come soon?", type:"yesno" },
         { scrambled:["what","did","you","say"], answer:"What did you say?", type:"wh" },
         { scrambled:["pick","up","the","keys"], answer:"Pick up the keys.", type:"imperative" },
-        { scrambled:["we","found","new","home"], answer:"We found a new home.", type:"positive" },
-        { scrambled:["can","you","play","piano"], answer:"Can you play the piano?", type:"yesno" }
+        { scrambled:["we","found","a new","home"], answer:"We found a new home.", type:"positive" },
+        { scrambled:["can","you","play","the piano"], answer:"Can you play the piano?", type:"yesno" }
       ]
     ]
   },
@@ -539,7 +582,7 @@ const QUIZ_DATA = {
         { scrambled:["we","will","meet","at","noon"], answer:"We will meet at noon.", type:"positive" },
         { scrambled:["he","is","fixing","the","car"], answer:"He is fixing the car.", type:"positive" },
         { scrambled:["i","can","see","the","bird"], answer:"I can see the bird.", type:"positive" },
-        { scrambled:["she","brought","her","new","bag"], answer:"She brought her new bag.", type:"positive" },
+        { scrambled:["she","brought","her","a new","bag"], answer:"She brought her a new bag.", type:"positive" },
         { scrambled:["they","found","a","lost","cat"], answer:"They found a lost cat.", type:"positive" },
         { scrambled:["we","drank","coffee","after","class"], answer:"We drank coffee after class.", type:"positive" },
         { scrambled:["he","wants","to","learn","music"], answer:"He wants to learn music.", type:"positive" }
@@ -547,11 +590,11 @@ const QUIZ_DATA = {
       [
         { scrambled:["are","you","going","to","school"], answer:"Are you going to school?", type:"yesno" },
         { scrambled:["do","they","want","to","join"], answer:"Do they want to join?", type:"yesno" },
-        { scrambled:["will","she","come","to","party"], answer:"Will she come to the party?", type:"yesno" },
+        { scrambled:["will","she","come","to","the party"], answer:"Will she come to the party?", type:"yesno" },
         { scrambled:["have","you","seen","my","keys"], answer:"Have you seen my keys?", type:"yesno" },
         { scrambled:["did","he","bring","the","book"], answer:"Did he bring the book?", type:"yesno" },
         { scrambled:["can","you","help","me","please"], answer:"Can you help me please?", type:"yesno" },
-        { scrambled:["are","they","ready","for","test"], answer:"Are they ready for the test?", type:"yesno" },
+        { scrambled:["are","they","ready","for","the test"], answer:"Are they ready for the test?", type:"yesno" },
         { scrambled:["could","you","open","the","door"], answer:"Could you open the door?", type:"yesno" },
         { scrambled:["does","she","like","that","song"], answer:"Does she like that song?", type:"yesno" },
         { scrambled:["should","we","start","right","now"], answer:"Should we start right now?", type:"yesno" }
@@ -564,16 +607,16 @@ const QUIZ_DATA = {
         { scrambled:["why","did","she","leave","early"], answer:"Why did she leave early?", type:"wh" },
         { scrambled:["which","book","do","you","prefer"], answer:"Which book do you prefer?", type:"wh" },
         { scrambled:["how","did","they","solve","that"], answer:"How did they solve that?", type:"wh" },
-        { scrambled:["whose","phone","is","on","table"], answer:"Whose phone is on the table?", type:"wh" },
-        { scrambled:["what","time","does","class","start"], answer:"What time does class start?", type:"wh" },
+        { scrambled:["whose","phone","is","on","the table"], answer:"Whose phone is on the table?", type:"wh" },
+        { scrambled:["what","time","does","the class","start"], answer:"What time does the class start?", type:"wh" },
         { scrambled:["where","have","you","been","today"], answer:"Where have you been today?", type:"wh" }
       ],
       [
         { scrambled:["please","bring","me","a","glass"], answer:"Please bring me a glass.", type:"imperative" },
         { scrambled:["wash","your","hands","before","eating"], answer:"Wash your hands before eating.", type:"imperative" },
-        { scrambled:["sit","quietly","and","read","book"], answer:"Sit quietly and read the book.", type:"imperative" },
+        { scrambled:["sit","quietly","and","read","the book"], answer:"Sit quietly and read the book.", type:"imperative" },
         { scrambled:["turn","off","the","lights","please"], answer:"Turn off the lights please.", type:"imperative" },
-        { scrambled:["make","sure","you","finish","work"], answer:"Make sure you finish the work.", type:"imperative" },
+        { scrambled:["make","sure","you","finish","the work"], answer:"Make sure you finish the work.", type:"imperative" },
         { scrambled:["write","your","name","on","paper"], answer:"Write your name on paper.", type:"imperative" },
         { scrambled:["bring","the","box","to","me"], answer:"Bring the box to me.", type:"imperative" },
         { scrambled:["close","the","door","very","silently"], answer:"Close the door very silently.", type:"imperative" },
@@ -621,7 +664,7 @@ const QUIZ_DATA = {
       { scrambled:["did","she","see","my","message","yet"], answer:"Did she see my message yet?", type:"yesno" },
       { scrambled:["where","can","i","find","your","house"], answer:"Where can I find your house?", type:"wh" },
       { scrambled:["what","time","does","school","finish","today"], answer:"What time does school finish today?", type:"wh" },
-      { scrambled:["please","put","the","books","on","table"], answer:"Please put the books on the table.", type:"imperative" }
+      { scrambled:["please","put","the","books","on","the table"], answer:"Please put the books on the table.", type:"imperative" }
     ],
     [
       { scrambled:["i","forgot","to","bring","my","lunch"], answer:"I forgot to bring my lunch.", type:"positive" },
@@ -681,18 +724,23 @@ const QUIZ_DATA = {
       // additional sublevels: keep simple variations for demonstration
       [
         { scrambled:["we","have","been","working","on","this","project"], answer:"We have been working on this project.", type:"positive" },
-        { scrambled:["will","they","be","available","next","week","end"], answer:"Will they be available next weekend?", type:"yesno" },
+        { 
+  scrambled:["will","they","attend","the","meeting","next","week"], 
+  answer:"Will they attend the meeting next week?", 
+  type:"yesno" 
+},
+
         { scrambled:["why","did","you","not","answer","my","call"], answer:"Why did you not answer my call?", type:"wh" },
-        { scrambled:["please","take","your","shoes","off","at","door"], answer:"Please take your shoes off at the door.", type:"imperative" },
+        { scrambled:["please","take","your","shoes","off","at","the door"], answer:"Please take your shoes off at the door.", type:"imperative" },
         { scrambled:["i","wonder","if","she","will","come","today"], answer:"I wonder if she will come today.", type:"positive" },
         { scrambled:["what","time","should","we","meet","on","monday"], answer:"What time should we meet on Monday?", type:"wh" },
-        { scrambled:["do","you","remember","the","name","of","place"], answer:"Do you remember the name of the place?", type:"yesno" },
+        { scrambled:["do","you","remember","the","name","of","the place"], answer:"Do you remember the name of the place?", type:"yesno" },
         { scrambled:["they","did","not","finish","their","homework","yet"], answer:"They did not finish their homework yet.", type:"positive" },
         { scrambled:["please","tell","me","exactly","what","happened","there"], answer:"Please tell me exactly what happened there.", type:"imperative" },
         { scrambled:["how","long","will","the","journey","take","today"], answer:"How long will the journey take today?", type:"wh" }
       ],
       [
-        { scrambled:["i","don't","think","this","is","a","good"], answer:"I don't think this is a good idea.", type:"positive" },
+        { scrambled:["i","don't","think","this","is","a good","idea"], answer:"I don't think this is a good idea.", type:"positive" },
         { scrambled:["can","you","explain","that","to","me","again"], answer:"Can you explain that to me again?", type:"yesno" },
         { scrambled:["which","one","of","these","should","we","choose"], answer:"Which one of these should we choose?", type:"wh" },
         { scrambled:["please","remind","me","to","call","her","later"], answer:"Please remind me to call her later.", type:"imperative" },
@@ -718,27 +766,194 @@ const QUIZ_DATA = {
     ]
   },
 
-  6: { // Level 6: 8-word sentences
-    level: 6,
-    sentenceLength: 8,
-    subLevels: [
-      // one sublevel shown; remaining follow similar pattern
-      [
-        { scrambled:["i","have","been","waiting","for","you","since","morning"], answer:"I have been waiting for you since morning.", type:"positive" },
-        { scrambled:["can","you","tell","me","where","it","was","left"], answer:"Can you tell me where it was left?", type:"yesno" },
-        { scrambled:["what","are","the","main","points","of","the","plan"], answer:"What are the main points of the plan?", type:"wh" },
-        { scrambled:["please","make","sure","all","lights","are","turned","off"], answer:"Please make sure all lights are turned off.", type:"imperative" },
-        { scrambled:["they","should","have","completed","this","task","by","now"], answer:"They should have completed this task by now.", type:"positive" },
-        { scrambled:["how","did","you","manage","to","finish","everything","so"], answer:"How did you manage to finish everything so quickly?", type:"wh" },
-        { scrambled:["do","you","think","we","can","trust","them","now"], answer:"Do you think we can trust them now?", type:"yesno" },
-        { scrambled:["please","hand","over","the","documents","to","the","manager"], answer:"Please hand over the documents to the manager.", type:"imperative" },
-        { scrambled:["we","will","be","starting","the","project","next","week"], answer:"We will be starting the project next week.", type:"positive" },
-        { scrambled:["what","would","you","prefer","for","dinner","tonight"], answer:"What would you prefer for dinner tonight?", type:"wh" }
-      ],
-      // for brevity remaining sublevels would be similar; you can edit later
-      [],[],[]
+  6: {
+  level: 6,
+  sentenceLength: 8,
+  subLevels: [
+
+    /* -----------------------------
+       SUB-LEVEL 1 — POSITIVE
+       ----------------------------- */
+    [
+            { scrambled:["i","have","been","waiting","for","you","since","morning"],
+        answer:"I have been waiting for you since morning.", type:"positive" },
+
+      { scrambled:["she","is","studying","for","her","final","exam","now"],
+        answer:"She is studying for her final exam now.", type:"positive" },
+
+      { scrambled:["they","are","cleaning","the","house","before","guests","come"],
+        answer:"They are cleaning the house before guests come.", type:"positive" },
+
+      { scrambled:["we","will","finish","our","project","before","next","week"],
+        answer:"We will finish our project before next week.", type:"positive" },
+
+      { scrambled:["he","has","bought","a","new","phone","this","evening"],
+        answer:"He has bought a new phone this evening.", type:"positive" },
+
+      { scrambled:["i","am","learning","to","speak","english","very","well"],
+        answer:"I am learning to speak English very well.", type:"positive" },
+
+      { scrambled:["she","is","preparing","dinner","for","her","family","now"],
+        answer:"She is preparing dinner for her family now.", type:"positive" },
+
+      { scrambled:["they","were","playing","football","in","the","ground","yesterday"],
+        answer:"They were playing football in the ground yesterday.", type:"positive" },
+
+      { scrambled:["we","are","packing","our","bags","for","the","trip"],
+        answer:"We are packing our bags for the trip.", type:"positive" },
+
+      { scrambled:["he","has","lost","his","keys","near","the","school"],
+        answer:"He has lost his keys near the school.", type:"positive" }
+ 
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 2 — YES/NO
+       ----------------------------- */
+    [
+      { scrambled:["can","you","tell","me","where","it","was","left"],
+        answer:"Can you tell me where it was left?", type:"yesno" },
+
+      { scrambled:["are","you","coming","to","class","with","me","today"],
+        answer:"Are you coming to class with me today?", type:"yesno" },
+
+      { scrambled:["did","he","finish","his","homework","before","leaving","yesterday"],
+        answer:"Did he finish his homework before leaving yesterday?", type:"yesno" },
+
+      { scrambled:["will","they","join","us","for","dinner","tonight","sir"],
+        answer:"Will they join us for dinner tonight sir?", type:"yesno" },
+
+      { scrambled:["have","you","seen","my","bag","anywhere","near","here"],
+        answer:"Have you seen my bag anywhere near here?", type:"yesno" },
+
+      { scrambled:["can","she","carry","this","heavy","box","alone","now"],
+        answer:"Can she carry this heavy box alone now?", type:"yesno" },
+
+      { scrambled:["are","we","going","to","finish","this","work","today"],
+        answer:"Are we going to finish this work today?", type:"yesno" },
+
+      { scrambled:["did","they","lock","the","door","before","leaving","home"],
+        answer:"Did they lock the door before leaving home?", type:"yesno" },
+
+      { scrambled:["have","you","checked","your","mail","before","coming","here"],
+        answer:"Have you checked your mail before coming here?", type:"yesno" },
+
+      { scrambled:["will","he","help","me","carry","these","bags","now"],
+        answer:"Will he help me carry these bags now?", type:"yesno" }
+
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 3 — WH QUESTIONS
+       ----------------------------- */
+    [
+      { scrambled:["what","are","the","main","points","of","this","plan"],
+        answer:"What are the main points of this plan?", type:"wh" },
+
+      { scrambled:["where","did","you","put","the","keys","last","night"],
+        answer:"Where did you put the keys last night?", type:"wh" },
+
+      { scrambled:["why","is","she","crying","in","the","classroom","now"],
+        answer:"Why is she crying in the classroom now?", type:"wh" },
+
+      { scrambled:["how","did","they","solve","this","problem","so","quickly"],
+        answer:"How did they solve this problem so quickly?", type:"wh" },
+
+      { scrambled:["when","are","we","going","to","finish","this","work"],
+        answer:"When are we going to finish this work?", type:"wh" },
+
+      { scrambled:["who","is","bringing","the","books","for","today's","lesson"],
+        answer:"Who is bringing the books for today's lesson?", type:"wh" },
+
+      { scrambled:["which","bus","should","we","take","to","go","there"],
+        answer:"Which bus should we take to go there?", type:"wh" },
+
+      { scrambled:["whose","phone","did","you","find","on","the","table"],
+        answer:"Whose phone did you find on the table?", type:"wh" },
+
+      { scrambled:["what","time","does","the","meeting","start","today"],
+        answer:"What time does the meeting start today?", type:"wh" },
+
+      { scrambled:["where","can","i","find","a","quiet","place","now"],
+        answer:"Where can I find a quiet place now?", type:"wh" }
+
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 4 — IMPERATIVE
+       ----------------------------- */
+    [
+      { scrambled:["please","make","sure","all","lights","are","turned","off"],
+        answer:"Please make sure all lights are turned off.", type:"imperative" },
+
+      { scrambled:["bring","your","homework","to","class","early","tomorrow","morning"],
+        answer:"Bring your homework to class early tomorrow morning.", type:"imperative" },
+
+      { scrambled:["wash","your","hands","properly","before","you","eat","anything"],
+        answer:"Wash your hands properly before you eat anything.", type:"imperative" },
+
+      { scrambled:["write","your","full","name","on","the","paper","please"],
+        answer:"Write your full name on the paper please.", type:"imperative" },
+
+      { scrambled:["help","your","friend","finish","this","project","on","time"],
+        answer:"Help your friend finish this project on time.", type:"imperative" },
+
+      { scrambled:["please","turn","off","the","fan","before","you","leave"],
+        answer:"Please turn off the fan before you leave.", type:"imperative" },
+
+      { scrambled:["bring","me","the","blue","file","from","your","bag"],
+        answer:"Bring me the blue file from your bag.", type:"imperative" },
+
+      { scrambled:["read","the","instructions","carefully","before","you","start","writing"],
+        answer:"Read the instructions carefully before you start writing.", type:"imperative" },
+
+      { scrambled:["close","the","windows","properly","before","the","rain","starts"],
+        answer:"Close the windows properly before the rain starts.", type:"imperative" },
+
+      { scrambled:["place","the","chairs","inside","the","classroom","after","lunch"],
+        answer:"Place the chairs inside the classroom after lunch.", type:"imperative" }
+
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 5 — MIXED (FINAL)
+       ----------------------------- */
+    [
+       { scrambled:["they","should","have","completed","this","task","by","now"],
+        answer:"They should have completed this task by now.", type:"positive" },
+
+      { scrambled:["how","did","you","manage","to","finish","this","quickly"],
+        answer:"How did you manage to finish this quickly?", type:"wh" },
+
+      { scrambled:["do","you","think","we","can","trust","them","now"],
+        answer:"Do you think we can trust them now?", type:"yesno" },
+
+      { scrambled:["please","hand","over","the","documents","to","the","manager"],
+        answer:"Please hand over the documents to the manager.", type:"imperative" },
+
+      { scrambled:["where","did","she","keep","the","blue","bag","yesterday"],
+        answer:"Where did she keep the blue bag yesterday?", type:"wh" },
+
+      { scrambled:["he","has","been","preparing","for","this","test","daily"],
+        answer:"He has been preparing for this test daily.", type:"positive" },
+
+      { scrambled:["will","you","be","able","to","join","the","meeting"],
+        answer:"Will you be able to join the meeting?", type:"yesno" },
+
+      { scrambled:["what","are","they","planning","to","do","after","school"],
+        answer:"What are they planning to do after school?", type:"wh" },
+
+      { scrambled:["bring","your","notes","to","class","for","revision","today"],
+        answer:"Bring your notes to class for revision today.", type:"imperative" },
+
+      { scrambled:["she","is","trying","to","learn","english","very","quickly"],
+        answer:"She is trying to learn English very quickly.", type:"positive" }
+
     ]
-  },
+
+  ]
+},
+
 
   7: {
   level: 7,
@@ -749,80 +964,180 @@ const QUIZ_DATA = {
        SUB-LEVEL 1 — POSITIVE  
        ----------------------------- */
     [
-      { scrambled:["she","is","making","dinner","for","her","family","at","home"], answer:"She is making dinner for her family at home.", type:"positive" },
-      { scrambled:["they","are","studying","together","for","the","big","exam","tomorrow"], answer:"They are studying together for the big exam tomorrow.", type:"positive" },
-      { scrambled:["he","is","cleaning","the","kitchen","floor","right","after","breakfast"], answer:"He is cleaning the kitchen floor right after breakfast.", type:"positive" },
-      { scrambled:["we","are","planning","to","visit","our","grandparents","this","weekend"], answer:"We are planning to visit our grandparents this weekend.", type:"positive" },
-      { scrambled:["i","am","working","on","my","new","project","at","school"], answer:"I am working on my new project at school.", type:"positive" },
-      { scrambled:["she","is","learning","how","to","paint","beautiful","flowers","today"], answer:"She is learning how to paint beautiful flowers today.", type:"positive" },
-      { scrambled:["they","are","buying","groceries","for","the","party","this","evening"], answer:"They are buying groceries for the party this evening.", type:"positive" },
-      { scrambled:["we","are","walking","to","the","park","after","finishing","lunch"], answer:"We are walking to the park after finishing lunch.", type:"positive" },
-      { scrambled:["i","am","reading","a","story","book","in","my","room"], answer:"I am reading a story book in my room.", type:"positive" },
-      { scrambled:["he","is","taking","care","of","his","younger","brother","today"], answer:"He is taking care of his younger brother today.", type:"positive" }
+       { scrambled:["she","is","making","dinner","for","her","family","at","home"],
+        answer:"She is making dinner for her family at home.", type:"positive" },
+
+      { scrambled:["they","are","studying","together","for","the","big","exam","tomorrow"],
+        answer:"They are studying together for the big exam tomorrow.", type:"positive" },
+
+      { scrambled:["he","is","cleaning","the","kitchen","floor","right","after","breakfast"],
+        answer:"He is cleaning the kitchen floor right after breakfast.", type:"positive" },
+
+      { scrambled:["we","are","planning","to","visit","our","grandparents","this","weekend"],
+        answer:"We are planning to visit our grandparents this weekend.", type:"positive" },
+
+      { scrambled:["i","am","working","on","my","new","project","at","school"],
+        answer:"I am working on my new project at school.", type:"positive" },
+
+      { scrambled:["she","is","learning","to","paint","beautiful","flowers","right","now"],
+        answer:"She is learning to paint beautiful flowers right now.", type:"positive" },
+
+      { scrambled:["they","are","buying","groceries","for","the","party","this","evening"],
+        answer:"They are buying groceries for the party this evening.", type:"positive" },
+
+      { scrambled:["we","are","walking","to","the","park","after","finishing","lunch"],
+        answer:"We are walking to the park after finishing lunch.", type:"positive" },
+
+      { scrambled:["i","am","reading","a","story","book","in","my","room"],
+        answer:"I am reading a story book in my room.", type:"positive" },
+
+      { scrambled:["he","is","taking","care","of","his","younger","brother","today"],
+        answer:"He is taking care of his younger brother today.", type:"positive" }
+
     ],
 
     /* -----------------------------  
        SUB-LEVEL 2 — YES/NO  
        ----------------------------- */
     [
-      { scrambled:["are","you","going","to","finish","the","assignment","today","sir"], answer:"Are you going to finish the assignment today sir?", type:"yesno" },
-      { scrambled:["do","they","need","any","help","with","the","new","task"], answer:"Do they need any help with the new task?", type:"yesno" },
-      { scrambled:["can","we","speak","with","the","manager","later","this","afternoon"], answer:"Can we speak with the manager later this afternoon?", type:"yesno" },
-      { scrambled:["is","she","coming","to","school","with","you","this","morning"], answer:"Is she coming to school with you this morning?", type:"yesno" },
-      { scrambled:["did","he","finish","cleaning","the","room","before","leaving","yesterday"], answer:"Did he finish cleaning the room before leaving yesterday?", type:"yesno" },
-      { scrambled:["are","they","waiting","for","us","outside","the","main","gate"], answer:"Are they waiting for us outside the main gate?", type:"yesno" },
-      { scrambled:["will","you","join","the","meeting","later","this","evening","sir"], answer:"Will you join the meeting later this evening sir?", type:"yesno" },
-      { scrambled:["have","you","read","the","instructions","before","starting","the","test"], answer:"Have you read the instructions before starting the test?", type:"yesno" },
-      { scrambled:["can","she","carry","the","heavy","bag","by","herself","now"], answer:"Can she carry the heavy bag by herself now?", type:"yesno" },
-      { scrambled:["did","we","forget","to","bring","the","keys","with","us"], answer:"Did we forget to bring the keys with us?", type:"yesno" }
+       { scrambled:["are","you","going","to","finish","the","assignment","today","sir"],
+        answer:"Are you going to finish the assignment today sir?", type:"yesno" },
+
+      { scrambled:["do","they","need","any","help","with","the","new","task"],
+        answer:"Do they need any help with the new task?", type:"yesno" },
+
+      { scrambled:["can","we","speak","with","the","manager","later","this","afternoon"],
+        answer:"Can we speak with the manager later this afternoon?", type:"yesno" },
+
+      { scrambled:["is","she","coming","to","school","with","you","this","morning"],
+        answer:"Is she coming to school with you this morning?", type:"yesno" },
+
+      { scrambled:["did","he","finish","cleaning","the","room","before","leaving","yesterday"],
+        answer:"Did he finish cleaning the room before leaving yesterday?", type:"yesno" },
+
+      { scrambled:["are","they","waiting","for","us","outside","the","main","gate"],
+        answer:"Are they waiting for us outside the main gate?", type:"yesno" },
+
+      { scrambled:["will","you","join","the","meeting","later","this","evening","sir"],
+        answer:"Will you join the meeting later this evening sir?", type:"yesno" },
+
+      { scrambled:["have","you","read","the","instructions","before","starting","the","test"],
+        answer:"Have you read the instructions before starting the test?", type:"yesno" },
+
+      { scrambled:["can","she","carry","the","heavy","bag","by","herself","now"],
+        answer:"Can she carry the heavy bag by herself now?", type:"yesno" },
+
+      { scrambled:["did","we","forget","to","bring","the","keys","with","us"],
+        answer:"Did we forget to bring the keys with us?", type:"yesno" }
+
     ],
 
     /* -----------------------------  
        SUB-LEVEL 3 — WH QUESTIONS  
        ----------------------------- */
     [
-      { scrambled:["where","are","you","planning","to","go","after","the","class"], answer:"Where are you planning to go after the class?", type:"wh" },
-      { scrambled:["what","time","does","the","movie","start","this","evening","sir"], answer:"What time does the movie start this evening sir?", type:"wh" },
-      { scrambled:["who","is","bringing","the","snacks","for","our","group","meeting"], answer:"Who is bringing the snacks for our group meeting?", type:"wh" },
-      { scrambled:["when","will","they","complete","the","work","on","this","project"], answer:"When will they complete the work on this project?", type:"wh" },
-      { scrambled:["why","is","she","crying","in","the","classroom","right","now"], answer:"Why is she crying in the classroom right now?", type:"wh" },
-      { scrambled:["which","bag","did","you","buy","from","the","new","shop"], answer:"Which bag did you buy from the new shop?", type:"wh" },
-      { scrambled:["how","can","we","improve","our","skills","for","the","competition"], answer:"How can we improve our skills for the competition?", type:"wh" },
-      { scrambled:["whose","jacket","did","you","find","on","the","school","bench"], answer:"Whose jacket did you find on the school bench?", type:"wh" },
-      { scrambled:["what","are","they","doing","in","the","library","right","now"], answer:"What are they doing in the library right now?", type:"wh" },
-      { scrambled:["where","did","he","put","the","keys","after","opening","door"], answer:"Where did he put the keys after opening the door?", type:"wh" }
+       { scrambled:["where","are","you","planning","to","go","after","the","class"],
+        answer:"Where are you planning to go after the class?", type:"wh" },
+
+      { scrambled:["what","time","does","the","movie","start","this","evening","sir"],
+        answer:"What time does the movie start this evening sir?", type:"wh" },
+
+      { scrambled:["who","is","bringing","the","snacks","for","our","group","meeting"],
+        answer:"Who is bringing the snacks for our group meeting?", type:"wh" },
+
+      { scrambled:["when","will","they","complete","the","work","on","this","project"],
+        answer:"When will they complete the work on this project?", type:"wh" },
+
+      { scrambled:["why","is","she","crying","in","the","classroom","right","now"],
+        answer:"Why is she crying in the classroom right now?", type:"wh" },
+
+      { scrambled:["which","bag","did","you","buy","from","the","new","shop"],
+        answer:"Which bag did you buy from the new shop?", type:"wh" },
+
+      { scrambled:["how","can","we","improve","our","skills","for","the","competition"],
+        answer:"How can we improve our skills for the competition?", type:"wh" },
+
+      { scrambled:["whose","jacket","did","you","find","on","the","school","bench"],
+        answer:"Whose jacket did you find on the school bench?", type:"wh" },
+
+      { scrambled:["what","are","they","doing","in","the","library","right","now"],
+        answer:"What are they doing in the library right now?", type:"wh" },
+
+      { scrambled:["where","did","he","put","the","keys","after","opening","door"],
+        answer:"Where did he put the keys after opening door?", type:"wh" }
+
     ],
 
     /* -----------------------------  
        SUB-LEVEL 4 — IMPERATIVE  
        ----------------------------- */
     [
-      { scrambled:["please","bring","your","notebook","to","the","table","right","now"], answer:"Please bring your notebook to the table right now.", type:"imperative" },
-      { scrambled:["turn","off","the","lights","before","leaving","the","classroom","now"], answer:"Turn off the lights before leaving the classroom now.", type:"imperative" },
-      { scrambled:["wash","your","hands","properly","before","you","eat","your","meal"], answer:"Wash your hands properly before you eat your meal.", type:"imperative" },
-      { scrambled:["help","your","friend","finish","the","homework","before","the","bell"], answer:"Help your friend finish the homework before the bell.", type:"imperative" },
-      { scrambled:["write","your","name","clearly","on","the","paper","before","submitting"], answer:"Write your name clearly on the paper before submitting.", type:"imperative" },
-      { scrambled:["listen","carefully","to","the","instructions","during","the","entire","lesson"], answer:"Listen carefully to the instructions during the entire lesson.", type:"imperative" },
-      { scrambled:["close","all","the","windows","before","you","leave","the","room"], answer:"Close all the windows before you leave the room.", type:"imperative" },
-      { scrambled:["bring","the","blue","box","to","me","from","the","shelf"], answer:"Bring the blue box to me from the shelf.", type:"imperative" },
-      { scrambled:["clean","your","desk","properly","after","you","finish","your","project"], answer:"Clean your desk properly after you finish your project.", type:"imperative" },
-      { scrambled:["place","the","books","neatly","on","the","table","right","now"], answer:"Place the books neatly on the table right now.", type:"imperative" }
+       { scrambled:["please","bring","your","notebook","to","the","table","right","now"],
+        answer:"Please bring your notebook to the table right now.", type:"imperative" },
+
+      { scrambled:["turn","off","the","lights","before","leaving","the","classroom","now"],
+        answer:"Turn off the lights before leaving the classroom now.", type:"imperative" },
+
+      { scrambled:["wash","your","hands","properly","before","you","eat","your","meal"],
+        answer:"Wash your hands properly before you eat your meal.", type:"imperative" },
+
+      { scrambled:["help","your","friend","finish","the","homework","before","the","bell"],
+        answer:"Help your friend finish the homework before the bell.", type:"imperative" },
+
+      { scrambled:["write","your","name","clearly","on","the","paper","before","submitting"],
+        answer:"Write your name clearly on the paper before submitting.", type:"imperative" },
+
+      { scrambled:["listen","carefully","to","the","instructions","during","the","entire","lesson"],
+        answer:"Listen carefully to the instructions during the entire lesson.", type:"imperative" },
+
+      { scrambled:["close","all","the","windows","before","you","leave","the","room"],
+        answer:"Close all the windows before you leave the room.", type:"imperative" },
+
+      { scrambled:["bring","the","blue","box","to","me","from","the","shelf"],
+        answer:"Bring the blue box to me from the shelf.", type:"imperative" },
+
+      { scrambled:["clean","your","desk","properly","after","you","finish","your","project"],
+        answer:"Clean your desk properly after you finish your project.", type:"imperative" },
+
+      { scrambled:["place","the","books","neatly","on","the","table","right","now"],
+        answer:"Place the books neatly on the table right now.", type:"imperative" }
+
     ],
 
     /* -----------------------------  
        SUB-LEVEL 5 — MIXED FINAL  
        ----------------------------- */
     [
-      { scrambled:["why","is","she","running","so","fast","in","the","hallway"], answer:"Why is she running so fast in the hallway?", type:"wh" },
-      { scrambled:["please","give","me","the","paper","from","your","bag","now"], answer:"Please give me the paper from your bag now.", type:"imperative" },
-      { scrambled:["he","is","looking","for","his","lost","wallet","right","now"], answer:"He is looking for his lost wallet right now.", type:"positive" },
-      { scrambled:["are","you","joining","us","for","the","trip","next","week"], answer:"Are you joining us for the trip next week?", type:"yesno" },
-      { scrambled:["what","are","you","doing","with","the","tools","right","now"], answer:"What are you doing with the tools right now?", type:"wh" },
-      { scrambled:["bring","your","sports","shoes","to","school","tomorrow","for","practice"], answer:"Bring your sports shoes to school tomorrow for practice.", type:"imperative" },
-      { scrambled:["they","are","waiting","for","the","bus","near","the","library"], answer:"They are waiting for the bus near the library.", type:"positive" },
-      { scrambled:["will","he","help","us","with","the","project","this","evening"], answer:"Will he help us with the project this evening?", type:"yesno" },
-      { scrambled:["where","did","you","put","the","blue","bottle","yesterday","sir"], answer:"Where did you put the blue bottle yesterday sir?", type:"wh" },
-      { scrambled:["she","is","preparing","a","special","meal","for","everyone","today"], answer:"She is preparing a special meal for everyone today.", type:"positive" }
+      { scrambled:["why","is","she","running","so","fast","in","the","hallway"],
+        answer:"Why is she running so fast in the hallway?", type:"wh" },
+
+      { scrambled:["please","give","me","the","paper","from","your","bag","now"],
+        answer:"Please give me the paper from your bag now.", type:"imperative" },
+
+      { scrambled:["he","is","looking","for","his","lost","wallet","right","now"],
+        answer:"He is looking for his lost wallet right now.", type:"positive" },
+
+      { scrambled:["are","you","joining","us","for","the","trip","next","week"],
+        answer:"Are you joining us for the trip next week?", type:"yesno" },
+
+      { scrambled:["what","are","you","doing","with","the","tools","right","now"],
+        answer:"What are you doing with the tools right now?", type:"wh" },
+
+      { scrambled:["bring","your","sports","shoes","to","school","tomorrow","for","practice"],
+        answer:"Bring your sports shoes to school tomorrow for practice.", type:"imperative" },
+
+      { scrambled:["they","are","waiting","for","the","bus","near","the","library"],
+        answer:"They are waiting for the bus near the library.", type:"positive" },
+
+      { scrambled:["will","he","help","us","with","the","project","this","evening"],
+        answer:"Will he help us with the project this evening?", type:"yesno" },
+
+      { scrambled:["where","did","you","put","the","blue","bottle","yesterday","sir"],
+        answer:"Where did you put the blue bottle yesterday sir?", type:"wh" },
+
+      { scrambled:["she","is","preparing","a","special","meal","for","everyone","today"],
+        answer:"She is preparing a special meal for everyone today.", type:"positive" }
+
     ]
 
   ]
@@ -1005,7 +1320,193 @@ const QUIZ_DATA = {
 },
 
 
-  10:{ level:10, sentenceLength:12, subLevels: [ [], [], [], [], [] ] }
+10:{
+  level: 10,
+  sentenceLength: 12,
+  subLevels: [
+
+    /* -----------------------------
+       SUB-LEVEL 1 — POSITIVE (10)
+       ----------------------------- */
+    [
+      { scrambled:["she","has","been","working","on","her","project","for","three","hours","straight","now"],
+        answer:"She has been working on her project for three hours straight now.", type:"positive" },
+
+      { scrambled:["they","are","planning","to","travel","to","the","mountains","during","their","next","vacation"],
+        answer:"They are planning to travel to the mountains during their next vacation.", type:"positive" },
+
+      { scrambled:["he","is","learning","how","to","cook","traditional","meals","for","his","family","tonight"],
+        answer:"He is learning how to cook traditional meals for his family tonight.", type:"positive" },
+
+      { scrambled:["we","have","been","discussing","the","new","project","requirements","with","our","team","today"],
+        answer:"We have been discussing the new project requirements with our team today.", type:"positive" },
+
+      { scrambled:["i","am","reading","an","interesting","book","recommended","by","my","teacher","last","week"],
+        answer:"I am reading an interesting book recommended by my teacher last week.", type:"positive" },
+
+      { scrambled:["they","were","playing","a","challenging","match","against","their","rivals","yesterday","afternoon","here"],
+        answer:"They were playing a challenging match against their rivals yesterday afternoon here.", type:"positive" },
+
+      { scrambled:["she","is","carefully","preparing","all","her","notes","for","the","upcoming","final","exam"],
+        answer:"She is carefully preparing all her notes for the upcoming final exam.", type:"positive" },
+
+      { scrambled:["we","have","organized","a","small","celebration","for","our","friend","who","graduated","recently"],
+        answer:"We have organized a small celebration for our friend who graduated recently.", type:"positive" },
+
+      { scrambled:["he","is","fixing","the","broken","chair","that","collapsed","during","the","event","yesterday"],
+        answer:"He is fixing the broken chair that collapsed during the event yesterday.", type:"positive" },
+
+      { scrambled:["i","am","cleaning","the","living","room","before","our","guests","arrive","later","tonight"],
+        answer:"I am cleaning the living room before our guests arrive later tonight.", type:"positive" }
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 2 — YES/NO QUESTIONS
+       ----------------------------- */
+    [
+      { scrambled:["are","you","planning","to","complete","this","entire","assignment","before","midnight","today","sir"],
+        answer:"Are you planning to complete this entire assignment before midnight today sir?", type:"yesno" },
+
+      { scrambled:["did","they","finish","painting","the","walls","as","the","teacher","instructed","them","yesterday"],
+        answer:"Did they finish painting the walls as the teacher instructed them yesterday?", type:"yesno" },
+
+      { scrambled:["can","she","prepare","all","the","documents","that","we","requested","earlier","this","morning"],
+        answer:"Can she prepare all the documents that we requested earlier this morning?", type:"yesno" },
+
+      { scrambled:["have","you","checked","whether","the","lights","were","turned","off","before","leaving","home"],
+        answer:"Have you checked whether the lights were turned off before leaving home?", type:"yesno" },
+
+      { scrambled:["will","he","be","attending","the","important","meeting","scheduled","for","next","monday","morning"],
+        answer:"Will he be attending the important meeting scheduled for next Monday morning?", type:"yesno" },
+
+      { scrambled:["are","we","going","to","submit","the","project","report","before","the","deadline","today"],
+        answer:"Are we going to submit the project report before the deadline today?", type:"yesno" },
+
+      { scrambled:["did","you","notice","any","issues","with","the","computer","before","it","stopped","working"],
+        answer:"Did you notice any issues with the computer before it stopped working?", type:"yesno" },
+
+      { scrambled:["can","they","finish","cleaning","the","hall","before","the","guests","start","arriving","now"],
+        answer:"Can they finish cleaning the hall before the guests start arriving now?", type:"yesno" },
+
+      { scrambled:["have","we","taken","all","the","necessary","items","for","the","camping","trip","today"],
+        answer:"Have we taken all the necessary items for the camping trip today?", type:"yesno" },
+
+      { scrambled:["will","she","help","us","complete","the","presentation","before","the","class","begins","tomorrow"],
+        answer:"Will she help us complete the presentation before the class begins tomorrow?", type:"yesno" }
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 3 — WH QUESTIONS
+       ----------------------------- */
+    [
+      { scrambled:["where","are","they","planning","to","stay","during","their","holiday","trip","next","month"],
+        answer:"Where are they planning to stay during their holiday trip next month?", type:"wh" },
+
+      { scrambled:["what","time","does","the","science","exhibition","begin","at","the","main","hall","today"],
+        answer:"What time does the science exhibition begin at the main hall today?", type:"wh" },
+
+      { scrambled:["who","is","responsible","for","organising","the","big","event","scheduled","for","next","friday"],
+        answer:"Who is responsible for organising the big event scheduled for next Friday?", type:"wh" },
+
+      { scrambled:["when","did","you","submit","the","homework","assignment","that","was","given","last","week"],
+        answer:"When did you submit the homework assignment that was given last week?", type:"wh" },
+
+      { scrambled:["why","is","she","carrying","such","a","large","bag","to","school","today"],
+        answer:"Why is she carrying such a large bag to school today?", type:"wh" },
+
+      { scrambled:["which","team","will","be","playing","in","the","final","match","this","year"],
+        answer:"Which team will be playing in the final match this year?", type:"wh" },
+
+      { scrambled:["how","can","we","improve","our","results","for","the","upcoming","annual","examinations","now"],
+        answer:"How can we improve our results for the upcoming annual examinations now?", type:"wh" },
+
+      { scrambled:["whose","jacket","did","you","find","lying","near","the","main","school","entrance","today"],
+        answer:"Whose jacket did you find lying near the main school entrance today?", type:"wh" },
+
+      { scrambled:["what","are","they","planning","to","do","after","completing","the","morning","practice","session"],
+        answer:"What are they planning to do after completing the morning practice session?", type:"wh" },
+
+      { scrambled:["where","did","he","leave","the","important","documents","after","finishing","his","work","yesterday"],
+        answer:"Where did he leave the important documents after finishing his work yesterday?", type:"wh" }
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 4 — IMPERATIVE
+       ----------------------------- */
+    [
+      { scrambled:["please","complete","all","your","assignments","before","the","final","submission","time","today","evening"],
+        answer:"Please complete all your assignments before the final submission time today evening.", type:"imperative" },
+
+      { scrambled:["bring","all","your","materials","to","the","class","before","the","lesson","begins","today"],
+        answer:"Bring all your materials to the class before the lesson begins today.", type:"imperative" },
+
+      { scrambled:["write","your","full","details","on","the","form","before","giving","it","to","me"],
+        answer:"Write your full details on the form before giving it to me.", type:"imperative" },
+
+      { scrambled:["turn","off","all","the","lights","before","leaving","the","building","later","tonight","sir"],
+        answer:"Turn off all the lights before leaving the building later tonight sir.", type:"imperative" },
+
+      { scrambled:["read","the","instructions","carefully","before","starting","your","examination","paper","this","morning","please"],
+        answer:"Read the instructions carefully before starting your examination paper this morning please.", type:"imperative" },
+
+      { scrambled:["help","your","friend","finish","the","assignment","before","the","deadline","arrives","later","today"],
+        answer:"Help your friend finish the assignment before the deadline arrives later today.", type:"imperative" },
+
+      { scrambled:["clean","your","desk","properly","after","you","complete","your","project","work","this","afternoon"],
+        answer:"Clean your desk properly after you complete your project work this afternoon.", type:"imperative" },
+
+      { scrambled:["submit","all","required","documents","to","the","office","before","the","principal","arrives","today"],
+        answer:"Submit all required documents to the office before the principal arrives today.", type:"imperative" },
+
+      { scrambled:["organise","your","notes","neatly","before","starting","the","revision","session","later","this","evening"],
+        answer:"Organise your notes neatly before starting the revision session later this evening.", type:"imperative" },
+
+      { scrambled:["bring","your","sports","equipment","to","the","field","before","the","training","session","begins"],
+        answer:"Bring your sports equipment to the field before the training session begins.", type:"imperative" }
+    ],
+
+    /* -----------------------------
+       SUB-LEVEL 5 — MIXED FINAL
+       ----------------------------- */
+    [
+      { scrambled:["why","are","they","talking","so","loudly","in","the","corridor","during","class","hours"],
+        answer:"Why are they talking so loudly in the corridor during class hours?", type:"wh" },
+
+      { scrambled:["please","hand","over","the","completed","form","to","me","before","leaving","this","room"],
+        answer:"Please hand over the completed form to me before leaving this room.", type:"imperative" },
+
+      { scrambled:["he","is","preparing","for","the","big","competition","that","will","happen","next","month"],
+        answer:"He is preparing for the big competition that will happen next month.", type:"positive" },
+
+      { scrambled:["are","you","joining","us","for","the","long","practice","session","scheduled","later","today"],
+        answer:"Are you joining us for the long practice session scheduled later today?", type:"yesno" },
+
+      { scrambled:["what","are","you","doing","with","the","tools","kept","inside","that","blue","box"],
+        answer:"What are you doing with the tools kept inside that blue box?", type:"wh" },
+
+      { scrambled:["bring","your","blue","file","to","the","office","before","the","meeting","starts","today"],
+        answer:"Bring your blue file to the office before the meeting starts today.", type:"imperative" },
+
+      { scrambled:["they","are","waiting","for","their","teacher","outside","the","hall","after","morning","assembly"],
+        answer:"They are waiting for their teacher outside the hall after morning assembly.", type:"positive" },
+
+      { scrambled:["will","he","help","us","finish","the","presentation","before","the","submission","deadline","today"],
+        answer:"Will he help us finish the presentation before the submission deadline today?", type:"yesno" },
+
+      { scrambled:["where","did","you","place","the","red","bag","after","cleaning","your","desk","yesterday"],
+        answer:"Where did you place the red bag after cleaning your desk yesterday?", type:"wh" },
+
+      { scrambled:["she","is","making","a","special","meal","for","her","family","tonight","at","home"],
+        answer:"She is making a special meal for her family tonight at home.", type:"positive" }
+    ]
+
+  ]
+},
+
+
+
+
+  11:{ level:11, sentenceLength:12, subLevels: [ [], [], [], [], [] ] }
 };
 
 /* =========================
@@ -1370,25 +1871,35 @@ class QuizEngine {
       }
 
       tile.addEventListener('click', () => {
-        if(this.soundOn && clickAudio){
-          try{ clickAudio.currentTime = 0; clickAudio.play().catch(()=>{}) }catch(e){}
-        }
+  if(this.soundOn && clickAudio){
+    try{ clickAudio.currentTime = 0; clickAudio.play().catch(()=>{}) }catch(e){}
+  }
 
-        this.answerArea.appendChild(tile)
-        tile.classList.add('answer-tile')
-        this.bankHistory.push({ tile })
+  /* -------------------------------
+     GLOW EXPANDING ANIMATION
+     ------------------------------- */
+  tile.classList.add("glow-click");
+  tile.classList.add("glow-active");
+  setTimeout(() => tile.classList.remove("glow-active"), 350);
 
-        // AUTO SUBMIT WHEN PUNCTUATION IS CLICKED
-        const isPunct = tile.dataset.word === '?' || tile.dataset.word === '.'
-        if(isPunct){
-          if(this._autoSubmitting) return
-          this._autoSubmitting = true
-          setTimeout(()=> {
-            this.submitAnswer()
-            setTimeout(()=> this._autoSubmitting = false, 800)
-          }, 120)
-        }
-      })
+  /* --------------------------------
+     EXISTING ENGINE BEHAVIOUR
+     -------------------------------- */
+  this.answerArea.appendChild(tile)
+  tile.classList.add('answer-tile')
+  this.bankHistory.push({ tile })
+
+  const isPunct = tile.dataset.word === '?' || tile.dataset.word === '.'
+  if(isPunct){
+    if(this._autoSubmitting) return
+    this._autoSubmitting = true
+    setTimeout(()=> {
+      this.submitAnswer()
+      setTimeout(()=> this._autoSubmitting = false, 800)
+    }, 120)
+  }
+})
+
 
       this.bankArea.appendChild(tile)
     })
@@ -1567,6 +2078,187 @@ document.addEventListener("click", e => {
   }
 });
 
+/* ============================================================
+   AURORA + COLOR SHIFT + STARS + SHOOTING STARS (Dark Mode Only)
+   Ultra-Optimised — Single Canvas, Single Loop, No Lag
+   ============================================================ */
+
+// Get canvas
+const aCanvas = document.getElementById("auroraCanvas");
+const aCtx = aCanvas.getContext("2d");
+
+// Resize canvas to full screen
+function resizeAurora() {
+    aCanvas.width = window.innerWidth;
+    aCanvas.height = window.innerHeight;
+}
+resizeAurora();
+window.addEventListener("resize", resizeAurora);
+
+/* ============================================================
+   STARFIELD (Static stars + small twinkle)
+   ============================================================ */
+
+const starCount = 80;        // choose 80–120 for safety
+const stars = [];
+
+function initStars() {
+    stars.length = 0;
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            x: Math.random() * aCanvas.width,
+            y: Math.random() * aCanvas.height * 0.8,
+            r: Math.random() * 1.2 + 0.3,
+            baseAlpha: Math.random() * 0.4 + 0.1,
+            twinkleSpeed: Math.random() * 0.02 + 0.01
+        });
+    }
+}
+initStars();
+window.addEventListener("resize", () => {
+    resizeAurora();
+    initStars();
+});
+
+/* ============================================================
+   SHOOTING STARS
+   ============================================================ */
+
+const shootingStars = [];
+
+function spawnShootingStar() {
+    shootingStars.push({
+        x: Math.random() * aCanvas.width,
+        y: Math.random() * aCanvas.height * 0.4,
+        vx: -8 - Math.random() * 4,
+        vy: 3 + Math.random() * 2,
+        life: 0,
+        maxLife: 50 + Math.floor(Math.random() * 30)
+    });
+}
+
+/* ============================================================
+   MAIN DRAW LOOP — AURORA + STARS + SHOOTING STARS
+   ============================================================ */
+
+let t = 0;
+let hueShift = 0;
+
+function drawAurora() {
+    const w = aCanvas.width;
+    const h = aCanvas.height;
+
+    // Check if dark mode
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+
+    // If not dark mode, clear the canvas and keep loop alive
+    if (!isDark) {
+        aCtx.clearRect(0, 0, w, h);
+        requestAnimationFrame(drawAurora);
+        return;
+    }
+
+    // Clear screen
+    aCtx.clearRect(0, 0, w, h);
+
+    /* ============================================================
+       AURORA WAVES WITH COLOR SHIFT
+       ============================================================ */
+
+    for (let i = 0; i < 3; i++) {
+        const y = h * (0.3 + i * 0.25);
+
+        const gradient = aCtx.createLinearGradient(0, y - 200, w, y + 200);
+
+        const c1 = `hsla(${(hueShift + i * 40) % 360}, 80%, 65%, 0.18)`;
+        const c2 = `hsla(${(hueShift + i * 40 + 60) % 360}, 80%, 60%, 0.15)`;
+        const c3 = `hsla(${(hueShift + i * 40 + 120) % 360}, 80%, 70%, 0.18)`;
+
+        gradient.addColorStop(0, c1);
+        gradient.addColorStop(0.5, c2);
+        gradient.addColorStop(1, c3);
+
+        aCtx.fillStyle = gradient;
+
+        const offset = Math.sin(t + i) * 40;
+
+        aCtx.beginPath();
+        aCtx.moveTo(0, y + offset);
+
+        for (let x = 0; x <= w; x += 20) {
+            aCtx.lineTo(
+                x,
+                y + Math.sin(x * 0.002 + t + i) * 40 + offset
+            );
+        }
+
+        aCtx.lineTo(w, h);
+        aCtx.lineTo(0, h);
+        aCtx.closePath();
+        aCtx.fill();
+    }
+
+    t += 0.01;
+    hueShift = (hueShift + 0.1) % 360;
+
+    /* ============================================================
+       STATIC STARS (twinkling)
+       ============================================================ */
+
+    for (let s of stars) {
+        const flicker = Math.sin((t + s.twinkleSpeed) * 50) * 0.3;
+        const alpha = s.baseAlpha + flicker;
+
+        aCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+        aCtx.beginPath();
+        aCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        aCtx.fill();
+    }
+
+    /* ============================================================
+       SHOOTING STARS
+       ============================================================ */
+
+    if (shootingStars.length < 3 && Math.random() < 0.02) {
+        spawnShootingStar();
+    }
+
+    aCtx.lineWidth = 2;
+
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const s = shootingStars[i];
+
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life++;
+
+        const alpha = Math.max(0, 1 - s.life / s.maxLife);
+
+        aCtx.strokeStyle = `rgba(255,255,255,${0.7 * alpha})`;
+        aCtx.beginPath();
+        aCtx.moveTo(s.x, s.y);
+        aCtx.lineTo(s.x - s.vx * 0.6, s.y - s.vy * 0.6);
+        aCtx.stroke();
+
+        aCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+        aCtx.beginPath();
+        aCtx.arc(s.x, s.y, 2.2, 0, Math.PI * 2);
+        aCtx.fill();
+
+        if (
+            s.life > s.maxLife ||
+            s.x < -50 ||
+            s.y > h + 50
+        ) {
+            shootingStars.splice(i, 1);
+        }
+    }
+
+    requestAnimationFrame(drawAurora);
+}
+
+// Start animation
+drawAurora();
 
 
 </script>
