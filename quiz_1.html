@@ -16,6 +16,8 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
 
+
+
   /* ---------- Center THE BOX ---------- */
   body{
     font-family:'Poppins',sans-serif;
@@ -181,10 +183,97 @@
   .token{ padding: 6px 10px; font-size: 0.85rem; }
 }
 
+/* ==============================================
+   ORIENTATION WARNING + ROTATING PHONE ANIMATION
+   ============================================== */
+
+#orientation-warning {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.92);
+  color: white;
+  display: none; /* JS toggles this */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  z-index: 999999;
+}
+
+.warning-content h2 {
+  font-size: 1.8rem;
+  margin-top: 20px;
+}
+
+.warning-content p {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Rotating phone animation */
+.phone-animation {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.phone {
+  width: 60px;
+  height: 100px;
+  background: #fff;
+  border-radius: 12px;
+  position: absolute;
+  top: 10px; left: 30px;
+  box-shadow: 0 0 12px rgba(255,255,255,0.4);
+  animation: rotatePhone 2s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+.rotate-arrow {
+  width: 80px;
+  height: 80px;
+  border: 4px solid transparent;
+  border-top-color: #45caff;
+  border-right-color: #45caff;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px; left: 20px;
+  animation: spinArrow 2s infinite linear;
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(90deg); }
+  70% { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes spinArrow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 </style>
 </head>
 
 <body>
+
+  <!-- ORIENTATION WARNING OVERLAY -->
+<div id="orientation-warning">
+  <div class="warning-content">
+    <div class="phone-animation">
+      <div class="phone"></div>
+      <div class="rotate-arrow"></div>
+    </div>
+
+    <h2>Please rotate your device</h2>
+    <p>This quiz works best in landscape mode.</p>
+  </div>
+</div>
+
 
 <canvas id="fw"></canvas>
 
@@ -576,6 +665,29 @@ function runFireworks(){
 function normalize(s){
   return String(s||"").trim().toLowerCase();
 }
+
+/* ======================================
+   ORIENTATION CHECK (BLOCK QUIZ IN PORTRAIT)
+   ====================================== */
+
+function checkOrientation() {
+  const isPortrait = window.innerHeight > window.innerWidth;
+  const overlay = document.getElementById('orientation-warning');
+  const quizContainer = document.querySelector('.container'); // main quiz wrapper
+
+  if (isPortrait) {
+    overlay.style.display = 'flex';
+    quizContainer.style.pointerEvents = "none"; // block all clicking
+  } else {
+    overlay.style.display = 'none';
+    quizContainer.style.pointerEvents = "auto";
+  }
+}
+
+window.addEventListener("load", checkOrientation);
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+
 </script>
 
 </body>
