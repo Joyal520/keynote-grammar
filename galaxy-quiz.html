@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Quiz • Vocabulary Challenge</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --glow: #78ffd6;
+    --accent: #a8ff78;
+    --purple: #4a00e0;
+    --dark: #0f001a;
+    --card: rgba(12, 10, 40, 0.9);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, #1a0033, #000000 70%);
+    color: #e6e6ff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 800px;
+    width: 100%;
+    background: var(--card);
+    border-radius: 28px;
+    padding: 40px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    border: 1px solid rgba(120,255,214,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    inset: -200px;
+    background: radial-gradient(circle at top, rgba(120,255,214,0.15), transparent 60%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.8em;
+    margin-bottom: 10px;
+    background: linear-gradient(120deg, #a8ff78, #78ffd6, #ff8aff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #a5b4fc;
+    margin-bottom: 30px;
+    font-size: 0.95em;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    font-size: 0.9em;
+  }
+
+  .badge {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(120, 255, 214, 0.4);
+    background: rgba(15,23,42,0.7);
+  }
+
+  #statusMessage {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1em;
+  }
+
+  #quizArea {
+    margin-top: 10px;
+  }
+
+  #quizWord {
+    text-align: center;
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  #questionInfo {
+    text-align: center;
+    font-size: 0.95em;
+    color: #c4c9ff;
+    margin-bottom: 25px;
+  }
+
+  #quizOptions {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 25px;
+  }
+
+  .option-btn {
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(148,163,184,0.6);
+    background: rgba(15,23,42,0.9);
+    color: #e2e8f0;
+    font-size: 1em;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .option-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15,23,42,0.7);
+    border-color: rgba(120,255,214,0.7);
+  }
+  .option-btn.correct {
+    background: rgba(22,163,74,0.25);
+    border-color: #22c55e;
+  }
+  .option-btn.wrong {
+    background: rgba(239,68,68,0.25);
+    border-color: #f97373;
+  }
+
+  #quizResult {
+    text-align: center;
+    font-size: 1.1em;
+    min-height: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.25s;
+  }
+
+  #nextBtn {
+    background: linear-gradient(120deg, #78ffd6, #a8ff78);
+    color: #0f172a;
+    display: none;
+  }
+  #nextBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(120,255,214,0.45);
+  }
+
+  #backBtn {
+    background: rgba(15,23,42,0.9);
+    color: #e2e8f0;
+    border: 1px solid rgba(148,163,184,0.6);
+  }
+  #backBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15,23,42,0.7);
+  }
+
+  #finalScore {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 1.2em;
+  }
+
+  #statusWarning {
+    color: #f97373;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Galaxy Quiz</h1>
+  <p class="subtitle">Test the words you collected in One-Minute Magic Reading.</p>
+
+  <div class="badge-row">
+    <div class="badge" id="wordCountBadge">Words collected: 0</div>
+    <div class="badge" id="questionCountBadge">Questions: 0</div>
+  </div>
+
+  <div id="statusMessage"></div>
+
+  <div id="quizArea" style="display:none;">
+    <div id="quizWord"></div>
+    <div id="questionInfo"></div>
+    <div id="quizOptions"></div>
+    <div id="quizResult"></div>
+    <div class="button-row">
+      <button class="btn" id="backBtn">⟵ Back to Reading</button>
+      <button class="btn" id="nextBtn">Next Question ⟶</button>
+    </div>
+    <div id="finalScore"></div>
+  </div>
+
+</div>
+
+<!-- Sounds -->
+<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2021/09/16/audio_5f49e0e1c0.mp3?filename=correct-answer-111.wav"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0cc2f60365.mp3?filename=wrong-answer-126.wav"></audio>
+<audio id="nextSound" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_a0d9c0e4de.mp3?filename=page-next-110936.mp3"></audio>
+
+<script>
+let vocabList = JSON.parse(localStorage.getItem('vocabList')) || [];
+let quizWords = [];
+let quizIndex = 0;
+let score = 0;
+
+const statusMessage = document.getElementById('statusMessage');
+const quizArea = document.getElementById('quizArea');
+const quizWordEl = document.getElementById('quizWord');
+const questionInfo = document.getElementById('questionInfo');
+const quizOptions = document.getElementById('quizOptions');
+const quizResult = document.getElementById('quizResult');
+const finalScore = document.getElementById('finalScore');
+const nextBtn = document.getElementById('nextBtn');
+const backBtn = document.getElementById('backBtn');
+const wordCountBadge = document.getElementById('wordCountBadge');
+const questionCountBadge = document.getElementById('questionCountBadge');
+
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const nextSound = document.getElementById('nextSound');
+
+// Initial checks
+wordCountBadge.textContent = `Words collected: ${vocabList.length}`;
+
+if (vocabList.length < 5) {
+  statusMessage.innerHTML = `<span id="statusWarning">You need at least 5 collected words to start the Galaxy Quiz.</span><br>
+  Go back, double-click more words in the story, then return here.`;
+  questionCountBadge.textContent = 'Questions: 0';
+} else {
+  statusMessage.textContent = '';
+  buildQuizSet();
+  quizArea.style.display = 'block';
+}
+
+// Build quiz word set
+function buildQuizSet() {
+  quizWords = vocabList.slice(); // shallow copy
+  shuffleArray(quizWords);
+  questionCountBadge.textContent = `Questions: ${quizWords.length}`;
+  loadQuizQuestion();
+}
+
+function loadQuizQuestion() {
+  nextBtn.style.display = 'none';
+  quizResult.textContent = '';
+  finalScore.textContent = '';
+
+  const current = quizWords[quizIndex];
+  if (!current) return;
+
+  quizWordEl.textContent = current.word;
+  questionInfo.textContent = `Question ${quizIndex + 1} of ${quizWords.length}`;
+
+  const correctMeaning = current.en;
+  let options = [correctMeaning];
+
+  // Add random wrong options
+  while (options.length < 4 && options.length < vocabList.length) {
+    const random = vocabList[Math.floor(Math.random() * vocabList.length)];
+    if (random.en !== correctMeaning && !options.includes(random.en)) {
+      options.push(random.en);
+    }
+  }
+
+  shuffleArray(options);
+
+  quizOptions.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.className = 'option-btn';
+    btn.onclick = () => handleAnswer(btn, opt, correctMeaning);
+    quizOptions.appendChild(btn);
+  });
+}
+
+function handleAnswer(button, selected, correct) {
+  // Lock all buttons
+  quizOptions.querySelectorAll('button').forEach(btn => btn.disabled = true);
+
+  if (selected === correct) {
+    button.classList.add('correct');
+    quizResult.textContent = 'Correct!';
+    quizResult.style.color = '#4ade80';
+    score++;
+    correctSound.currentTime = 0;
+    correctSound.play();
+  } else {
+    button.classList.add('wrong');
+    quizResult.textContent = 'Wrong!';
+    quizResult.style.color = '#f97373';
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
+    // Highlight correct answer
+    quizOptions.querySelectorAll('button').forEach(btn => {
+      if (btn.textContent === correct) {
+        btn.classList.add('correct');
+      }
+    });
+  }
+
+  nextBtn.style.display = 'inline-flex';
+}
+
+nextBtn.onclick = () => {
+  nextSound.currentTime = 0;
+  nextSound.play();
+  quizIndex++;
+  if (quizIndex < quizWords.length) {
+    loadQuizQuestion();
+  } else {
+    finishQuiz();
+  }
+};
+
+function finishQuiz() {
+  quizWordEl.textContent = 'Quiz Finished!';
+  quizOptions.innerHTML = '';
+  quizResult.textContent = '';
+  nextBtn.style.display = 'none';
+
+  const percent = Math.round((score / quizWords.length) * 100);
+  let comment;
+  if (percent === 100) comment = "Outstanding! Your galaxy is shining bright.";
+  else if (percent >= 70) comment = "Great job! Keep growing your galaxy.";
+  else if (percent >= 40) comment = "Not bad. Review the words and try again.";
+  else comment = "This is the start. Learn the words and replay the quiz.";
+
+  finalScore.innerHTML = `Your Score: <strong>${score} / ${quizWords.length}</strong> (${percent}%)<br>${comment}`;
+}
+
+backBtn.onclick = () => {
+  window.location.href = 'magic-reading.html';
+};
+
+// Fisher-Yates shuffle
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+</script>
+</body>
+</html>
