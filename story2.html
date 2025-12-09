@@ -347,6 +347,41 @@
     max-width: 300px;
   }
 }
+/* MOBILE FIX: stop justification completely */
+@media (max-width: 767px) {
+    .story-card {
+        text-align: left !important;
+        text-justify: auto !important;
+        word-spacing: normal !important;
+        letter-spacing: normal !important;
+        line-height: 1.7 !important;
+    }
+
+    /* all wrapped words behave like normal inline text */
+    .story-card span,
+    .story-card .word,
+    .story-card .phrase {
+        display: inline !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+    }
+}
+/* Safety CSS: fallback for small screens */
+@media (max-width: 767.98px) {
+  .story-card {
+    text-align: left !important;
+    text-justify: auto !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
+  }
+  .story-card span,
+  .story-card .word,
+  .story-card .phrase {
+    display: inline !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+}
 
 
 
@@ -710,6 +745,95 @@ document.getElementById("langSelect").onchange = ()=>{
 
 renderVocab();
 updateQuizButton();
+
+(function preventMobileJustify() {
+  const BREAKPOINT = 768; // px - <=767 is mobile
+  const storyCard = document.querySelector('.story-card');
+  if (!storyCard) return;
+
+  // save inline styles so we can restore them on larger screens
+  const savedInline = {
+    textAlign: storyCard.style.textAlign || '',
+    textJustify: storyCard.style.textJustify || '',
+    wordSpacing: storyCard.style.wordSpacing || '',
+    letterSpacing: storyCard.style.letterSpacing || ''
+  };
+
+  // also keep a map of inline span style states we may override
+  const spans = () => Array.from(storyCard.querySelectorAll('span'));
+
+  function applyMobileStyles() {
+    // Force left alignment and normal spacing on the story container
+    storyCard.style.textAlign = 'left';
+    storyCard.style.textJustify = 'auto';
+    storyCard.style.wordSpacing = 'normal';
+    storyCard.style.letterSpacing = 'normal';
+    // Force each wrapper to behave exactly like text
+    spans().forEach(s => {
+      s.style.display = 'inline';
+      s.style.whiteSpace = 'normal';
+      s.style.wordBreak = 'break-word';
+      s.style.margin = '0';
+      s.style.padding = s.classList.contains('word') ? '0 0.05rem' : '0'; // tiny padding to preserve tap targets
+      // remove any leading/trailing width constraints that could cause layout boxes
+      s.style.minWidth = '';
+      s.style.maxWidth = '100%';
+    });
+
+    // Force browser reflow and recompute layout
+    // This trick clears certain cached justification layout glitches
+    storyCard.style.transform = 'translateZ(0)';
+    void storyCard.offsetWidth;
+    storyCard.style.transform = '';
+  }
+
+  function restoreDesktopStyles() {
+    // restore saved container inline styles
+    storyCard.style.textAlign = savedInline.textAlign;
+    storyCard.style.textJustify = savedInline.textJustify;
+    storyCard.style.wordSpacing = savedInline.wordSpacing;
+    storyCard.style.letterSpacing = savedInline.letterSpacing;
+
+    // remove forced inline styles from spans (so original CSS rules can apply)
+    spans().forEach(s => {
+      s.style.display = '';
+      s.style.whiteSpace = '';
+      s.style.wordBreak = '';
+      s.style.margin = '';
+      s.style.padding = '';
+      s.style.minWidth = '';
+      s.style.maxWidth = '';
+    });
+
+    // force reflow to ensure justification reapplies correctly
+    storyCard.style.transform = 'translateZ(0)';
+    void storyCard.offsetWidth;
+    storyCard.style.transform = '';
+  }
+
+  function checkAndApply() {
+    if (window.innerWidth < BREAKPOINT) {
+      applyMobileStyles();
+    } else {
+      restoreDesktopStyles();
+    }
+  }
+
+  // Run on load
+  checkAndApply();
+
+  // Watch resizes & orientation changes
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(checkAndApply, 120);
+  }, { passive: true });
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(checkAndApply, 150);
+  });
+})();
+
 </script>
 </body>
 </html>
