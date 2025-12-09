@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Grammar Assessment — Interactive (Final)</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark-bg:#0a1d3f;
+    --light-bg:#f3f7ff;
+    --card-glass-dark: rgba(255,255,255,0.06);
+    --card-glass-light: rgba(10,25,63,0.05);
+    --accent: #ffeb3b; /* yellow button */
+    --btn-text: #000;
+    --text-light: #ffffff;
+    --text-dark: #06203a;
+    --correct: #1bbf4b;
+    --wrong: #ff4b4b;
+    --glass-blur: 12px;
+    --fs:16px;
+  }
+  html,body{height:100%;margin:0;font-family:'Roboto',system-ui,-apple-system,Segoe UI,Arial; font-size:var(--fs); -webkit-font-smoothing:antialiased;}
+  body{background:var(--dark-bg); color:var(--text-light); overflow-x:hidden;}
+
+/* Layout */
+.app {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  box-sizing:border-box;
+  position:relative;
+}
+
+/* Moving blobs */
+.blob {
+  position:fixed;
+  border-radius:50%;
+  filter: blur(80px);
+  opacity:0.55;
+  z-index:0;
+  transform: translate3d(0,0,0);
+}
+.blob.a { width:420px; height:420px; background: #ffeb3b; top:-120px; left:-90px; animation: blobMove 28s ease-in-out infinite; }
+.blob.b { width:360px; height:360px; background: #00e5ff; top:160px; right:-140px; animation: blobMove 30s ease-in-out infinite; animation-delay:4s;}
+.blob.c { width:520px; height:520px; background: #ff69b4; bottom:-150px; left:-200px; animation: blobMove 34s ease-in-out infinite; animation-delay:7s;}
+@keyframes blobMove {
+  0%{transform:translate(0,0) scale(1);}
+  50%{transform:translate(80px,-60px) scale(1.12);}
+  100%{transform:translate(0,0) scale(1);}
+}
+
+/* shooting stars */
+.stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
+.star { position:absolute; width:2px; height:2px; background:rgba(255,255,255,0.9); border-radius:50%; opacity:0.9; transform:translateZ(0); animation:shoot linear infinite; }
+@keyframes shoot { 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(800px,900px) scale(.6); opacity:0;} }
+
+/* Card */
+.card {
+  position:relative;
+  z-index:5;
+  width:100%;
+  max-width:980px;
+  border-radius:18px;
+  padding:20px;
+  box-shadow: 0 14px 40px rgba(2,6,23,0.6);
+  backdrop-filter: blur(var(--glass-blur));
+  background: var(--card-glass-dark);
+  color:inherit;
+  box-sizing:border-box;
+}
+
+/* Header */
+.header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.title { font-size:20px; color:var(--accent); margin:0; }
+.controls { display:flex; gap:10px; align-items:center; }
+
+/* Buttons */
+.btn {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.btn.ghost { background: transparent; color: var(--text-light); border:1px solid rgba(255,255,255,0.08); box-shadow:none; font-weight:600; padding:8px 12px; }
+.toggle {
+  display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.03);
+}
+
+/* Intro area */
+.intro {
+  display:flex; gap:20px; align-items:flex-start; margin-top:14px;
+  flex-wrap:wrap;
+}
+.intro .left {
+  flex:1; min-width:240px;
+}
+.intro .right {
+  flex:1; min-width:240px;
+}
+
+/* instructions box */
+.instructions {
+  background: rgba(255,255,255,0.03);
+  padding:14px; border-radius:12px; line-height:1.45;
+}
+
+/* Progress bar */
+.progress-wrap { margin-top:14px; display:flex; align-items:center; gap:12px; }
+.progress-bar {
+  background: rgba(255,255,255,0.06);
+  height:12px; flex:1; border-radius:8px; overflow:hidden;
+}
+.progress-inner {
+  height:100%; width:0%; background: linear-gradient(90deg,#ffeb3b,#ffd54a); transition:width 500ms ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25) inset;
+}
+.qinfo { min-width:140px; text-align:right; font-weight:600; color:rgba(255,235,59,0.95); }
+
+/* question area (center) */
+.q-area { margin-top:18px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+.q-text { text-align:center; font-weight:700; padding:8px 12px; min-height:56px; }
+
+/* options grid */
+.options { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; width:100%; }
+
+/* option button style */
+.opt-btn {
+  background:var(--accent);
+  color:var(--btn-text);
+  border:none;
+  padding:10px 14px;
+  min-width:160px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.opt-btn[disabled]{ opacity:0.55; cursor:not-allowed; transform:none; }
+
+/* blank style */
+.blank {
+  border-bottom:3px solid var(--accent);
+  display:inline-block;
+  min-width:120px;
+  padding:8px 10px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:700;
+  background: rgba(255,255,255,0.02);
+}
+
+/* matching columns */
+.match-wrap { display:flex; gap:18px; width:100%; justify-content:space-between; }
+.col { width:48%; display:flex; flex-direction:column; gap:10px; }
+.match-item {
+  background: rgba(255,255,255,0.04); padding:12px; border-radius:10px; cursor:pointer; text-align:center; font-weight:700;
+}
+
+/* sentence builder words (yellow) */
+.builder-bank { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.builder-word {
+  background:var(--accent); color:var(--btn-text); border:none; padding:10px 14px; border-radius:14px; cursor:pointer; font-weight:700;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.builder-word.disabled{ opacity:0.5; cursor:not-allowed; }
+
+/* controls */
+.controls-bottom { display:flex; gap:12px; justify-content:center; margin-top:10px; }
+
+/* hint text */
+.hint { min-height:20px; text-align:center; font-weight:600; color:rgba(255,255,255,0.9); }
+
+/* result area */
+.result {
+  margin-top:12px; padding:14px; border-radius:12px; text-align:center;
+  background: linear-gradient(135deg, rgba(255,235,59,0.08), rgba(255,255,255,0.02)); box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+.recommendation {
+  display:flex; flex-direction:column; gap:10px; margin-top:12px; padding:12px; border-radius:12px;
+  color:#06203a; font-weight:700;
+}
+.reco-basic { background: linear-gradient(90deg,#ffd9a6,#ffd184); }
+.reco-inter { background: linear-gradient(90deg,#ffe98a,#fff08a); }
+.reco-adv { background: linear-gradient(90deg,#b1ffb9,#8fffb3); }
+
+/* correct/wrong styling */
+.correct { background:var(--correct) !important; color:#000 !important; }
+.wrong { background:var(--wrong) !important; color:#000 !important; }
+
+/* responsive */
+@media(max-width:880px){
+  .opt-btn{ min-width:140px; }
+  .blank{ min-width:90px; }
+  .match-wrap{ flex-direction:column; }
+  .col{ width:100%; }
+  .intro{ flex-direction:column; }
+  .q-text{ font-size:15px; }
+}
+@media(max-width:420px){
+  .opt-btn{ min-width:120px; padding:8px 10px; }
+  .builder-word{ padding:8px 10px; min-width:80px;}
+}
+/* Light theme (toggle) */
+body.light {
+  background: var(--light-bg);
+  color: var(--text-dark);
+}
+body.light .card { background: var(--card-glass-light); color:var(--text-dark); }
+body.light .btn.ghost { color:var(--text-dark); border-color: rgba(2,6,23,0.06); }
+body.light .hint { color: rgba(2,6,23,0.85); }
+body.light .opt-btn { box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+</style>
+</head>
+<body>
+<div class="blob a"></div>
+<div class="blob b"></div>
+<div class="blob c"></div>
+<div class="stars" id="starsRoot"></div>
+
+<div class="app">
+  <div class="card" id="card">
+    <div class="header">
+      <div>
+        <h1 class="title">📘 Grammar Assessment — 100 points</h1>
+        <div style="font-size:13px; color:rgba(255,255,255,0.85);">1 minute per question • 20 questions • Mobile friendly</div>
+      </div>
+      <div class="controls">
+        <div class="toggle" id="themeToggle" role="button" tabindex="0" aria-pressed="false">🌙 <span style="font-weight:700;">Dark</span></div>
+        <button class="btn ghost" id="backBtn" style="display:none;">Back</button>
+        <button class="btn" id="startBtn">Start Quiz</button>
+      </div>
+    </div>
+
+    <!-- Intro view -->
+    <div id="introView" style="margin-top:14px;">
+      <div class="intro">
+        <div class="left">
+          <div class="instructions">
+            <strong>Quick Intro</strong>
+            <p style="margin:8px 0 0; line-height:1.45;">
+              This assessment checks your grammar across 5 sections:
+              <ol style="margin:8px 0 0 18px;">
+                <li>MCQ — choose the correct option</li>
+                <li>Fill-in-the-Blank — click the correct word from the yellow bank</li>
+                <li>Matching — click a left item then its right pair</li>
+                <li>Error identification — Correct or Wrong</li>
+                <li>Sentence Builder — click yellow words to build the sentence</li>
+              </ol>
+              Each question = 5 points. Total = 100 points. Scoring above 50 triggers celebration.
+            </p>
+          </div>
+        </div>
+        <div class="right">
+          <div class="instructions">
+            <strong>Controls & Tips</strong>
+            <ul style="margin:8px 0 0 18px; line-height:1.45;">
+              <li>Use ← / → and Enter keys for MCQs.</li>
+              <li>Click (tap) words to pick them — they disappear from the bank.</li>
+              <li>Matching locks pairs—continue until all matched.</li>
+              <li>One retry for sentence builder; time limit is strict.</li>
+              <li>Use the Back button to return to this intro at any time.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; justify-content:center;">
+        <button class="btn" id="startNow">Start Quiz</button>
+        <button class="btn ghost" id="preview">Preview Questions</button>
+      </div>
+    </div>
+
+    <!-- Quiz view -->
+    <div id="quizView" style="display:none; margin-top:12px;">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-inner" id="progressInner" style="width:0%"></div></div>
+        <div class="qinfo" id="qInfo">Q 1 / 20</div>
+      </div>
+
+      <div class="q-area">
+        <div class="q-text" id="qText">Question will appear here</div>
+        <div class="options" id="options"></div>
+        <div class="controls-bottom">
+          <button class="btn ghost" id="skipBtn">Skip</button>
+          <button class="btn" id="nextBtn">Next</button>
+        </div>
+        <div class="hint" id="hint"></div>
+      </div>
+    </div>
+
+    <!-- Result view -->
+    <div id="resultView" style="display:none; margin-top:16px;">
+      <div class="result" id="resultCard">
+        <h2 id="scoreText">Your Score</h2>
+        <div id="level" style="font-size:18px; font-weight:800; margin-top:8px;"></div>
+        <div id="recWrap" style="margin-top:12px;"></div>
+        <div style="margin-top:12px;">
+          <button class="btn" id="retryBtn">Retry Quiz</button>
+          <a href="index.html" class="btn ghost" id="homeBtn">Back to Home</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- fireworks canvas -->
+<canvas id="fireworks" style="position:fixed;left:0;top:0;pointer-events:none;z-index:9999;"></canvas>
+
+<script>
+/* =========================
+   Data & Config
+   ========================= */
+const POINTS_PER_QUESTION = 5; // 20 questions * 5 = 100
+const QUESTION_TIME = 60; // seconds
+
+// Full quiz data (20 questions)
+const quizData = [
+  // Section 1: MCQ (5)
+  {type:'mcq', question:'She ___ to school every morning.', options:['go','goes','going','gone'], answer:'goes'},
+  {type:'mcq', question:'They ___ dinner when I called.', options:['was eating','eating','were eating','ate'], answer:'were eating'},
+  {type:'mcq', question:'The room ___ cleaned yesterday.', options:['is','was','were','has'], answer:'was'},
+  {type:'mcq', question:'If I ___ enough money, I would travel.', options:['have','had','will have','has'], answer:'had'},
+  {type:'mcq', question:'Which sentence is correct?', options:["She don’t like tea","She doesn’t likes tea","She doesn’t like tea","She not like tea"], answer:"She doesn’t like tea"},
+
+  // Section 2: Fill-in-the-blanks (clickable bank) (5)
+  {type:'fill', question:'She ___ to the market yesterday.', options:['went','has','because','Although','reading'], answer:'went'},
+  {type:'fill', question:'He ___ a new bicycle.', options:['went','has','because','Although','reading'], answer:'has'},
+  {type:'fill', question:'I stayed home ___ it was raining.', options:['went','has','because','Although','reading'], answer:'because'},
+  {type:'fill', question:'___ he was tired, he continued working.', options:['went','has','because','Although','reading'], answer:'Although'},
+  {type:'fill', question:'She is ___ a novel.', options:['went','has','because','Although','reading'], answer:'reading'},
+
+  // Section 3: Matching (5 left-right)
+  {type:'match', question:'Match the sentences:', pairs:[
+    ['I am hungry','so I’ll get food'],
+    ['She likes music','every evening'],
+    ['They went home','after the match'],
+    ['The film was cancelled','due to the heavy rain'],
+    ['He studies hard','because he wants good grades']
+  ]},
+
+  // Section 4: Error identification (Correct/Wrong) (5)
+  {type:'mcq', question:'Is this sentence grammatically correct?\n“She don’t know the answer.”', options:['Correct','Wrong'], answer:'Wrong'},
+  {type:'mcq', question:'Is this sentence grammatically correct?\n“They was playing cricket.”', options:['Correct','Wrong'], answer:'Wrong'},
+  {type:'mcq', question:'Is this sentence grammatically correct?\n“He go to work every day.”', options:['Correct','Wrong'], answer:'Wrong'},
+  {type:'mcq', question:'Is this sentence grammatically correct?\n“The boys has finished the homework.”', options:['Correct','Wrong'], answer:'Wrong'},
+  {type:'mcq', question:'Is this sentence grammatically correct?\n“I didn’t went to school.”', options:['Correct','Wrong'], answer:'Wrong'},
+
+  // Section 5: Sentence builder (5)
+  {type:'builder', question:'to / she / wants / learn / English', answer:['She','wants','to','learn','English']},
+  {type:'builder', question:'he / not / is / ready', answer:['He','is','not','ready']},
+  {type:'builder', question:'homework / did / not / I / my', answer:['I','did','not','do','my','homework']},
+  {type:'builder', question:'the / cat / the / chased / dog', answer:['The','dog','chased','the','cat']},
+  {type:'builder', question:'bus / missed / I / the', answer:['I','missed','the','bus']}
+];
+
+let current = 0;
+let score = 0;
+let timer = null;
+let timeLeft = QUESTION_TIME;
+
+/* =========================
+   UI nodes
+   ========================= */
+const startBtn = document.getElementById('startBtn');
+const startNow = document.getElementById('startNow');
+const introView = document.getElementById('introView');
+const quizView = document.getElementById('quizView');
+const resultView = document.getElementById('resultView');
+const backBtn = document.getElementById('backBtn');
+const previewBtn = document.getElementById('preview');
+const card = document.getElementById('card');
+const qText = document.getElementById('qText');
+const options = document.getElementById('options');
+const hint = document.getElementById('hint');
+const qInfo = document.getElementById('qInfo');
+const progressInner = document.getElementById('progressInner');
+const nextBtn = document.getElementById('nextBtn');
+const skipBtn = document.getElementById('skipBtn');
+const fireworksCanvas = document.getElementById('fireworks');
+const themeToggle = document.getElementById('themeToggle');
+const retryBtn = document.getElementById('retryBtn');
+const homeBtn = document.getElementById('homeBtn');
+const backHomeBtn = document.getElementById('homeBtn'); // same
+
+/* setup */
+document.getElementById('qIndex')?.setAttribute('aria-hidden','true');
+const totalQuestions = quizData.length;
+document.getElementById('qTotal')?.setAttribute('aria-hidden','true');
+
+/* ---------------------------
+   Utility functions
+   --------------------------- */
+function shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); }
+function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+function updateProgress(){
+  const pct = Math.round((current/totalQuestions)*100);
+  progressInner.style.width = pct + '%';
+  qInfo.textContent = `Q ${Math.min(current+1, totalQuestions)} / ${totalQuestions}`;
+}
+function startTimer(){
+  clearInterval(timer);
+  timeLeft = QUESTION_TIME;
+  updateTimerDisplay();
+  timer = setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft <= 0){ clearInterval(timer); handleTimeout(); }
+  },1000);
+}
+function updateTimerDisplay(){ document.getElementById('qInfo').title = `Time left: ${timeLeft}s`; /* for accessibility */ }
+
+/* =========================
+   Views control
+   ========================= */
+function showIntro(){ introView.style.display = ''; quizView.style.display='none'; resultView.style.display='none'; backBtn.style.display='none'; startBtn.style.display=''; }
+function showQuiz(){ introView.style.display='none'; quizView.style.display=''; resultView.style.display='none'; backBtn.style.display='inline-flex'; startBtn.style.display='none'; }
+function showResult(){ introView.style.display='none'; quizView.style.display='none'; resultView.style.display=''; backBtn.style.display='inline-flex'; startBtn.style.display='none'; }
+
+/* =========================
+   Event bindings: start/back
+   ========================= */
+startBtn.addEventListener('click', ()=>{ startQuiz(); });
+startNow.addEventListener('click', ()=>{ startQuiz(); });
+previewBtn.addEventListener('click', ()=>{ alert('Preview: Questions will be interactive and timed. Start the quiz to try.'); });
+backBtn.addEventListener('click', ()=>{ // go to intro
+  clearInterval(timer);
+  showIntro();
+});
+
+/* theme toggle */
+let dark = true;
+function applyTheme(){
+  if(dark){ document.body.classList.remove('light'); themeToggle.innerHTML = '🌙 <strong>Dark</strong>'; }
+  else{ document.body.classList.add('light'); themeToggle.innerHTML = '☀️ <strong>Light</strong>'; }
+}
+themeToggle.addEventListener('click', ()=>{ dark = !dark; applyTheme(); });
+themeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter') { dark = !dark; applyTheme(); }});
+applyTheme();
+
+/* =========================
+   Quiz flow
+   ========================= */
+function startQuiz(){
+  current = 0;
+  score = 0;
+  showQuiz();
+  renderQuestion();
+  updateProgress();
+  startTimer();
+}
+
+function handleTimeout(){
+  hint.textContent = 'Time up — moving on.';
+  disableAllInteractive();
+  setTimeout(()=> nextQuestion(), 900);
+}
+
+/* disable interactive children in options area */
+function disableAllInteractive(){
+  options.querySelectorAll('button, .match-item, .builder-word').forEach(el=>{
+    el.disabled = true;
+    el.style.pointerEvents = 'none';
+  });
+}
+
+/* render current question */
+function renderQuestion(){
+  clear(options);
+  hint.textContent = '';
+  updateProgress();
+  const q = quizData[current];
+  qText.textContent = q.question;
+  startTimer();
+
+  if(q.type === 'mcq'){
+    renderMCQ(q);
+  } else if(q.type === 'fill'){
+    renderFill(q);
+  } else if(q.type === 'match'){
+    renderMatch(q);
+  } else if(q.type === 'builder'){
+    renderBuilder(q);
+  }
+}
+
+/* -------------------------
+   MCQ rendering & handlers
+   ------------------------- */
+let mcqKeyHandler = null;
+function renderMCQ(q){
+  const btns = [];
+  const opts = q.options.slice();
+  opts.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.setAttribute('data-opt', opt);
+    b.addEventListener('click', onMCQClick);
+    b.style.minWidth = '140px';
+    b.style.margin = '6px';
+    options.appendChild(b);
+    btns.push(b);
+  });
+
+  // keyboard support
+  let focusIndex = 0;
+  function focusMCQ(idx){
+    const all = options.querySelectorAll('.opt-btn');
+    all.forEach((btn,i)=> btn.style.boxShadow = i===idx ? '0 10px 20px rgba(0,0,0,0.35) inset' : 'none');
+    focusIndex = idx;
+    all[focusIndex].focus();
+  }
+  focusMCQ(0);
+
+  mcqKeyHandler = function(e){
+    const all = options.querySelectorAll('.opt-btn');
+    if(e.key === 'ArrowRight'){ e.preventDefault(); focusMCQ((focusIndex+1)%all.length); }
+    else if(e.key === 'ArrowLeft'){ e.preventDefault(); focusMCQ((focusIndex-1+all.length)%all.length); }
+    else if(e.key === 'Enter'){ e.preventDefault(); all[focusIndex].click(); }
+  };
+  document.addEventListener('keydown', mcqKeyHandler);
+
+  function onMCQClick(evt){
+    // prevent double
+    const selected = evt.currentTarget;
+    document.removeEventListener('keydown', mcqKeyHandler);
+    const val = selected.getAttribute('data-opt');
+    const correct = q.answer;
+    // lock buttons
+    options.querySelectorAll('.opt-btn').forEach(b=> b.disabled = true);
+    if(val === correct){
+      selected.classList.add('correct');
+      hint.textContent = 'Correct';
+      score += POINTS_PER_QUESTION;
+    } else {
+      selected.classList.add('wrong');
+      // highlight correct one
+      Array.from(options.querySelectorAll('.opt-btn')).find(b=> b.getAttribute('data-opt')===correct)?.classList.add('correct');
+      hint.textContent = 'Incorrect — correct highlighted';
+    }
+    clearInterval(timer);
+    setTimeout(()=> nextQuestion(), 900);
+  }
+}
+
+/* -------------------------
+   Fill rendering & handlers
+   ------------------------- */
+function renderFill(q){
+  // show blank
+  const blank = document.createElement('div');
+  blank.className = 'blank';
+  blank.textContent = '_______';
+  options.appendChild(blank);
+
+  // bank
+  const bank = document.createElement('div');
+  bank.style.display='flex';
+  bank.style.flexWrap='wrap';
+  bank.style.justifyContent='center';
+  bank.style.gap='10px';
+  bank.style.marginTop='12px';
+  options.appendChild(bank);
+
+  const shuffled = shuffle(q.options);
+  shuffled.forEach(word => {
+    const w = document.createElement('button');
+    w.className = 'opt-btn';
+    w.textContent = word;
+    w.style.minWidth='110px';
+    w.addEventListener('click', ()=>{
+      // disable clicked
+      if(w.disabled) return;
+      w.disabled = true;
+      blank.textContent = word;
+      // evaluate
+      if(word === q.answer){
+        blank.classList.add('correct');
+        hint.textContent = 'Correct';
+        score += POINTS_PER_QUESTION;
+      } else {
+        blank.classList.add('wrong');
+        hint.textContent = 'Incorrect';
+      }
+      // disable others
+      bank.querySelectorAll('button').forEach(b=> b.disabled = true);
+      clearInterval(timer);
+      setTimeout(()=> nextQuestion(), 900);
+    });
+    bank.appendChild(w);
+  });
+}
+
+/* -------------------------
+   Matching rendering & handlers
+   ------------------------- */
+function renderMatch(q){
+  const container = document.createElement('div');
+  container.className = 'match-wrap';
+  const leftCol = document.createElement('div'); leftCol.className = 'col';
+  const rightCol = document.createElement('div'); rightCol.className = 'col';
+  container.appendChild(leftCol); container.appendChild(rightCol);
+  options.appendChild(container);
+
+  const pairs = q.pairs.slice();
+  const lefts = pairs.map(p=>p[0]);
+  const rights = shuffle(pairs.map(p=>p[1]));
+  let selectedLeft = null;
+  let lockedCount = 0;
+
+  lefts.forEach(txt => {
+    const node = document.createElement('div');
+    node.className = 'match-item';
+    node.textContent = txt;
+    node.setAttribute('data-left', txt);
+    node.addEventListener('click', ()=>{
+      if(node.dataset.locked === 'true') return;
+      // visual selection
+      leftCol.querySelectorAll('.match-item').forEach(n=> n.style.outline = 'none');
+      node.style.outline = '3px solid rgba(255,235,59,0.35)';
+      selectedLeft = node;
+    });
+    leftCol.appendChild(node);
+  });
+
+  rights.forEach(txt => {
+    const node = document.createElement('div');
+    node.className = 'match-item';
+    node.textContent = txt;
+    node.setAttribute('data-right', txt);
+    node.addEventListener('click', ()=>{
+      if(node.dataset.locked === 'true') return;
+      if(!selectedLeft){
+        hint.textContent = 'Select an item from the left first.';
+        return;
+      }
+      const leftTxt = selectedLeft.getAttribute('data-left');
+      const ok = pairs.find(p => p[0] === leftTxt && p[1] === txt);
+      // lock both
+      selectedLeft.dataset.locked = 'true';
+      node.dataset.locked = 'true';
+      selectedLeft.style.pointerEvents = 'none';
+      node.style.pointerEvents = 'none';
+      if(ok){
+        selectedLeft.classList.add('correct');
+        node.classList.add('correct');
+        score += POINTS_PER_QUESTION;
+        hint.textContent = 'Correct pair';
+      } else {
+        selectedLeft.classList.add('wrong');
+        node.classList.add('wrong');
+        hint.textContent = 'Incorrect pair';
+      }
+      selectedLeft.style.outline = 'none';
+      selectedLeft = null;
+      lockedCount++;
+      if(lockedCount >= pairs.length){
+        clearInterval(timer);
+        setTimeout(()=> nextQuestion(), 900);
+      }
+    });
+    rightCol.appendChild(node);
+  });
+}
+
+/* -------------------------
+   Builder rendering & handlers
+   ------------------------- */
+function renderBuilder(q){
+  // output area
+  const output = document.createElement('div');
+  output.style.minHeight = '44px';
+  output.style.display = 'flex';
+  output.style.flexWrap = 'wrap';
+  output.style.justifyContent = 'center';
+  output.style.gap = '8px';
+  options.appendChild(output);
+
+  // bank
+  const bank = document.createElement('div');
+  bank.className = 'builder-bank';
+  bank.style.marginTop = '8px';
+  options.appendChild(bank);
+
+  const words = q.answer.slice();
+  const shuffled = shuffle(words);
+  let selection = [];
+  let attempts = 0;
+
+  shuffled.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'builder-word';
+    b.textContent = w;
+    b.addEventListener('click', ()=>{
+      if(b.classList.contains('disabled')) return;
+      b.classList.add('disabled');
+      b.style.transform = 'scale(0.9)';
+      setTimeout(()=> b.style.display = 'none', 180);
+      selection.push(w);
+      // add to output pill
+      const pill = document.createElement('span');
+      pill.textContent = w;
+      pill.className = 'builder-word';
+      pill.style.background = 'rgba(255,255,255,0.06)';
+      pill.style.color = 'inherit';
+      pill.style.padding = '8px 10px';
+      pill.style.borderRadius = '8px';
+      output.appendChild(pill);
+
+      if(selection.length === words.length){
+        attempts++;
+        const ok = selection.every((v,i)=> v === words[i]);
+        if(ok){
+          output.querySelectorAll('.builder-word').forEach(n => { n.style.background = 'var(--correct)'; n.style.color = '#000'; });
+          hint.textContent = 'Correct sentence!';
+          score += POINTS_PER_QUESTION;
+          clearInterval(timer);
+          setTimeout(()=> nextQuestion(), 900);
+        } else {
+          output.querySelectorAll('.builder-word').forEach(n => { n.style.background = 'var(--wrong)'; n.style.color = '#000'; });
+          if(attempts < 2){
+            hint.textContent = 'Incorrect — one retry allowed.';
+            // re-enable the bank after short pause
+            setTimeout(()=> {
+              selection = [];
+              output.innerHTML = '';
+              bank.querySelectorAll('.builder-word').forEach(node => { node.classList.remove('disabled'); node.style.display='inline-block'; node.style.transform='scale(1)'; });
+              hint.textContent = '';
+            }, 900);
+          } else {
+            hint.textContent = 'Incorrect — moving on.';
+            clearInterval(timer);
+            setTimeout(()=> nextQuestion(), 900);
+          }
+        }
+      }
+    });
+    bank.appendChild(b);
+  });
+}
+
+/* -------------------------
+   Navigation
+   ------------------------- */
+nextBtn.addEventListener('click', ()=>{ clearInterval(timer); nextQuestion(); });
+skipBtn.addEventListener('click', ()=>{ clearInterval(timer); hint.textContent = 'Skipped'; nextQuestion(); });
+
+function nextQuestion(){
+  // cleanup any keyboard handlers
+  document.removeEventListener('keydown', mcqKeyHandler);
+  current++;
+  if(current >= totalQuestions){
+    showResults();
+  } else {
+    renderQuestion();
+    updateProgress();
+  }
+}
+
+/* when timer runs out */
+function handleUserTimeout(){
+  disableAllInteractive();
+  hint.textContent = 'Time up — moving on';
+  setTimeout(()=> nextQuestion(), 900);
+}
+
+/* show final results */
+function showResults(){
+  clearInterval(timer);
+  showResult();
+  const scoreTotal = score;
+  const maxScore = totalQuestions * POINTS_PER_QUESTION;
+  const percent = Math.round((scoreTotal / maxScore) * 100);
+  // render result card content
+  document.getElementById('scoreText').textContent = `Your Score: ${scoreTotal} / ${maxScore}`;
+  let levelText = '';
+  let recHtml = '';
+  if(scoreTotal <= 50){
+    levelText = 'Basic Grammar';
+    recHtml = `<div class="recommendation reco-basic"><div>Focus Areas:</div>
+      <ul style="margin:6px 0 0 16px; font-weight:600;">
+        <li>Sentence structure (simple sentences)</li>
+        <li>Simple tenses (present, past, future)</li>
+        <li>Subject–verb agreement</li>
+        <li>Basic vocabulary in context</li>
+      </ul>
+      <div style="margin-top:8px; font-weight:700;">Recommendation: Short daily drills, rewrite simple sentences in different tenses, and correct your mistakes.</div>
+    </div>`;
+  } else if(scoreTotal <= 80){
+    levelText = 'Intermediate Grammar';
+    recHtml = `<div class="recommendation reco-inter"><div>Focus Areas:</div>
+      <ul style="margin:6px 0 0 16px; font-weight:600;">
+        <li>Passive voice</li>
+        <li>Conditionals</li>
+        <li>Perfect tenses</li>
+        <li>Complex connectors (although, however)</li>
+      </ul>
+      <div style="margin-top:8px; font-weight:700;">Recommendation: Analyse mistakes carefully, write short timed paragraphs and practice complex forms.</div>
+    </div>`;
+  } else {
+    levelText = 'Advanced Grammar';
+    recHtml = `<div class="recommendation reco-adv"><div>Focus Areas:</div>
+      <ul style="margin:6px 0 0 16px; font-weight:600;">
+        <li>Modal nuances</li>
+        <li>Tone & style (formal vs informal)</li>
+        <li>Advanced sentence structures</li>
+        <li>Error-proof editing skills</li>
+      </ul>
+      <div style="margin-top:8px; font-weight:700;">Recommendation: Write essays, teach/explain concepts, and polish style and clarity.</div>
+    </div>`;
+  }
+  document.getElementById('level').textContent = levelText;
+  document.getElementById('recWrap').innerHTML = recHtml;
+  // show fireworks if >50
+  if(scoreTotal > 50) startFireworks(percent);
+  // show result view
+  showResult();
+}
+
+/* Retry & home handlers */
+retryBtn.addEventListener('click', ()=>{ startQuiz(); });
+homeBtn.addEventListener('click', ()=>{ clearInterval(timer); showIntro(); });
+
+/* Keyboard: Enter should act as Next when appropriate */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){
+    // if focus is on button it will trigger click naturally; otherwise treat as next if no interactive enabled
+    const focus = document.activeElement;
+    if(focus && (focus.tagName === 'BUTTON' || focus.classList.contains('builder-word'))) return;
+    // check if options has active (enabled) interactive elements
+    const enabledInteractive = options.querySelectorAll('button:not([disabled]), .match-item:not([data-locked])');
+    if(enabledInteractive.length === 0) {
+      // safe to next
+      if(quizView.style.display !== 'none') nextQuestion();
+    }
+  }
+});
+
+/* =========================
+   Fireworks & confetti
+   ========================= */
+function startFireworks(percent){
+  const canvas = fireworksCanvas;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // particles array
+  const particles = [];
+  const confetti = [];
+
+  function spawnBurst(x,y){
+    for(let i=0;i<80;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*(Math.random()*8),
+        vy:(Math.random()-0.5)*(Math.random()*8)-4,
+        life:80 + Math.random()*60,
+        color:`hsl(${Math.random()*360},90%,60%)`
+      });
+    }
+    // confetti
+    for(let i=0;i<40;i++){
+      confetti.push({
+        x: x + (Math.random()*120-60),
+        y: y + (Math.random()*40-20),
+        vx: (Math.random()-0.5)*4,
+        vy: Math.random()*6 + 2,
+        w: 6 + Math.random()*8,
+        h: 10 + Math.random()*10,
+        color: `hsl(${Math.random()*360},90%,60%)`,
+        life: 140 + Math.random()*80
+      });
+    }
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach((p,i)=>{
+      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life--;
+      ctx.globalAlpha = Math.max(0, p.life / 140);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+      ctx.fill();
+      if(p.life <= 0) particles.splice(i,1);
+    });
+    confetti.forEach((c,i)=>{
+      c.x += c.vx; c.y += c.vy; c.vy += 0.06; c.life--;
+      ctx.globalAlpha = Math.max(0, c.life / 200);
+      ctx.fillStyle = c.color;
+      ctx.fillRect(c.x, c.y, c.w, c.h);
+      if(c.life <= 0) confetti.splice(i,1);
+    });
+    requestAnimationFrame(loop);
+  }
+
+  // spawn a few bursts across the top half
+  for(let i=0;i<6;i++){
+    setTimeout(()=> spawnBurst(Math.random()*canvas.width, 60 + Math.random()* (canvas.height*0.4)), i*300);
+  }
+  // If excellent score, add extra sparkle text
+  if(percent >= 81){
+    const ctxText = canvas.getContext('2d');
+    let t = 0;
+    const anim = setInterval(()=>{
+      ctxText.clearRect(0, canvas.height*0.6, canvas.width, canvas.height*0.4);
+      ctxText.font = 'bold 42px Roboto, sans-serif';
+      ctxText.fillStyle = `rgba(255,255,255,${0.9 - t*0.01})`;
+      ctxText.textAlign = 'center';
+      ctxText.fillText('Outstanding! Advanced Grammar ✨', canvas.width/2, canvas.height*0.78);
+      t++;
+      if(t>80) { clearInterval(anim); }
+    },60);
+  }
+
+  loop();
+}
+
+/* =========================
+   Stars generation
+   ========================= */
+(function createStars(){
+  const root = document.getElementById('starsRoot');
+  const count = 28;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = (Math.random()*100)+'%';
+    s.style.top = (Math.random()*70)+'%';
+    s.style.width = (1 + Math.random()*2)+'px';
+    s.style.height = s.style.width;
+    s.style.opacity = 0.4 + Math.random()*0.6;
+    s.style.animationDuration = (1.8 + Math.random()*3.2) + 's';
+    s.style.animationDelay = Math.random()*5 + 's';
+    root.appendChild(s);
+  }
+})();
+
+/* initial view */
+showIntro();
+updateProgress();
+
+</script>
+</body>
+</html>
