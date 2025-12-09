@@ -359,29 +359,10 @@
     word-break: break-word !important;
   }
 
-  @media (max-width: 768px) {
+  /* Popup hidden on mobile */
   .popup {
-    display: block !important;
-    position: fixed !important;
-    bottom: 80px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    opacity: 0;
-    padding: 12px 18px;
-    font-size: 1em;
-    border-radius: 12px;
-    background: rgba(0,0,0,0.85);
-    color: #fff;
-    z-index: 999999;
-    pointer-events: none;
-    white-space: nowrap;
-    transition: opacity .25s ease;
+    display: none !important;
   }
-
-  .popup.show {
-    opacity: 1 !important;
-  }
-}
 
   /* Float image fix */
   .story-image-float {
@@ -423,7 +404,7 @@
 
     <img src="story2.jpg" class="story-image-float" alt="Story image">
 
-    Sara moved into an old house on a rainy evening. The hallway was colder than
+    Sara moved into an old house on a rainy evening. The corridor was colder than
     the other rooms, but she ignored it. At midnight, a soft whisper came through
     the cracks of her bedroom door. She thought it was just the wind. She tried to
     sleep. But the whisper became louder.
