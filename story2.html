@@ -278,117 +278,93 @@
   }
 
   .story-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
 
-.story {
-  text-align: justify; /* FIX: perfect alignment */
-}
+  .story {
+    text-align: justify;
+    line-height: 1.9;
+    position: relative;
+  }
 
-.story-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.story-header h2 {
-  flex: 1;
-  margin: 0;
-}
-
-.story-image-inside {
-  width: 220px;
-  height: auto;
-  border-radius: 14px;
-  object-fit: cover;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-}
-
-/* For mobile*/
-@media (max-width: 768px) {
   .story-header {
-    flex-direction: column;
-    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .story-header h2 {
+    flex: 1;
+    margin: 0;
   }
 
   .story-image-inside {
-    width: 100%;
+    width: 220px;
+    height: auto;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   }
-}
 
-.story {
-  text-align: justify;
-  line-height: 1.9;
-  position: relative;
-}
-
-/* Magazine-style floating image */
-.story-image-float {
-  float: right;
-  width: 230px;
-  height: auto;
-  margin: 0 0 12px 20px;
-  border-radius: 16px;
-  object-fit: cover;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-}
-
-/* For small screens – image becomes centered above text */
-@media (max-width: 768px) {
+  /* Magazine-style floating image */
   .story-image-float {
-    float: none;
-    display: block;
-    margin: 0 auto 20px auto;
-    width: 100%;
-    max-width: 300px;
+    float: right;
+    width: 230px;
+    height: auto;
+    margin: 0 0 12px 20px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   }
-}
-/* MOBILE FIX: stop justification completely */
-@media (max-width: 767px) {
-    .story-card {
-        text-align: left !important;
-        text-justify: auto !important;
-        word-spacing: normal !important;
-        letter-spacing: normal !important;
-        line-height: 1.7 !important;
-    }
-
-    /* all wrapped words behave like normal inline text */
-    .story-card span,
-    .story-card .word,
-    .story-card .phrase {
-        display: inline !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-    }
-}
-/* Safety CSS: fallback for small screens */
-@media (max-width: 767.98px) {
-  .story-card {
-    text-align: left !important;
-    text-justify: auto !important;
-    word-spacing: normal !important;
-    letter-spacing: normal !important;
-  }
-  .story-card span,
-  .story-card .word,
-  .story-card .phrase {
-    display: inline !important;
-    white-space: normal !important;
-    word-break: break-word !important;
-  }
-}
-
-
 
   body[data-theme="light"] .btn{
     box-shadow:
       10px 10px 24px rgba(148,163,184,0.5),
       -6px -6px 18px rgba(255,255,255,0.9);
+  }
+
+  /* === MOBILE FIXES === */
+  @media (max-width: 768px) {
+    /* Disable justification and spacing issues */
+    .story {
+      text-align: left !important;
+      line-height: 1.8 !important;
+      padding: 24px !important;
+    }
+
+    /* Force words to flow like normal text */
+    .story .word,
+    .story .phrase {
+      display: inline !important;
+      padding: 0 2px !important;
+      margin: 0 !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+    }
+
+    /* Hide popup on mobile to prevent layout shifts */
+    .popup {
+      display: none !important;
+    }
+
+    /* Center image on mobile */
+    .story-image-float {
+      float: none !important;
+      display: block !important;
+      margin: 20px auto !important;
+      width: 100% !important;
+      max-width: 280px !important;
+    }
+
+    /* Adjust header */
+    header {
+      flex-direction: column;
+      text-align: center;
+    }
   }
 </style>
 </head>
@@ -415,23 +391,21 @@
   </div>
 
   <!-- STORY -->
-  
-<div class="story" id="story">
-  <h2>The Whisper Behind the Door</h2>
+  <div class="story" id="story">
+    <h2>The Whisper Behind the Door</h2>
 
-  <img src="story2.jpg" class="story-image-float" alt="Story image">
+    <img src="story2.jpg" class="story-image-float" alt="Story image">
 
-  Sara moved into an old house on a rainy evening. The hallway was colder than
-  the other rooms, but she ignored it. At midnight, a soft whisper came through
-  the cracks of her bedroom door. She thought it was just the wind. She tried to
-  sleep. But the whisper became louder.
+    Sara moved into an old house on a rainy evening. The hallway was colder than
+    the other rooms, but she ignored it. At midnight, a soft whisper came through
+    the cracks of her bedroom door. She thought it was just the wind. She tried to
+    sleep. But the whisper became louder.
 
-  She opened the door, the corridor was empty. She noticed a muddy footprint on
-  the floor. The whisper came again, closer this time, right behind her. Sara
-  turned slowly. Her heart started pounding fast. Then she realized she was not
-  alone in the house.
-</div>
-
+    She opened the door, the corridor was empty. She noticed a muddy footprint on
+    the floor. The whisper came again, closer this time, right behind her. Sara
+    turned slowly. Her heart started pounding fast. Then she realized she was not
+    alone in the house.
+  </div>
 
   <h2 class="section-title">My Vocabulary Galaxy</h2>
 
@@ -745,94 +719,6 @@ document.getElementById("langSelect").onchange = ()=>{
 
 renderVocab();
 updateQuizButton();
-
-(function preventMobileJustify() {
-  const BREAKPOINT = 768; // px - <=767 is mobile
-  const storyCard = document.querySelector('.story-card');
-  if (!storyCard) return;
-
-  // save inline styles so we can restore them on larger screens
-  const savedInline = {
-    textAlign: storyCard.style.textAlign || '',
-    textJustify: storyCard.style.textJustify || '',
-    wordSpacing: storyCard.style.wordSpacing || '',
-    letterSpacing: storyCard.style.letterSpacing || ''
-  };
-
-  // also keep a map of inline span style states we may override
-  const spans = () => Array.from(storyCard.querySelectorAll('span'));
-
-  function applyMobileStyles() {
-    // Force left alignment and normal spacing on the story container
-    storyCard.style.textAlign = 'left';
-    storyCard.style.textJustify = 'auto';
-    storyCard.style.wordSpacing = 'normal';
-    storyCard.style.letterSpacing = 'normal';
-    // Force each wrapper to behave exactly like text
-    spans().forEach(s => {
-      s.style.display = 'inline';
-      s.style.whiteSpace = 'normal';
-      s.style.wordBreak = 'break-word';
-      s.style.margin = '0';
-      s.style.padding = s.classList.contains('word') ? '0 0.05rem' : '0'; // tiny padding to preserve tap targets
-      // remove any leading/trailing width constraints that could cause layout boxes
-      s.style.minWidth = '';
-      s.style.maxWidth = '100%';
-    });
-
-    // Force browser reflow and recompute layout
-    // This trick clears certain cached justification layout glitches
-    storyCard.style.transform = 'translateZ(0)';
-    void storyCard.offsetWidth;
-    storyCard.style.transform = '';
-  }
-
-  function restoreDesktopStyles() {
-    // restore saved container inline styles
-    storyCard.style.textAlign = savedInline.textAlign;
-    storyCard.style.textJustify = savedInline.textJustify;
-    storyCard.style.wordSpacing = savedInline.wordSpacing;
-    storyCard.style.letterSpacing = savedInline.letterSpacing;
-
-    // remove forced inline styles from spans (so original CSS rules can apply)
-    spans().forEach(s => {
-      s.style.display = '';
-      s.style.whiteSpace = '';
-      s.style.wordBreak = '';
-      s.style.margin = '';
-      s.style.padding = '';
-      s.style.minWidth = '';
-      s.style.maxWidth = '';
-    });
-
-    // force reflow to ensure justification reapplies correctly
-    storyCard.style.transform = 'translateZ(0)';
-    void storyCard.offsetWidth;
-    storyCard.style.transform = '';
-  }
-
-  function checkAndApply() {
-    if (window.innerWidth < BREAKPOINT) {
-      applyMobileStyles();
-    } else {
-      restoreDesktopStyles();
-    }
-  }
-
-  // Run on load
-  checkAndApply();
-
-  // Watch resizes & orientation changes
-  let resizeTimer = null;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(checkAndApply, 120);
-  }, { passive: true });
-
-  window.addEventListener('orientationchange', () => {
-    setTimeout(checkAndApply, 150);
-  });
-})();
 
 </script>
 </body>
