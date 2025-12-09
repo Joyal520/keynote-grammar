@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Trainer</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top, #1e1e1e, #000);
+    font-family: 'Poppins', Arial, sans-serif;
+    color: #fff;
+    overflow: hidden;
+    touch-action: none; /* prevent double-tap zoom */
+  }
+
+  /* INTRO PAGE */
+  #introPage {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  #introPage h1 {
+    font-size: 2.3rem;
+    margin-bottom: 10px;
+  }
+
+  #introPage p {
+    max-width: 420px;
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 25px;
+    line-height: 1.5;
+  }
+
+  #enterBtn {
+    padding: 14px 32px;
+    font-size: 1.2rem;
+    border: none;
+    background: #27ae60;
+    color: white;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+
+  #enterBtn:active {
+    transform: translateY(1px);
+  }
+
+  /* GAME PAGE */
+  #appPage {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  .circle {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 0 35px rgba(0,0,0,0.7);
+    margin-top: 30px;
+  }
+
+  .circle:active {
+    transform: scale(0.97);
+  }
+
+  .ready {
+    background: #444 !important;
+  }
+
+  .waiting {
+    background: #e74c3c !important; /* red = wait */
+  }
+
+  .go {
+    background: #2ecc71 !important; /* green = tap! */
+    box-shadow: 0 0 40px rgba(46, 204, 113, 0.7);
+  }
+
+  .status {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .stats {
+    margin-top: 25px;
+    font-size: 1.2rem;
+  }
+
+  .best {
+    color: #2ecc71;
+    margin-top: 6px;
+  }
+
+  #start {
+    margin-top: 25px;
+    padding: 12px 30px;
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    font-size: 1.1rem;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  #start:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 10px;
+    font-size: 0.8rem;
+    color: #777;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    #introPage h1 {
+      font-size: 1.9rem;
+    }
+    .circle {
+      width: 220px;
+      height: 220px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO PAGE -->
+<div id="introPage">
+  <h1>Reaction Time Trainer</h1>
+  <p>
+    This exercise trains your focus, attention, and processing speed.
+    Wait until the circle turns <strong>GREEN</strong>, then tap it
+    as fast as you can. If you tap while it's red, you fail the round.
+  </p>
+  <button id="enterBtn">Start Training</button>
+</div>
+
+<!-- GAME PAGE -->
+<div id="appPage">
+  <h2>Tap When It Turns Green</h2>
+  <div class="circle ready" id="circle"></div>
+  <div class="status" id="statusText">Press START to begin a round.</div>
+
+  <div class="stats">
+    <div>Last reaction: <span id="last">-</span> ms</div>
+    <div class="best">Best: <span id="best">-</span> ms</div>
+    <div>Attempts: <span id="count">0</span></div>
+  </div>
+
+  <button id="start">START</button>
+</div>
+
+<footer>
+  Reaction Time Trainer – trains focus & processing speed
+</footer>
+
+<!-- SOUND EFFECTS -->
+<audio id="beepReady" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+<audio id="beepGo" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="tapSound" src="https://actions.google.com/sounds/v1/foley/wood_tap_medium.ogg"></audio>
+<audio id="errorSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"></audio>
+
+<script>
+  // Helper to play sounds safely (no crashes if blocked)
+  function safePlay(audioEl) {
+    if (!audioEl) return;
+    const p = audioEl.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {});
+    }
+  }
+
+  // Intro → App transition
+  const introPage = document.getElementById('introPage');
+  const appPage = document.getElementById('appPage');
+  const enterBtn = document.getElementById('enterBtn');
+
+  enterBtn.addEventListener('click', () => {
+    introPage.style.display = 'none';
+    appPage.style.display = 'flex';
+  });
+
+  // Game elements
+  const circle = document.getElementById('circle');
+  const lastSpan = document.getElementById('last');
+  const bestSpan = document.getElementById('best');
+  const countSpan = document.getElementById('count');
+  const startBtn = document.getElementById('start');
+  const statusText = document.getElementById('statusText');
+
+  const beepReady = document.getElementById('beepReady');
+  const beepGo = document.getElementById('beepGo');
+  const tapSound = document.getElementById('tapSound');
+  const errorSound = document.getElementById('errorSound');
+
+  let startTime = null;
+  let timeoutId = null;
+  let bestTime = Infinity;
+  let attempts = 0;
+  let inRound = false;  // to prevent spam
+
+  function getRandomDelay() {
+    return 1500 + Math.random() * 4000; // 1.5–5.5 seconds
+  }
+
+  function resetCircleToReady() {
+    circle.className = 'circle ready';
+  }
+
+  function startRound() {
+    if (inRound) return;
+    inRound = true;
+
+    resetCircleToReady();
+    circle.classList.remove('go');
+    circle.classList.add('waiting'); // red
+    startBtn.disabled = true;
+    statusText.textContent = 'Wait... do NOT tap while it is red.';
+    safePlay(beepReady);
+
+    const delay = getRandomDelay();
+
+    timeoutId = setTimeout(() => {
+      circle.classList.remove('waiting');
+      circle.classList.add('go'); // green
+      startTime = performance.now();
+      statusText.textContent = 'NOW! Tap as fast as you can!';
+      safePlay(beepGo);
+    }, delay);
+  }
+
+  function tooEarly() {
+    clearTimeout(timeoutId);
+    resetCircleToReady();
+    startBtn.disabled = false;
+    inRound = false;
+    statusText.textContent = 'Too early! You tapped while it was red. Press START to try again.';
+    safePlay(errorSound);
+  }
+
+  function endRound() {
+    if (!circle.classList.contains('go') || !startTime) {
+      // Clicked while ready but no active green → ignore.
+      return;
+    }
+
+    const reaction = Math.round(performance.now() - startTime);
+    safePlay(tapSound);
+
+    attempts++;
+    countSpan.textContent = attempts;
+    lastSpan.textContent = reaction;
+
+    if (reaction < bestTime) {
+      bestTime = reaction;
+      bestSpan.textContent = bestTime;
+    }
+
+    resetCircleToReady();
+    startBtn.disabled = false;
+    startTime = null;
+    inRound = false;
+    statusText.textContent = 'Good! Press START for another round.';
+  }
+
+  // Click / tap on the circle
+  circle.addEventListener('click', () => {
+    if (circle.classList.contains('waiting')) {
+      // Red → too early
+      tooEarly();
+    } else if (circle.classList.contains('go')) {
+      // Green → valid reaction
+      endRound();
+    } else {
+      // Ready state, no active round → ignore
+      // Optionally: statusText.textContent = 'Press START to begin.';
+    }
+  });
+
+  // Start button
+  startBtn.addEventListener('click', () => {
+    // Just in case: cancel any pending timeout from previous round
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    startRound();
+  });
+
+  // Optional: prevent multi-touch issues
+  document.addEventListener('touchstart', e => {
+    if (e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+</script>
+
+</body>
+</html>

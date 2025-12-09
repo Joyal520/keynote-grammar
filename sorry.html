@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>We Are Updating!</title>
+
+<style>
+    :root {
+        --bg: #0a0f24;
+        --text: #e9efff;
+        --accent: #6ea8ff;
+        --glow: #8bc6ff;
+        --robot-blue: #67b7ff;
+        --robot-yellow: #ffd857;
+        --screen-glow: #89e0ff;
+    }
+
+    * {
+        margin: 0; padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+        overflow: hidden;
+    }
+
+    .container {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 40px 28px;
+        border-radius: 22px;
+        max-width: 480px;
+        width: 95%;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 25px rgba(110,168,255,0.23);
+        animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+        100% { transform: translateY(0); }
+    }
+
+    /* Robot container */
+    .robot {
+        width: 180px;
+        margin: 0 auto 25px;
+    }
+
+    /* Typing Animation */
+    .left-hand {
+        animation: typeLeft 0.5s infinite alternate ease-in-out;
+        transform-origin: top center;
+    }
+    .right-hand {
+        animation: typeRight 0.5s infinite alternate-reverse ease-in-out;
+        transform-origin: top center;
+    }
+
+    @keyframes typeLeft {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(10deg); }
+    }
+
+    @keyframes typeRight {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-10deg); }
+    }
+
+    /* Screen glow */
+    .screen {
+        filter: drop-shadow(0 0 12px var(--screen-glow));
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    p {
+        opacity: 0.9;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    /* Button */
+    .btn {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 12px 30px;
+        border-radius: 30px;
+        border: 2px solid var(--accent);
+        color: var(--text);
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .btn:hover {
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 20px var(--glow);
+    }
+
+    /* Mobile Resize */
+    @media(max-width: 450px){
+        h1 { font-size: 1.5rem; }
+        .robot { width: 150px; }
+        p { font-size: 0.95rem; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="robot">
+        <svg viewBox="0 0 200 200">
+            <!-- Computer Screen -->
+            <rect x="50" y="80" width="100" height="60" rx="10"
+              class="screen" fill="#1f3247"/>
+
+            <!-- Screen glow overlay -->
+            <rect x="50" y="80" width="100" height="60" rx="10"
+              fill="rgba(137,224,255,0.08)"/>
+
+            <!-- Keyboard -->
+            <rect x="55" y="145" width="90" height="15" rx="4"
+              fill="#444e60"/>
+
+            <!-- Robot Head -->
+            <ellipse cx="100" cy="40" rx="38" ry="26" fill="var(--robot-yellow)"/>
+
+            <!-- Eyes -->
+            <circle cx="85" cy="40" r="8" fill="white"/>
+            <circle cx="115" cy="40" r="8" fill="white"/>
+
+            <circle cx="85" cy="40" r="4" fill="var(--accent)"/>
+            <circle cx="115" cy="40" r="4" fill="var(--accent)"/>
+
+            <!-- Robot Body -->
+            <rect x="70" y="60" width="60" height="40" rx="12"
+              fill="var(--robot-blue)"/>
+
+            <!-- Robot Hands -->
+            <rect x="62" y="90" width="15" height="40" rx="6"
+              class="left-hand" fill="var(--robot-blue)"/>
+            <rect x="123" y="90" width="15" height="40" rx="6"
+              class="right-hand" fill="var(--robot-blue)"/>
+
+        </svg>
+    </div>
+
+    <h1>We Are Updating This Page!</h1>
+    <p>
+        Our IntelliQuest robot is working hard, typing new code  
+        and preparing exciting features for you.
+        <br><br>
+        Check back soon — the upgrade is almost ready!
+    </p>
+
+    <a href="index.html" class="btn">Back to Home</a>
+</div>
+
+</body>
+</html>

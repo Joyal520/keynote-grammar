@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IntelliQuest Lab | Grammar With Joy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#e0f4ff;
+      --bg2:#ffe7f7;
+      --bg3:#e9ffe7;
+      --card-bg:rgba(255,255,255,0.96);
+      --border:#d4d4d4;
+      --accent:#0f766e;
+      --accent-strong:#0d9488;
+      --accent-2:#0ea5e9;
+      --accent-soft:rgba(14,148,136,0.12);
+      --text:#0f172a;
+      --muted:#6b7280;
+      --shadow:0 22px 45px rgba(15,23,42,0.18);
+      --nav-bg:rgba(255,255,255,0.9);
+      --danger:#f97373;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      min-height:100vh;
+      font-family:'Poppins',sans-serif;
+      color:var(--text);
+      padding:0 16px 28px;
+      position:relative;
+      overflow-x:hidden;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:220% 220%;
+      animation:auroraMove 18s ease-in-out infinite;
+    }
+
+    @keyframes auroraMove{
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(56,189,248,0.22), transparent 50%),
+        radial-gradient(circle at 80% 12%, rgba(52,211,153,0.2), transparent 55%),
+        radial-gradient(circle at 70% 82%, rgba(244,114,182,0.16), transparent 55%);
+      filter:blur(32px);
+      opacity:0.9;
+      z-index:-1;
+    }
+
+    /* NAVBAR */
+    .navbar{
+      max-width:1120px;
+      margin:10px auto 18px;
+      height:56px;
+      border-radius:999px;
+      background:var(--nav-bg);
+      border:1px solid rgba(148,163,184,0.55);
+      box-shadow:0 14px 26px rgba(15,23,42,0.19);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 16px;
+      backdrop-filter:blur(18px);
+    }
+
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:0.95rem;
+      font-weight:600;
+    }
+
+    .nav-logo{
+      width:28px;
+      height:28px;
+      border-radius:11px;
+      background:linear-gradient(135deg,#22c55e,#0ea5e9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#f9fafb;
+      font-size:1rem;
+      font-weight:700;
+      box-shadow:0 7px 16px rgba(34,197,94,0.45);
+    }
+
+    .nav-title-main{
+      font-size:0.9rem;
+    }
+    .nav-title-sub{
+      font-size:0.72rem;
+      color:var(--muted);
+    }
+
+    .nav-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .nav-right a{
+      font-size:0.82rem;
+      text-decoration:none;
+      color:var(--muted);
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      transition:background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      white-space:nowrap;
+    }
+
+    .nav-right a:hover{
+      background:rgba(219,234,254,0.9);
+      border-color:rgba(129,140,248,0.75);
+      color:#1d4ed8;
+    }
+
+    /* PAGE HEADER */
+    .page-wrapper{
+      max-width:1120px;
+      margin:0 auto;
+    }
+
+    .page-header{
+      margin-bottom:18px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(59,130,246,0.12);
+      border:1px solid rgba(59,130,246,0.4);
+      font-size:0.78rem;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+      margin-bottom:8px;
+      color:#1d4ed8;
+    }
+
+    .pill span.icon{font-size:0.9rem;}
+
+    h1{
+      font-size:2rem;
+      margin-bottom:4px;
+    }
+
+    @media(max-width:600px){
+      h1{font-size:1.7rem;}
+    }
+
+    .subtitle{
+      font-size:0.95rem;
+      color:var(--muted);
+      max-width:640px;
+    }
+
+    .subtitle span{
+      color:var(--accent-2);
+      font-weight:500;
+    }
+
+    /* LAB GRID */
+    .lab-grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:16px;
+    }
+
+    @media(max-width:480px){
+      .lab-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .lab-card{
+      position:relative;
+      border-radius:22px;
+      background:var(--card-bg);
+      border:1px solid rgba(148,163,184,0.55);
+      box-shadow:var(--shadow);
+      padding:16px 14px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      overflow:hidden;
+      backdrop-filter:blur(16px);
+      transition:transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .lab-card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(34,197,94,0.18), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(56,189,248,0.18), transparent 60%);
+      opacity:0;
+      transition:opacity 0.2s ease;
+      pointer-events:none;
+    }
+
+    .lab-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 24px 50px rgba(15,23,42,0.25);
+      border-color:rgba(34,197,94,0.65);
+    }
+
+    .lab-card:hover::before{
+      opacity:1;
+    }
+
+    .lab-icon-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+    }
+
+    .lab-icon{
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.2rem;
+      background:radial-gradient(circle at 30% 10%,rgba(248,250,252,0.85),transparent 60%),
+                 linear-gradient(135deg,rgba(34,197,94,0.15),rgba(14,165,233,0.22));
+      box-shadow:0 10px 20px rgba(34,197,94,0.3);
+    }
+
+    .lab-tag{
+      font-size:0.7rem;
+      padding:3px 8px;
+      border-radius:999px;
+      background:rgba(240,249,255,0.95);
+      border:1px solid rgba(191,219,254,0.9);
+      color:#0369a1;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      white-space:nowrap;
+    }
+
+    .lab-tag.soon{
+      background:rgba(254,249,195,0.95);
+      border-color:rgba(234,179,8,0.85);
+      color:#92400e;
+    }
+
+    .lab-title{
+      font-size:1.02rem;
+      font-weight:600;
+    }
+
+    .lab-desc{
+      font-size:0.86rem;
+      color:var(--muted);
+      line-height:1.55;
+      min-height:44px;
+    }
+
+    .lab-meta{
+      font-size:0.75rem;
+      color:#9ca3af;
+      display:flex;
+      justify-content:space-between;
+      margin-top:2px;
+    }
+
+    .lab-actions{
+      margin-top:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      padding:7px 14px;
+      border-radius:999px;
+      font-size:0.86rem;
+      font-weight:500;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+      transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,#22c55e,#0d9488);
+      color:#f9fafb;
+      box-shadow:0 10px 22px rgba(34,197,94,0.4);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 30px rgba(34,197,94,0.6);
+    }
+
+    .btn-primary:active{
+      transform:translateY(0);
+      box-shadow:0 9px 18px rgba(34,197,94,0.5);
+    }
+
+    .btn-ghost{
+      background:rgba(248,250,252,0.95);
+      color:var(--muted);
+      border:1px solid rgba(209,213,219,0.9);
+    }
+
+    .btn-ghost.disabled{
+      opacity:0.65;
+      cursor:not-allowed;
+    }
+
+    .btn-ghost:hover:not(.disabled){
+      background:rgba(219,234,254,0.98);
+      color:#1d4ed8;
+      border-color:rgba(129,140,248,0.9);
+      transform:translateY(-1px);
+      box-shadow:0 10px 18px rgba(148,163,184,0.45);
+    }
+
+    .lab-level{
+      font-size:0.75rem;
+      color:#0f766e;
+      background:rgba(187,247,208,0.9);
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(22,163,74,0.7);
+      white-space:nowrap;
+    }
+
+    /* FOOT NOTE */
+    .foot-note{
+      max-width:1120px;
+      margin:18px auto 0;
+      font-size:0.8rem;
+      color:var(--muted);
+      text-align:left;
+    }
+
+    .foot-note span{
+      color:var(--accent-strong);
+      font-weight:500;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="nav-logo">IQ</div>
+      <div>
+        <div class="nav-title-main">Grammar With Joy</div>
+        <div class="nav-title-sub">IntelliQuest Lab</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <!-- Change href if your homepage uses a different filename -->
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+      <div class="pill">
+        <span class="icon">⚗️</span>
+        Learning Experiments
+      </div>
+      <h1>IntelliQuest Lab</h1>
+      <p class="subtitle">
+        A central hub of focused practice labs for breathing, attention, memory, vocabulary, grammar,
+        and AI-powered writing. Start with the <span>Box Breathing Lab</span> and grow this space
+        into your full IntelliQuest training system.
+      </p>
+    </section>
+
+    <!-- LAB GRID -->
+    <section class="lab-grid">
+      <!-- 1. Box Breathing Lab -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">🌬️</div>
+          <div class="lab-tag">Available now</div>
+        </div>
+        <div class="lab-title">Box Breathing Lab</div>
+        <p class="lab-desc">
+          Train calm focus with guided 4–4–4–4 breathing. Includes difficulty levels, session timer,
+          moving visual guide, and sound cues. Ideal pre-class or pre-study ritual.
+        </p>
+        <div class="lab-meta">
+          <span>Category: Focus & Calm</span>
+          <span>Best for: 8+ years</span>
+        </div>
+        <div class="lab-actions">
+          <!-- Link to your existing box breathing page -->
+          <a href="boxbreathing.html" class="btn btn-primary">
+            ▶ Open Lab
+          </a>
+          <div class="lab-level">Guided • Visual • Audio</div>
+        </div>
+      </article>
+
+      <!-- 2. Focus Timer Lab (coming soon) -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">⏱️</div>
+          <div class="lab-tag soon">Coming soon</div>
+        </div>
+        <div class="lab-title">Focus Timer Lab</div>
+        <p class="lab-desc">
+          Structured study blocks with short breaks, check-ins, and reflection prompts.
+          Designed to build attention stamina and reduce distraction while learning.
+        </p>
+        <div class="lab-meta">
+          <span>Category: Attention</span>
+          <span>Planned: Pomodoro-style</span>
+        </div>
+        <div class="lab-actions">
+          <button class="btn btn-ghost disabled">
+            🔒 Not yet available
+          </button>
+          <div class="lab-level">Focus • Discipline</div>
+        </div>
+      </article>
+
+      <!-- 3. Memory Builder Lab (coming soon) -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">🧠</div>
+          <div class="lab-tag soon">Coming soon</div>
+        </div>
+        <div class="lab-title">Memory Builder Lab</div>
+        <p class="lab-desc">
+          Short, repeatable drills for working memory and recall: numbers, words, and patterns.
+          Useful before vocabulary, reading, or exam practice sessions.
+        </p>
+        <div class="lab-meta">
+          <span>Category: Memory</span>
+          <span>Status: In design</span>
+        </div>
+        <div class="lab-actions">
+          <button class="btn btn-ghost disabled">
+            🔒 Not yet available
+          </button>
+          <div class="lab-level">Recall • Patterns</div>
+        </div>
+      </article>
+
+      <!-- 4. Vocabulary Boost Lab (coming soon) -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">📚</div>
+          <div class="lab-tag soon">Coming soon</div>
+        </div>
+        <div class="lab-title">Vocabulary Boost Lab</div>
+        <p class="lab-desc">
+          Fast-paced word drills, synonym/antonym games, and context challenges to
+          grow active vocabulary for speaking and writing.
+        </p>
+        <div class="lab-meta">
+          <span>Category: English Skills</span>
+          <span>Mode: Interactive</span>
+        </div>
+        <div class="lab-actions">
+          <button class="btn btn-ghost disabled">
+            🔒 Not yet available
+          </button>
+          <div class="lab-level">Words • Context</div>
+        </div>
+      </article>
+
+      <!-- 5. Grammar Studio Lab (coming soon) -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">✏️</div>
+          <div class="lab-tag soon">Coming soon</div>
+        </div>
+        <div class="lab-title">Grammar Studio Lab</div>
+        <p class="lab-desc">
+          Live sentence-building, error correction, and pattern recognition exercises powered
+          by your Keynote Grammar content and IntelliQuest engine.
+        </p>
+        <div class="lab-meta">
+          <span>Category: Grammar</span>
+          <span>Source: Keynote Grammar</span>
+        </div>
+        <div class="lab-actions">
+          <button class="btn btn-ghost disabled">
+            🔒 Not yet available
+          </button>
+          <div class="lab-level">Sentences • Accuracy</div>
+        </div>
+      </article>
+
+      <!-- 6. AI Writing Lab (coming soon) -->
+      <article class="lab-card">
+        <div class="lab-icon-row">
+          <div class="lab-icon">🤖</div>
+          <div class="lab-tag soon">Coming soon</div>
+        </div>
+        <div class="lab-title">AI Writing Lab</div>
+        <p class="lab-desc">
+          Guided writing space where students plan, draft, and refine paragraphs, essays,
+          and creative pieces with AI support and teacher-designed prompts.
+        </p>
+        <div class="lab-meta">
+          <span>Category: Writing + AI</span>
+          <span>Mode: Assisted</span>
+        </div>
+        <div class="lab-actions">
+          <button class="btn btn-ghost disabled">
+            🔒 Not yet available
+          </button>
+          <div class="lab-level">Ideas • Structure</div>
+        </div>
+      </article>
+    </section>
+
+    <!-- FOOT NOTE -->
+    <div class="foot-note">
+      This page is your <span>IntelliQuest Lab hub</span>. You can keep adding new labs without changing
+      the structure: just duplicate a card, update the title, description, and link when the new module
+      is ready.
+    </div>
+  </div>
+</body>
+</html>
