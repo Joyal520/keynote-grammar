@@ -284,10 +284,14 @@
   }
 
   .story {
-    text-align: justify;
-    line-height: 1.9;
-    position: relative;
+  text-align: justify;
+}
+
+@media (max-width: 768px) {
+  .story {
+    text-align: left !important;
   }
+}
 
   .story-header {
     display: flex;
@@ -327,45 +331,49 @@
       -6px -6px 18px rgba(255,255,255,0.9);
   }
 
-  /* === MOBILE FIXES === */
   @media (max-width: 768px) {
-    /* Disable justification and spacing issues */
-    .story {
-      text-align: left !important;
-      line-height: 1.8 !important;
-      padding: 24px !important;
-    }
 
-    /* Force words to flow like normal text */
-    .story .word,
-    .story .phrase {
-      display: inline !important;
-      padding: 0 2px !important;
-      margin: 0 !important;
-      white-space: normal !important;
-      word-break: break-word !important;
-    }
-
-    /* Hide popup on mobile to prevent layout shifts */
-    .popup {
-      display: none !important;
-    }
-
-    /* Center image on mobile */
-    .story-image-float {
-      float: none !important;
-      display: block !important;
-      margin: 20px auto !important;
-      width: 100% !important;
-      max-width: 280px !important;
-    }
-
-    /* Adjust header */
-    header {
-      flex-direction: column;
-      text-align: center;
-    }
+  .story {
+    text-align: left !important;
+    line-height: 1.6 !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
   }
+
+  /* Force SPANs to behave like normal text */
+  .story .word,
+  .story .phrase {
+    display: inline !important;
+    white-space: normal !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Make sure the text wrapper does NOT act like separate blocks */
+  .story span {
+    display: inline !important;
+  }
+
+  /* Remove any block formatting */
+  .story * {
+    word-break: break-word !important;
+  }
+
+  /* Popup hidden on mobile */
+  .popup {
+    display: none !important;
+  }
+
+  /* Float image fix */
+  .story-image-float {
+    float: none !important;
+    display: block !important;
+    margin: 20px auto !important;
+    width: 100% !important;
+    max-width: 280px !important;
+  }
+}
+
 </style>
 </head>
 <body data-theme="dark">
