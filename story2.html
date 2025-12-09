@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>Magic Reading</title>
 
-<!-- BOOTSTRAP (ADDED SAFELY) -->
+<!-- Bootstrap (CSS then JS bundle at bottom) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Tamil + Modern Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* YOUR ORIGINAL CSS — UNTOUCHED */
   :root {
     --glow: #78ffd6;
     --accent: #a8ff78;
@@ -28,17 +26,15 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', 'Noto Sans Tamil', sans-serif;
+    font-family: 'Inter','Noto Sans Tamil',sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
     color: var(--text-main);
-  }
-
-  body[data-theme="dark"] {
     background: radial-gradient(circle at top, #1a0033, #000000 70%);
   }
 
+  /* LIGHT MODE – aurora gradient + animation */
   body[data-theme="light"] {
     --glow: #7dd3fc;
     --accent: #a5b4fc;
@@ -51,13 +47,13 @@
     animation: auroraMove 18s ease-in-out infinite;
     color: var(--text-main);
   }
-
   @keyframes auroraMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
 
+  /* Particle container */
   .particles { position: fixed; inset:0; pointer-events:none; z-index:0; }
   .particle {
     position: absolute;
@@ -72,7 +68,8 @@
     100% { transform: translateY(-100px) scale(1); opacity: 0; }
   }
 
-  .container {
+  /* Outer container (keeps previous look and width) */
+  .app-container {
     position: relative;
     z-index: 10;
     max-width: 900px;
@@ -81,16 +78,17 @@
     background: var(--card);
     backdrop-filter: blur(16px);
     border-radius: 32px;
-    border: 1px solid rgba(120, 255, 214, 0.2);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    border: 1px solid rgba(120, 255, 214, 0.18);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     transition: 0.3s;
   }
 
-  body[data-theme="light"] .container {
+  body[data-theme="light"] .app-container {
     border: none;
     box-shadow:
-      18px 18px 36px rgba(15,23,42,0.18),
+      18px 18px 36px rgba(15,23,42,0.10),
       -12px -12px 30px rgba(255,255,255,0.9);
+    background: var(--card);
   }
 
   header {
@@ -130,17 +128,13 @@
       -4px -4px 10px rgba(255,255,255,0.9);
   }
 
-  .mode-toggle button span.icon{
-    font-size:1.1em;
-  }
-
   .lang-select { text-align:center; margin:10px 0 25px; }
   .lang-select select {
     padding: 10px 24px;
     border-radius: 50px;
     border: 2px solid var(--glow);
-    background: rgba(120,255,214,0.15);
-    color:white;
+    background: rgba(120,255,214,0.12);
+    color: white;
     cursor:pointer;
   }
   body[data-theme="light"] .lang-select select{
@@ -149,168 +143,215 @@
     border-color:#a5b4fc;
   }
 
+  /* STORY AREA - responsive magazine (Option C) */
   .story {
-    font-size: 1.3em;
-    line-height: 1.9;
-    padding: 32px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 24px;
-    border: 1px dashed rgba(120,255,214,0.3);
+    padding: 0; /* we'll handle padding in inner row/cols */
     margin-bottom: 40px;
-    overflow: visible !important;
     position: relative;
     z-index: 50;
   }
 
-  .story-image-float {
-    float: right;
-    width: 230px;
+  .story-card {
+    padding: 32px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 24px;
+    border: 1px dashed rgba(120,255,214,0.20);
+    line-height: 1.9;
+    text-align: justify;
+  }
+  body[data-theme="light"] .story-card {
+    background:#f7f8ff;
+    border:1px solid #e0e7ff;
+    box-shadow:
+      inset 3px 3px 7px rgba(148,163,184,0.18),
+      inset -3px -3px 7px rgba(255,255,255,0.9);
+  }
+
+  /* Image column - T2 tablet width = 300px */
+  .story-image {
+    width: 100%;
     height: auto;
-    margin: 0 0 12px 20px;
     border-radius: 16px;
     object-fit: cover;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+    display:block;
+    margin: 0 auto;
   }
 
-  @media (max-width: 768px) {
-    .story-image-float {
-      float: none;
-      display: block;
-      margin: 0 auto 20px auto;
-      width: 100%;
-      max-width: 300px;
-    }
+  /* Desktop: image sits on right (magazine feel) */
+  @media(min-width: 992px){
+    .story .image-col { order: 2; } /* image to right */
+    .story .text-col  { order: 1; }
+    .story-card { text-align: justify; }
   }
 
+  /* Tablet: two columns; image column width constrained to 300px (T2) */
+  @media(min-width: 768px) and (max-width: 991.98px){
+    .story .image-col { flex: 0 0 300px; max-width: 300px; }
+    .story .text-col  { flex: 1 1 auto; }
+    .story-row { gap: 24px; align-items: flex-start; }
+  }
+
+  /* Mobile: image on top, full width */
+  @media(max-width: 767.98px){
+    .story-card { padding: 20px; text-align: left; }
+  }
+
+  /* Words and popup styling (unchanged but robust) */
   .word {
-    cursor:pointer;
-    padding: 2px 6px;
+    cursor: pointer;
+    padding: 2px 4px;
     border-radius: 6px;
-    transition:0.3s;
-    position:relative;
+    transition: 0.18s;
+    display: inline !important; /* critical */
+    white-space: normal !important;
+  }
+  .word:hover {
+    background: rgba(168,255,120,0.25);
+    color: #a8ff78;
+  }
+  body[data-theme="light"] .word:hover {
+    background: rgba(129,140,248,0.22);
+    color: #1d4ed8;
   }
 
   .popup {
-    position:absolute;
-    bottom:140%;
-    left:50%;
-    transform:translateX(-50%);
-    background:linear-gradient(135deg,#1a0033,#2d0077);
-    padding:10px 14px;
-    border-radius:10px;
-    color:#ffeb3b;
-    font-size:0.9em;
-    opacity:0;
-    transition:0.3s;
-    white-space:nowrap;
-    z-index:99999 !important;
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg,#1a0033,#2d0077);
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #ffeb3b;
+    font-size: 0.9em;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.18s;
+    white-space: nowrap;
+    z-index: 99999 !important;
   }
+  .popup.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+  body[data-theme="light"] .popup { background: linear-gradient(135deg,#312e81,#7c3aed); color: #fef9c3; }
 
-  .popup.show {
-    opacity:1;
-    transform:translateX(-50%) translateY(-10px);
+  /* Vocab Table */
+  .vocab-table {
+    margin-top: 16px;
+    background: rgba(15,0,40,0.6);
+    border-radius: 12px;
+    overflow: hidden;
   }
+  .vocab-table table { width: 100%; border-collapse: collapse; }
+  .vocab-table thead th { background: linear-gradient(90deg,#ff8a00,#da1b60); color: #fff; padding: 12px 14px; text-align:left; }
+  .vocab-table td { padding: 12px 14px; border-bottom: 1px solid rgba(120,255,214,0.12); color: var(--text-main); }
 
-  table {
-    width:100%;
-    border-collapse:collapse;
-    background:rgba(15,0,40,0.6);
-    border-radius:20px;
-    overflow:hidden;
-  }
+  body[data-theme="light"] .vocab-table { background: #f3f4ff; }
+  body[data-theme="light"] .vocab-table td { color: #111827; border-bottom: 1px solid #e6edf8; }
 
-  th {
-    background:linear-gradient(90deg,#ff8a00,#da1b60);
-    padding:16px;
-    color:white;
-  }
-
-  td {
-    padding:14px 16px;
-    border-bottom:1px solid rgba(120,255,214,0.2);
-  }
-
-  .btn {
+  .btn-primary-custom {
     display:block;
-    margin:20px auto 0;
-    padding:14px 38px;
-    background:var(--btn-grad);
-    border:none;
-    border-radius:40px;
-    color:white;
-    text-align:center;
-    cursor:pointer;
-    box-shadow:0 14px 30px rgba(0,0,0,0.35);
+    margin: 20px auto 0;
+    padding: 12px 28px;
+    background: var(--btn-grad);
+    border: none;
+    color: #fff;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    text-decoration: none;
+    text-align: center;
+  }
+  .btn-primary-custom.disabled {
+    opacity: 0.5; pointer-events: none; box-shadow: none;
   }
 
-  .btn.disabled {
-    opacity:0.5;
-    cursor:not-allowed;
-  }
+  /* final safety rules to avoid spacing bugs */
+  .story-card span { display: inline !important; white-space: normal !important; }
+  .story-card { word-break: normal; hyphens: auto; text-justify: inter-word; }
 </style>
 </head>
-
 <body data-theme="dark">
 
-<!-- Background particles -->
-<div class="particles" id="particles"></div>
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
 
-<div class="container">
-  <header>
-    <h1>Magic Reading</h1>
-    <div class="mode-toggle">
-      <button id="modeToggle">
-        <span class="icon">🌙</span>
-        <span class="label">Dark mode</span>
-      </button>
+  <div class="app-container">
+
+    <header>
+      <h1>Magic Reading</h1>
+      <div class="mode-toggle">
+        <button id="modeToggle">
+          <span class="icon">🌙</span>
+          <span class="label">Dark mode</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="lang-select text-center mb-3">
+      <select id="langSelect" aria-label="Language select">
+        <option value="en">English</option>
+        <option value="ta">தமிழ்</option>
+      </select>
     </div>
-  </header>
 
-  <div class="lang-select">
-    <select id="langSelect">
-      <option value="en">English</option>
-      <option value="ta">தமிழ்</option>
-    </select>
+    <!-- STORY: responsive magazine layout (Option C) -->
+    <section class="story" id="story">
+      <div class="story-card">
+        <div class="d-flex flex-column">
+          <!-- Use bootstrap row/cols for responsive magazine layout -->
+          <div class="d-flex flex-wrap story-row">
+            <!-- Image column -->
+            <div class="image-col me-3" style="flex:0 0 auto;">
+              <img id="storyImage" src="story2.jpg" alt="Story image" class="story-image">
+            </div>
+
+            <!-- Text column -->
+            <div class="text-col flex-fill">
+              <h2 class="mb-3">The Whisper Behind the Door</h2>
+
+              <!-- The text node(s) below will be processed by JS to wrap words only -->
+              <div id="storyText">
+                Sara moved into an old house on a rainy evening. The hallway was colder than
+                the other rooms, but she ignored it. At midnight, a soft whisper came through
+                the cracks of her bedroom door. She thought it was just the wind. She tried to
+                sleep. But the whisper became louder.
+
+                She opened the door, the corridor was empty. She noticed a muddy footprint on
+                the floor. The whisper came again, closer this time, right behind her. Sara
+                turned slowly. Her heart started pounding fast. Then she realized she was not
+                alone in the house.
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title text-center mt-4 mb-2">My Vocabulary Galaxy</h2>
+
+    <div class="vocab-table">
+      <table id="vocabTable" class="w-100">
+        <thead><tr><th>Word / Phrase</th><th>Meaning</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <button class="btn-primary-custom" id="clearBtn">Clear All Words</button>
+    <a class="btn-primary-custom disabled" id="quizBtn" href="#">Go to Galaxy Quiz</a>
+
   </div>
 
-  <div class="story" id="story">
-    <h2>The Whisper Behind the Door</h2>
-
-    <img src="story2.jpg" class="story-image-float">
-
-    Sara moved into an old house on a rainy evening. The hallway was colder than
-    the other rooms, but she ignored it. At midnight, a soft whisper came through
-    the cracks of her bedroom door. She thought it was just the wind. She tried to
-    sleep. But the whisper became louder.
-
-    She opened the door, the corridor was empty. She noticed a muddy footprint on
-    the floor. The whisper came again, closer this time, right behind her. Sara
-    turned slowly. Her heart started pounding fast. Then she realized she was not
-    alone in the house.
-  </div>
-
-  <h2 class="section-title">My Vocabulary Galaxy</h2>
-
-  <table id="vocabTable">
-    <thead><tr><th>Word / Phrase</th><th>Meaning</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <button class="btn" id="clearBtn">Clear All Words</button>
-  <a class="btn disabled" id="quizBtn">Go to Galaxy Quiz</a>
-</div>
+<!-- Bootstrap JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* YOUR FULL ORIGINAL JAVASCRIPT — UNMODIFIED */
-
-
-<script>
-// --------------------------------------------------
-// 1. DICTIONARY (WORDS + PHRASES)
-// --------------------------------------------------
+/* ===========================
+   DICTIONARY
+   =========================== */
 const dictionary = {
-  "Sara": { en: "A female name", ta: "சாரா" },
-  
+  "sara": { en: "A female name", ta: "சாரா" },
+
   "moved": { en: "went from one place to another", ta: "குடிபெயர்ந்தாள்" },
   "into": { en: "to the inside of", ta: "உள்ளே" },
 
@@ -322,18 +363,13 @@ const dictionary = {
 
   "colder": { en: "more cold than something", ta: "அதிக குளிரான" },
 
-  "than": { en: " compared to", ta: "விட" },
-
-
   "the other rooms": { en: "the rest of the rooms", ta: "மற்ற அறைகள்" },
 
   "ignored it": { en: "did not pay attention to it", ta: "அதைப் புறக்கணித்தாள்" },
 
   "midnight": { en: "12:00 at night", ta: "நள்ளிரவு" },
 
-  "a soft whisper": { en: "a gentle quiet voice", ta: "மென்மையான  குசுகுசுப்பு," },
-
-  "through": { en: "passed through", ta: "ஊடாக" },
+  "a soft whisper": { en: "a gentle quiet voice", ta: "மென்மையான குசுகுசுப்பு" },
 
   "the cracks": { en: "small openings", ta: "பிளவுகள்" },
 
@@ -344,8 +380,8 @@ const dictionary = {
 
   "tried": { en: "attempted", ta: "முயன்றாள்" },
 
-  "the whisper": { en: "the quiet sound ", ta: "கிசுகிசுத்தல்" },
-  
+  "the whisper": { en: "the quiet sound", ta: "கிசுகிசுத்தல்" },
+
   "became louder": { en: "clearer", ta: "ஒலி அதிகரித்தது" },
 
   "opened the door": { en: "opened the door", ta: "கதவை திறந்தாள்" },
@@ -354,17 +390,12 @@ const dictionary = {
 
   "empty": { en: "nothing was there", ta: "வெறுமையாக" },
 
-   "she noticed": { en: "she paid attention to something or someone", ta: "அவள் கவனித்தாள்" },
-
- 
+  "she noticed": { en: "she paid attention to something or someone", ta: "அவள் கவனித்தாள்" },
 
   "a muddy footprint": { en: "one dirty foot mark", ta: "ஒரு சேற்றுக் கால் தடம்" },
 
-
-
   "on the floor": { en: "on the ground", ta: "தரையில்" },
 
-  
   "came again": { en: "was heard once more", ta: "மீண்டும் வந்தது" },
 
   "closer this time": { en: "nearer than before", ta: "இந்த முறை மேலும் அருகில்" },
@@ -375,9 +406,7 @@ const dictionary = {
 
   "pounding fast": { en: "heart beating fast", ta: "இதயம் வேகமாகத் துடித்தது" },
 
-
   "realized": { en: "understood suddenly", ta: "உணர்ந்தாள்" },
-
 
   "then": { en: "at that time", ta: "அப்பொழுது" },
 
@@ -386,16 +415,15 @@ const dictionary = {
   "in the house": { en: "inside the house", ta: "வீட்டிற்குள்" }
 };
 
-
-// --------------------------------------------------
+/* ===========================
+   State
+   =========================== */
 let currentLang = "en";
 let vocabList = JSON.parse(localStorage.getItem("vocabList")) || [];
 
-// THEME TOGGLE
+/* THEME TOGGLE */
 const bodyEl = document.body;
 const modeBtn = document.getElementById("modeToggle");
-
-// Load theme from storage
 const savedTheme = localStorage.getItem("magicTheme") || "dark";
 setTheme(savedTheme);
 
@@ -418,76 +446,103 @@ function setTheme(theme){
   }
 }
 
-// Background particles
+/* ===========================
+   Particles (background)
+   =========================== */
 function createParticle() {
   const p = document.createElement('div');
   p.classList.add('particle');
-  p.style.width = p.style.height = Math.random()*6+3+'px';
-  p.style.left = Math.random()*100+'vw';
-  p.style.animationDuration = Math.random()*10+10+'s';
+  const size = Math.random() * 6 + 3;
+  p.style.width = p.style.height = size + 'px';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.top = Math.random() * 100 + 'vh';
+  p.style.opacity = 0;
+  p.style.animationDuration = Math.random() * 10 + 10 + 's';
   document.getElementById("particles").appendChild(p);
-  setTimeout(()=>p.remove(),20000);
+  setTimeout(()=> p.remove(), 22000);
 }
 setInterval(createParticle, 250);
 
-// ---------------- PHRASE-AWARE WRAPPER ----------------
+/* ===========================
+   UTILS: getNextNWords (token stream aware)
+   Returns {text, tokensConsumed}
+   =========================== */
+function getNextNWords(tokens, startIndex, n) {
+  let text = "";
+  let consumed = 0;
+  let wordsFound = 0;
+  let i = startIndex;
+  while (i < tokens.length && wordsFound < n) {
+    const tok = tokens[i];
+    text += tok;
+    consumed++;
+    if (!/^\s+$/.test(tok)) {
+      wordsFound++;
+      // if there's a following space token, include it too
+      if (i + 1 < tokens.length && /^\s+$/.test(tokens[i+1])) {
+        text += tokens[i+1];
+        consumed++;
+        i += 2;
+        continue;
+      }
+    }
+    i++;
+  }
+  return { text, tokensConsumed: consumed };
+}
+
+/* ===========================
+   wrapTextWithDictionary — FIXED version (does not wrap spaces)
+   =========================== */
 function wrapTextWithDictionary(element) {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
   const nodes = [];
-
   while (walker.nextNode()) nodes.push(walker.currentNode);
 
   nodes.forEach(node => {
     const text = node.nodeValue;
     if (!text.trim()) return;
 
-    const words = text.split(/(\s+)/); // keep spaces
+    // split into tokens: words and spaces preserved
+    const tokens = text.match(/\S+|\s+/g) || [text];
     let result = [];
     let i = 0;
 
-    while (i < words.length) {
-      if (/^\s+$/.test(words[i])) {
-        result.push(words[i]);
+    while (i < tokens.length) {
+
+      // if token is only spaces -> keep as plain text (do not wrap)
+      if (/^\s+$/.test(tokens[i])) {
+        result.push(tokens[i]);
         i++;
         continue;
       }
 
-      const w1 = words[i].replace(/[.,!?;:]/g, "").toLowerCase();
-
-      const has2 = (i + 2 < words.length);
-      const has3 = (i + 4 < words.length);
-
-      const w2 = has2
-        ? (words[i] + words[i+1] + words[i+2]).replace(/[.,!?;:]/g, "").toLowerCase()
-        : "";
-
-      const w3 = has3
-        ? (words[i] + words[i+1] + words[i+2] + words[i+3] + words[i+4]).replace(/[.,!?;:]/g, "").toLowerCase()
-        : "";
-
-      // 3-word phrase
-      if (w3 && dictionary[w3]) {
-        const token = words[i] + words[i+1] + words[i+2] + words[i+3] + words[i+4];
-        result.push(wrapPhrase(token, w3));
-        i += 5;
+      // try 3-word phrase
+      const candidate3 = getNextNWords(tokens, i, 3);
+      const cand3Clean = candidate3.text.replace(/[.,!?;:]/g, "").toLowerCase().trim();
+      if (cand3Clean && dictionary[cand3Clean]) {
+        result.push(wrapPhrase(candidate3.text, cand3Clean));
+        i += candidate3.tokensConsumed;
         continue;
       }
 
-      // 2-word phrase
-      if (w2 && dictionary[w2]) {
-        const token = words[i] + words[i+1] + words[i+2];
-        result.push(wrapPhrase(token, w2));
-        i += 3;
+      // try 2-word phrase
+      const candidate2 = getNextNWords(tokens, i, 2);
+      const cand2Clean = candidate2.text.replace(/[.,!?;:]/g, "").toLowerCase().trim();
+      if (cand2Clean && dictionary[cand2Clean]) {
+        result.push(wrapPhrase(candidate2.text, cand2Clean));
+        i += candidate2.tokensConsumed;
         continue;
       }
 
-      // Single word
-      if (dictionary[w1]) {
-        result.push(wrapWord(words[i], w1));
+      // single word
+      const tok = tokens[i];
+      const clean = tok.replace(/[.,!?;:]/g, "").toLowerCase();
+      if (clean && dictionary[clean]) {
+        result.push(wrapWord(tok, clean));
       } else {
-        result.push(words[i]);
+        result.push(tok);
       }
-
       i++;
     }
 
@@ -497,114 +552,123 @@ function wrapTextWithDictionary(element) {
   });
 }
 
+/* Builds a wrapped single-word span (keeps original token formatting) */
 function wrapWord(token, key) {
-  return `
-    <span class="word" data-word="${key}">
-      ${token}
-      <span class="popup"
-            data-en="${dictionary[key].en}"
-            data-ta="${dictionary[key].ta}">
-        ${dictionary[key].en}
-      </span>
-    </span>
-  `;
+  return `<span class="word" data-word="${key}">${token}<span class="popup" data-en="${dictionary[key].en}" data-ta="${dictionary[key].ta}">${dictionary[key].en}</span></span>`;
 }
 
+/* Builds a wrapped phrase span */
 function wrapPhrase(token, key) {
-  return `
-    <span class="word phrase" data-word="${key}">
-      ${token}
-      <span class="popup"
-            data-en="${dictionary[key].en}"
-            data-ta="${dictionary[key].ta}">
-        ${dictionary[key].en}
-      </span>
-    </span>
-  `;
+  // token may include trailing spaces — keep them inside the returned HTML so layout remains correct
+  return `<span class="word phrase" data-word="${key}">${token}<span class="popup" data-en="${dictionary[key].en}" data-ta="${dictionary[key].ta}">${dictionary[key].en}</span></span>`;
 }
 
-// Run wrapper
-wrapTextWithDictionary(document.getElementById("story"));
+/* Run wrapper on storyText (NOT the whole story container, to avoid touching header/h2) */
+wrapTextWithDictionary(document.getElementById("storyText"));
 
-// Popup on click
+/* ===========================
+   Interaction: popups, double-click vocab
+   =========================== */
 document.addEventListener("click", e => {
-  if (e.target.classList.contains("word") || e.target.closest(".word")) {
-    const wordEl = e.target.classList.contains("word") ? e.target : e.target.closest(".word");
+  const target = e.target.closest(".word");
+  if (target) {
     document.querySelectorAll(".popup").forEach(p => p.classList.remove("show"));
-    const pop = wordEl.querySelector(".popup");
+    const pop = target.querySelector(".popup");
     if (!pop) return;
     pop.textContent = currentLang === "ta" ? pop.dataset.ta : pop.dataset.en;
     pop.classList.add("show");
     setTimeout(() => pop.classList.remove("show"), 3000);
+  } else {
+    // click outside words -> hide popups
+    document.querySelectorAll(".popup").forEach(p => p.classList.remove("show"));
   }
 });
 
-// Add vocab on double click
 document.addEventListener("dblclick", e => {
-  if (e.target.classList.contains("word") || e.target.closest(".word")) {
-    const wordEl = e.target.classList.contains("word") ? e.target : e.target.closest(".word");
-    const key = wordEl.dataset.word;
-    if (!dictionary[key]) return;
-    if (!vocabList.some(v => v.word === key)) {
-      vocabList.push({
-        word: key,
-        en: dictionary[key].en,
-        ta: dictionary[key].ta
-      });
-      localStorage.setItem("vocabList", JSON.stringify(vocabList));
-      renderVocab();
-      updateQuizButton();
-    }
+  const target = e.target.closest(".word");
+  if (!target) return;
+  const key = target.dataset.word;
+  if (!dictionary[key]) return;
+  if (!vocabList.some(v => v.word === key)) {
+    vocabList.push({ word: key, en: dictionary[key].en, ta: dictionary[key].ta });
+    localStorage.setItem("vocabList", JSON.stringify(vocabList));
+    renderVocab();
+    updateQuizButton();
   }
 });
 
-// Render vocab table
+/* ===========================
+   Vocab rendering + controls
+   =========================== */
 function renderVocab(){
   const tbody = document.querySelector("#vocabTable tbody");
   tbody.innerHTML = "";
-  vocabList.forEach(item=>{
+  vocabList.forEach(item => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${item.word}</td><td>${currentLang==="ta" ? item.ta : item.en}</td>`;
+    tr.innerHTML = `<td>${item.word}</td><td>${currentLang === "ta" ? item.ta : item.en}</td>`;
     tbody.appendChild(tr);
   });
 }
 
-// Clear vocab
-document.getElementById("clearBtn").onclick = ()=>{
-  if(confirm("Clear all collected words?")){
+document.getElementById("clearBtn").addEventListener("click", () => {
+  if (confirm("Clear all collected words?")) {
     vocabList = [];
     localStorage.setItem("vocabList", JSON.stringify(vocabList));
     renderVocab();
     updateQuizButton();
   }
-};
+});
 
-// Quiz button
 const quizBtn = document.getElementById("quizBtn");
 function updateQuizButton(){
-  if(vocabList.length >= 5){
+  if (vocabList.length >= 5) {
     quizBtn.classList.remove("disabled");
+    quizBtn.removeAttribute("aria-disabled");
     quizBtn.href = "galaxy-quiz.html";
   } else {
     quizBtn.classList.add("disabled");
+    quizBtn.setAttribute("aria-disabled","true");
     quizBtn.removeAttribute("href");
   }
 }
-quizBtn.onclick = (e)=>{
-  if(vocabList.length < 5){
+quizBtn.addEventListener("click", (e) => {
+  if (vocabList.length < 5) {
     e.preventDefault();
     alert("Collect at least 5 words first!");
   }
-};
+});
 
-// Language change
-document.getElementById("langSelect").onchange = ()=>{
+/* Language selector */
+document.getElementById("langSelect").addEventListener("change", () => {
   currentLang = document.getElementById("langSelect").value;
   renderVocab();
-};
+});
 
+/* initialize render */
 renderVocab();
 updateQuizButton();
+
+/* ===========================
+   Accessibility & responsive image sizing
+   =========================== */
+(function adaptImageLayout(){
+  const img = document.getElementById('storyImage');
+  // on tablets we want the image column to be 300px wide (T2)
+  // We enforce max-width so the image scales nicely.
+  img.style.maxWidth = '100%';
+  img.style.height = 'auto';
+})();
+
+/* ===========================
+   Optional: close popups on resize to avoid stuck popups
+   =========================== */
+window.addEventListener('resize', ()=> {
+  document.querySelectorAll('.popup').forEach(p=>p.classList.remove('show'));
+});
+
+/* ===========================
+   END
+   =========================== */
 </script>
 </body>
 </html>
