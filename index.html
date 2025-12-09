@@ -3,531 +3,316 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>IntelliQuest Online Learning Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Grammar With Joy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* -------------------------
-   Basic & Performance Rules
-   ------------------------- */
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+html,body{height:100%;overflow-x:hidden;}
 body{
   font-family:'Poppins',sans-serif;
-  background:#0a0e2a;
+  background:#0a1d42;
   color:#e6f0ff;
+  background-attachment:fixed;
   position:relative;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  /* Limit layer compositing when possible */
-  transform-style:preserve-3d;
-  contain:layout style paint;
 }
 
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+/* Canvas Background */
+#canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+
+/* Subtle Blobs */
+.blob{
+  position:fixed;border-radius:50%;filter:blur(80px);opacity:0.4;pointer-events:none;z-index:-1;
+  animation:float 30s infinite alternate ease-in-out;
 }
+.blob1{width:300px;height:300px;background:#5e85ff;top:-100px;left:-100px;}
+.blob2{width:280px;height:280px;background:#9d77ff;bottom:-80px;right:-120px;}
+@keyframes float{0%{transform:translate(0,0)}100%{transform:translate(40px,-40px)}}
 
-/* -------------------------
-   Parallax Layers (cheap)
-   ------------------------- */
-.parallax{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -3;
-  will-change: transform;
-  contain:paint;
-}
-.layer{
-  position:absolute;inset:0;
-  background-repeat:no-repeat;background-size:cover;background-position:center;
-  will-change: transform;
-  /* Keep background subtle to avoid multiple repaints */
-}
-.layer1{ background: radial-gradient(circle at 20% 80%, #1a1f5e 0%, transparent 50%); transform: translateZ(-1px) scale(1.9); opacity:0.95;}
-.layer2{ background: radial-gradient(circle at 80% 20%, #2a1a6e 0%, transparent 50%); transform: translateZ(-1px) scale(1.6); opacity:0.9;}
-.layer3{ background: radial-gradient(circle at 50% 50%, #0f1a5c 0%, transparent 60%); transform: translateZ(-1px) scale(1.3); opacity:0.88;}
-
-/* -------------------------
-   Canvas & Blobs
-   ------------------------- */
-#canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;will-change:transform;contain:paint;}
-.blob{position:fixed;border-radius:50%;filter:blur(48px);opacity:0.35;pointer-events:none;z-index:-2;mix-blend-mode:screen;will-change:transform;transition:transform 35s linear;}
-.blob1{width:360px;height:360px;background:#5e85ff;top:-120px;left:-120px;}
-.blob2{width:340px;height:320px;background:#9d77ff;bottom:-90px;right:-90px;}
-
-/* Slight floating using transform only */
-@keyframes float-slow{0%{transform:translate(0,0)}100%{transform:translate(40px,-40px)}}
-.blob1{animation:float-slow 38s infinite alternate ease-in-out;}
-.blob2{animation:float-slow 42s infinite alternate ease-in-out;}
-
-/* -------------------------
-   Header / Nav
-   ------------------------- */
+/* HEADER - Fully Responsive */
 header{
-  position:fixed;top:0;left:0;width:100%;padding:12px 18px;
+  position:fixed;top:0;left:0;width:100%;padding:15px 20px;
   display:flex;justify-content:space-between;align-items:center;
-  background:linear-gradient(180deg, rgba(10,15,50,0.65), rgba(10,15,50,0.55));
-  z-index:1000;border-bottom:1px solid rgba(100,150,255,0.08);
-  backdrop-filter: blur(8px);
+  background:rgba(10,29,66,0.85);backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  z-index:1000;border-bottom:1px solid rgba(100,150,255,0.2);
 }
-header h1{
-  font-size:1.45rem;font-weight:800;
-  background:linear-gradient(90deg,#6e9fff,#c77aff,#ff9dff);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  line-height:1;
-}
+header h1{font-size:1.35rem;font-weight:600;}
 
-/* Desktop nav */
-nav.desktop{display:flex;gap:14px;align-items:center;}
+/* Desktop Nav */
+nav.desktop{
+  display:flex;gap:18px;align-items:center;
+}
 nav.desktop a{
-  color:#e6f0ff;text-decoration:none;font-weight:600;font-size:0.95rem;
-  padding:8px 14px;border-radius:26px;position:relative;overflow:hidden;
-  transition:transform .18s ease, background .18s ease;
+  color:#e6f0ff;text-decoration:none;font-weight:500;font-size:0.95rem;
+  padding:8px 18px;border-radius:30px;position:relative;overflow:hidden;
 }
 
-/* Mobile hamburger */
-.hamburger{display:none;cursor:pointer;font-size:1.8rem;z-index:1001;}
-.hamburger span{display:block;width:28px;height:3px;background:#fff;margin:6px;border-radius:3px;transition:0.25s;}
-.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px);}
+/* Mobile Hamburger */
+.hamburger{
+  display:none;cursor:pointer;font-size:1.8rem;z-index:1001;
+}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(8px,8px);}
 .hamburger.active span:nth-child(2){opacity:0;}
-.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px);}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px);}
 
-/* Mobile menu */
+/* Mobile Menu */
 .mobile-menu{
   position:fixed;top:0;left:0;width:100%;height:100vh;
-  background:rgba(10,15,50,0.98);
+  background:rgba(10,20,50,0.98);backdrop-filter:blur(20px);
   display:flex;flex-direction:column;justify-content:center;align-items:center;
-  gap:28px;font-size:1.5rem;z-index:999;
-  transform:translateY(-100%);transition:transform 0.34s cubic-bezier(.2,.9,.2,1);
-  -webkit-backdrop-filter: blur(6px);
+  gap:30px;font-size:1.6rem;z-index:999;
+  transform:translateY(-100%);transition:transform 0.4s ease;
 }
 .mobile-menu.active{transform:translateY(0);}
-.mobile-menu a{color:#fff;text-decoration:none;padding:12px 36px;border-radius:36px;width:85%;text-align:center;}
+.mobile-menu a{
+  color:#fff;text-decoration:none;padding:15px 40px;border-radius:40px;
+  width:80%;text-align:center;position:relative;overflow:hidden;
+}
 
-/* Responsive */
+/* Show hamburger only on mobile */
 @media (max-width: 868px){
   nav.desktop{display:none;}
   .hamburger{display:block;}
-  header{padding:10px 14px;}
 }
 
-/* -------------------------
-   Reusable button & snake-hover
-   ------------------------- */
-.snake-hover {
-  position: relative; overflow: hidden;
-  transition: transform .35s cubic-bezier(.2,.9,.2,1), box-shadow .35s;
-  border-radius: 28px; display:inline-block; cursor:pointer;
-  will-change: transform, box-shadow;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/* SNAKE + WHITE GLOW EFFECT */
+.snake-hover{
+  position:relative;overflow:hidden;transition:all 0.4s ease;
+}
+.snake-hover .snake-svg{
+  position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.8;
+}
+.snake-hover .snake-svg polyline{
+  fill:none;stroke:#ffffff;stroke-width:3;stroke-dasharray:40 500;stroke-dashoffset:40;
+  transition:stroke-dashoffset 0.9s ease;
+}
+.snake-hover:hover .snake-svg polyline,
+.snake-hover.active .snake-svg polyline{stroke-dashoffset:-460;}
+.snake-hover:hover,
+.snake-hover.active{
+  background:#ffffff !important;color:#000 !important;
+  box-shadow:0 0 40px #fff,0 0 80px #fff,0 0 120px #fff;
+  transform:translateY(-4px);
 }
 
-/* Glow layer via pseudo - use opacity toggles only */
-.snake-hover::before {
-  content: ''; position:absolute; inset:-30%;
-  background: radial-gradient(circle, rgba(94,133,255,0.42), transparent 60%);
-  transform: translateZ(0); opacity:0; transition:opacity .28s ease;
-  pointer-events:none; z-index:-1;
-}
-.snake-hover:hover::before{opacity:1;}
-
-/* Snake SVG border kept but simplified stroke for performance */
-.snake-svg { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
-.snake-svg polyline { fill:none; stroke:#ffffff; stroke-width:2.6; stroke-dasharray:60 600; stroke-dashoffset:60; transition: stroke-dashoffset 0.95s cubic-bezier(.2,.9,.2,1), stroke .35s; }
-.snake-hover:hover .snake-svg polyline { stroke-dashoffset: -560; stroke:#5e85ff; }
-
-/* Hover visual style (kept but slightly tamed) */
-.snake-hover:hover {
-  transform: translateY(-4px) scale(1.04);
-  box-shadow: 0 12px 30px rgba(94,133,255,0.18), 0 6px 12px rgba(0,0,0,0.35);
-}
-
-/* -------------------------
-   Hero & Features (responsive)
-   ------------------------- */
+/* Hero */
 .hero{
-  margin:120px 16px 60px;padding:36px 20px;text-align:center;
-  background:rgba(15,25,80,0.58);border-radius:22px;
-  backdrop-filter: blur(8px);border:1px solid rgba(100,150,255,0.08);
-  box-shadow:0 18px 40px rgba(0,0,0,0.45);
-  transform:translateZ(0);
+  margin:130px 20px 50px;padding:45px 25px;text-align:center;
+  background:rgba(10,29,66,0.65);border-radius:22px;backdrop-filter:blur(16px);
+  border:1px solid rgba(100,150,255,0.3);box-shadow:0 10px 40px rgba(0,0,0,0.5);
 }
 .hero h2{
-  font-size:2.25rem;line-height:1.08;margin-bottom:12px;
-  background:linear-gradient(90deg,#6e9fff,#a488ff,#d48aff,#ff9dff);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;
+  font-size:2.3rem;line-height:1.2;margin-bottom:18px;
+  background:linear-gradient(90deg,#6e9fff,#d48aff);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
-.hero p{font-size:1.02rem;line-height:1.7;opacity:0.95;margin-bottom:20px;}
+.hero p{font-size:1.08rem;line-height:1.75;opacity:0.92;margin-bottom:35px;}
 
 /* Buttons */
 .btn{
-  display:inline-block;padding:12px 28px;margin:8px;border-radius:40px;background:rgba(100,150,255,0.14);
-  border:1px solid rgba(100,150,255,0.22);color:#fff;font-weight:700;text-decoration:none;
-  transition:transform .22s ease, box-shadow .22s ease;
+  display:inline-block;padding:16px 36px;margin:10px;
+  border-radius:50px;background:rgba(100,150,255,0.28);
+  border:1px solid rgba(100,150,255,0.5);color:#fff;font-weight:600;
+  text-decoration:none;transition:all 0.3s;backdrop-filter:blur(10px);
 }
-.btn:active{transform:translateY(1px)}
 
-/* Features grid */
+/* Features Grid */
 .features{
-  display:grid;grid-template-columns:1fr;gap:22px;margin:60px 16px;max-width:980px;margin-left:auto;margin-right:auto;
+  display:grid;grid-template-columns:1fr;gap:22px;
+  margin:50px 20px;max-width:500px;margin-left:auto;margin-right:auto;
 }
 @media (min-width: 600px){
-  .features{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+  .features{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));max-width:1000px;}
 }
 .card{
-  position:relative;background:rgba(20,30,90,0.5);padding:26px;border-radius:20px;text-align:center;
-  border:1px solid rgba(100,150,255,0.06);
-  box-shadow: inset 6px 6px 12px rgba(255,255,255,0.03), 0 10px 26px rgba(0,0,0,0.45);
-  transition: transform .34s cubic-bezier(.2,.9,.2,1), box-shadow .34s;
-  cursor:pointer;overflow:hidden;
+  background:rgba(10,29,66,0.65);padding:32px 26px;border-radius:20px;text-align:center;
+  border:1px solid rgba(100,150,255,0.3);backdrop-filter:blur(14px);
+  transition:transform 0.3s;cursor:pointer;
 }
-.card h3{font-size:1.25rem;margin-bottom:10px;}
-.card p{opacity:0.95;font-size:0.98rem;}
+.card:hover{transform:translateY(-10px);}
 
-/* Card hover more muted */
-.card:hover{ transform: translateY(-12px); box-shadow: 0 20px 60px rgba(94,133,255,0.14); border-color:#5e85ff; }
-.card:hover h3, .card:hover p{ color: #fff; }
 
-/* -------------------------
-   Light Mode
-   ------------------------- */
-body.light-mode{
-  background:#e8f0ff;color:#0a1d42;
+/* Footer */
+footer{text-align:center;padding:30px 20px;font-size:0.92rem;opacity:0.85;}
+
+/* Light Mode */
+body.light-mode{background:#f8fbff;color:#0a1d42;}
+body.light-mode .hero,body.light-mode .card,body.light-mode header,body.light-mode .mobile-menu{
+  background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.1);
 }
-body.light-mode .hero, body.light-mode .card, body.light-mode header, body.light-mode .mobile-menu{
-  background:rgba(255,255,255,0.94); border-color:rgba(80,120,255,0.12); color: #0a1d42;
-}
-body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode p, body.light-mode a{ color: #0a1d42 !important; }
-
-/* -------------------------
-   Footer
-   ------------------------- */
-footer{
-  text-align:center;padding:32px 14px;font-size:0.95rem;opacity:0.92;background:linear-gradient(180deg, rgba(10,15,50,0.28), rgba(10,15,50,0.18));
-}
-
-/* -------------------------
-   Floating Play Button
-   ------------------------- */
-.floating-play-btn{
-  position:fixed;bottom:22px;right:18px;width:62px;height:62px;border-radius:50%;
-  background:#5e85ff;color:#000;font-weight:700;font-size:1rem;display:grid;place-items:center;
-  box-shadow: 0 10px 26px rgba(94,133,255,0.32); z-index:999;
-}
-
-/* Utility (small screens) */
-@media (max-width:420px){
-  .hero h2{font-size:1.6rem;} .hero{padding:22px;} .btn{padding:10px 18px;}
-  header h1{font-size:1.15rem;}
-}
-
-/* Ensure interactive elements have minimal paint cost on hover */
-.snake-hover, .btn, .card { will-change: transform; }
 </style>
 </head>
 <body>
 
-<!-- Parallax Background Layers -->
-<div class="parallax" aria-hidden="true">
-  <div class="layer layer1"></div>
-  <div class="layer layer2"></div>
-  <div class="layer layer3"></div>
-</div>
-
-<canvas id="canvas" aria-hidden="true"></canvas>
-<div class="blob blob1" aria-hidden="true"></div>
-<div class="blob blob2" aria-hidden="true"></div>
+<canvas id="canvas"></canvas>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
 
 <header>
-  <h1>IntelliQuest Online Learning Platform</h1>
+  <h1>Grammar With Joy</h1>
 
-  <nav class="desktop" aria-label="Primary">
+  <!-- Desktop Navigation -->
+  <nav class="desktop">
     <a href="topics.html" class="snake-hover">Topics
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
-    <a href="story-home.html" class="snake-hover">Stories
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+
+    <a href="story-home.html" class="snake-hover">Stories 
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
-    <a href="start.html" class="snake-hover">Test
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+
+    <a href="start.html" class="snake-hover">Test Centre
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
     <a href="library.html" class="snake-hover">Library
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
     <a href="about.html" class="snake-hover">About
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
     <a href="contact.html" class="snake-hover">Contact
-      <svg class="snake-svg" height="50" width="200" aria-hidden="true"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
+      <svg class="snake-svg" height="50" width="200"><polyline points="0,0 200,0 200,50 0,50 0,0"/></svg>
     </a>
   </nav>
 
-  <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">
-    <span></span><span></span><span></span>
+  <!-- Hamburger Icon -->
+  <div class="hamburger" onclick="this.classList.toggle('active');document.querySelector('.mobile-menu').classList.toggle('active')">
+    <span style="display:block;width:28px;height:3px;background:#fff;margin:6px;border-radius:3px;transition:0.3s;"></span>
+    <span style="display:block;width:28px;height:3px;background:#fff;margin:6px;border-radius:3px;transition:0.3s;"></span>
+    <span style="display:block;width:28px;height:3px;background:#fff;margin:6px;border-radius:3px;transition:0.3s;"></span>
   </div>
 
-  <button class="mode-toggle snake-hover" id="modeToggle" style="padding:10px 18px;border-radius:28px;" aria-pressed="false">
+  <!-- Toggle Mode Button (visible on all screens) -->
+  <button class="mode-toggle snake-hover" style="padding:10px 20px;border-radius:30px;" onclick="document.body.classList.toggle('light-mode')">
     Toggle Mode
-    <svg class="snake-svg" height="50" width="160" aria-hidden="true"><polyline points="0,0 160,0 160,50 0,50 0,0"/></svg>
+    <svg class="snake-svg" height="50" width="180"><polyline points="0,0 180,0 180,50 0,50 0,0"/></svg>
   </button>
 </header>
 
-<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <a href="topics.html" class="snake-hover">Topics<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
-  <a href="story-home.html" class="snake-hover">Stories<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
-  <a href="start.html" class="snake-hover">Test<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
-  <a href="library.html" class="snake-hover">Library<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
-  <a href="about.html" class="snake-hover">About<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
-  <a href="contact.html" class="snake-hover">Contact<svg class="snake-svg" height="60" width="300" aria-hidden="true"><polyline points="0,0 300,0 300,60 0,60 0,0"/></svg></a>
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu">
+  <a href="topics.html" class="snake-hover">Topics
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
+
+  <a href="story-home.html" class="snake-hover">Stories
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
+
+
+  <a href="start.html" class="snake-hover">Test Centre
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
+
+  <a href="library.html" class="snake-hover">Library
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
+
+  
+  <a href="about.html" class="snake-hover">About
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
+
+  <a href="contact.html" class="snake-hover">Contact
+    <svg class="snake-svg" height="60" width="300">
+      <polyline points="0,0 300,0 300,60 0,60 0,0"/>
+    </svg>
+  </a>
 </div>
 
+
 <main>
-  <section class="hero" aria-labelledby="heroTitle">
-    <h2 id="heroTitle">Welcome to IntelliQuest</h2>
+  <section class="hero">
+    <h2>Welcome to Grammar With Joy</h2>
     <p>Master English grammar with fun games, animations, and interactive lessons!</p>
     <a href="sorry.html" class="btn snake-hover">
       Start Learning
-      <svg class="snake-svg" height="65" width="240" aria-hidden="true"><polyline points="0,0 240,0 240,65 0,65 0,0"/></svg>
+      <svg class="snake-svg" height="65" width="240"><polyline points="0,0 240,0 240,65 0,65 0,0"/></svg>
     </a>
     <a href="taketest.html" class="btn snake-hover">
       Test Your Level
-      <svg class="snake-svg" height="65" width="240" aria-hidden="true"><polyline points="0,0 240,0 240,65 0,65 0,0"/></svg>
+      <svg class="snake-svg" height="65" width="240"><polyline points="0,0 240,0 240,65 0,65 0,0"/></svg>
     </a>
   </section>
 
-  <section class="features" aria-label="Features">
-   <div class="card snake-hover" data-href="sentencehome.html" role="button" tabindex="0">
-      <svg class="snake-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
-        <polyline points="0,0 1000,0 1000,1000 0,1000 0,0"></polyline>
-      </svg>
-      <div class="card-inner">
-        <h3>Sentence Builder</h3>
-        <p>Build sentences with clicks, sounds, and fun animations.</p>
-        <p style="margin-top:12px;color:#7cafff;font-weight:700;">Unlocked</p>
-      </div>
+  <section class="features">
+    <div class="card snake-hover" onclick="location.href='sentencehome.html'">
+      <svg class="snake-svg" height="200" width="340"><polyline points="0,0 340,0 340,200 0,200 0,0"/></svg>
+      <h3>Sentence Builder</h3>
+      <p>Build sentences with clicks, sounds, and fun animations.</p>
+      <p style="margin-top:12px;color:#7cafff;font-weight:600;">★★★ Unlocked</p>
     </div>
-
-    <div class="card snake-hover" data-href="sorry.html" role="button" tabindex="0">
-      <svg class="snake-svg" viewBox="0 0 340 200" preserveAspectRatio="none" aria-hidden="true">
-        <polyline points="0,0 340,0 340,200 0,200 0,0"></polyline>
-      </svg>
+    <div class="card snake-hover" onclick="location.href='sorry.html'">
+      <svg class="snake-svg" height="200" width="340"><polyline points="0,0 340,0 340,200 0,200 0,0"/></svg>
       <h3>Play Games</h3>
       <p>Quizzes, challenges, and rewards await!</p>
     </div>
+    
+    <div class="card snake-hover" onclick="window.location.href='intelliquest-lab.html'">
+  <svg class="snake-svg" viewBox="0 0 340 200" preserveAspectRatio="none">
+    <polyline points="0,0 340,0 340,200 0,200 0,0"></polyline>
+  </svg>
+  <h3>IntelliQuest Lab</h3>
+  <p>Check your mastery and continue improving daily.</p>
+</div>
 
-    <div class="card snake-hover" data-href="intelliquest-lab.html" role="button" tabindex="0">
-      <svg class="snake-svg" viewBox="0 0 340 200" preserveAspectRatio="none" aria-hidden="true">
-        <polyline points="0,0 340,0 340,200 0,200 0,0"></polyline>
-      </svg>
-      <h3>IntelliQuest Lab</h3>
-      <p>Check your mastery and continue improving daily.</p>
-    </div>
   </section>
 </main>
 
-<footer>© 2025 IntelliQuest • Made by R. J. Roshan</footer>
+<footer>© 2025 Grammar With Joy • Made with ❤️ by R. J. Roshan</footer>
 
-<a href="sorry.html" class="floating-play-btn snake-hover" aria-label="Play">
+<a href="sorry.html" class="floating-play-btn snake-hover">
   Play
-  <svg class="snake-svg" height="80" width="80" aria-hidden="true"><polyline points="0,0 80,0 80,80 0,80 0,0"/></svg>
+  <svg class="snake-svg" height="80" width="80"><polyline points="0,0 80,0 80,80 0,80 0,0"/></svg>
 </a>
 
-<!-- Hover Sound (lazy; play only after user interaction) -->
-<audio id="hoverSound" src="buttonhovering.mp3" preload="none"></audio>
-
-<!-- Tubes Cursor (Three.js component) -->
-<script type="module">
-/* ===============
-   Lightweight Utilities
-   =============== */
-const throttle = (fn, wait) => {
-  let last = 0;
-  return function(...args){
-    const now = Date.now();
-    if(now - last >= wait){ last = now; fn.apply(this, args); }
-  };
-};
-const rafThrottle = (fn) => {
-  let ticking = false;
-  return function(...args){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(()=>{ fn.apply(this,args); ticking = false; });
-  };
-};
-
-/* ===============
-   Hover Sound & Interaction Unlock
-   =============== */
+<!-- Hover/Tap Sound (mobile-safe) -->
+<audio id="hoverSound" src="buttonhovering.mp3" preload="auto"></audio>
+<script>
 let soundUnlocked = false;
-const audioEl = document.getElementById('hoverSound');
-const unlockSound = () => {
-  if(soundUnlocked) return;
-  soundUnlocked = true;
-  try{ audioEl.preload = 'auto'; audioEl.load(); }catch(e){}
-  document.removeEventListener('pointerdown', unlockSound);
-};
-document.addEventListener('pointerdown', unlockSound, {passive: true});
+document.body.addEventListener('click', function unlock(){ soundUnlocked = true; }, {once:true});
 
-/* Use event delegation for hover sound to avoid many listeners */
-const playSound = throttle(() => {
-  if(!soundUnlocked) return;
-  try{
-    audioEl.currentTime = 0;
-    audioEl.play().catch(()=>{});
-  }catch(e){}
-}, 150);
-
-document.addEventListener('pointerover', (ev) => {
-  const el = ev.target.closest && ev.target.closest('.snake-hover');
-  if(!el) return;
-  playSound();
-}, {passive:true});
-
-/* ===============
-   Mobile menu toggle (keyboard accessible)
-   =============== */
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  const isActive = hamburger.classList.contains('active');
-  mobileMenu.classList.toggle('active', isActive);
-  hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-  mobileMenu.setAttribute('aria-hidden', !isActive ? 'true' : 'false');
-});
-hamburger.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') hamburger.click(); });
-
-/* Close mobile menu when link clicked (event delegation) */
-mobileMenu.addEventListener('click', (e) => {
-  const a = e.target.closest('a');
-  if(a){ hamburger.classList.remove('active'); mobileMenu.classList.remove('active'); hamburger.setAttribute('aria-expanded', 'false'); mobileMenu.setAttribute('aria-hidden', 'true'); }
-});
-
-/* ===============
-   Card click navigation (accessible)
-   =============== */
-document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('click', () => {
-    const href = card.getAttribute('data-href');
-    if(href) window.location.href = href;
-  });
-  card.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') card.click(); });
-});
-
-/* ===============
-   Mode toggle
-   =============== */
-const modeToggle = document.getElementById('modeToggle');
-modeToggle.addEventListener('click', () => {
-  const active = document.body.classList.toggle('light-mode');
-  modeToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
-});
-
-/* ===============
-   Micro-parallax & snake-hover micro transforms
-   - Throttled to rAF
-   =============== */
-const snakeElements = document.querySelectorAll('.snake-hover');
-const onPointerMove = throttle((e) => {
-  // Only compute when target exists
-  const el = e.target.closest && e.target.closest('.snake-hover');
-  if(!el) return;
-  const rect = el.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / Math.max(rect.width,1)) - 0.5;
-  const y = ((e.clientY - rect.top) / Math.max(rect.height,1)) - 0.5;
-
-  // Set transforms using transform-only properties
-  const rx = (y * 4).toFixed(2);
-  const ry = (x * -4).toFixed(2);
-  el.style.transform = `translateY(-4px) scale(1.04) rotateX(${rx}deg) rotateY(${ry}deg)`;
-  // subtle shadow offset via transform-friendly box-shadow (kept light)
-  el.style.boxShadow = `0 12px 30px rgba(94,133,255,0.14), ${Math.round(x*12)}px ${Math.round(y*12)}px 30px rgba(0,0,0,0.18)`;
-}, 40);
-
-const onPointerLeave = (e) => {
-  const el = e.target.closest && e.target.closest('.snake-hover');
-  if(!el) return;
-  el.style.transform = '';
-  el.style.boxShadow = '';
+const playSound = () => {
+  if (!soundUnlocked) return;
+  const s = document.getElementById('hoverSound');
+  s.currentTime = 0;
+  s.play().catch(()=>{});
 };
 
-document.addEventListener('pointermove', rafThrottle(onPointerMove), {passive:true});
-document.addEventListener('pointerout', (e) => {
-  const el = e.target.closest && e.target.closest('.snake-hover');
-  if(el) onPointerLeave(e);
-}, {passive:true});
-
-/* ===============
-   Efficient Parallax (rAF + minimal math)
-   =============== */
-const layers = document.querySelectorAll('.layer');
-let lastScroll = window.pageYOffset;
-let ticking = false;
-const updateParallax = () => {
-  const scrolled = window.pageYOffset;
-  // compute small translateY only; use integer values to avoid subpixel thrashing
-  layers.forEach((layer, i) => {
-    const speed = 0.22 * (i + 1); // gentle
-    const y = Math.round(scrolled * speed);
-    layer.style.transform = `translateY(${y}px) translateZ(-1px) scale(${1 + (i * 0.25)})`;
-  });
-  ticking = false;
-};
-
-window.addEventListener('scroll', () => {
-  if (ticking) return;
-  ticking = true;
-  requestAnimationFrame(updateParallax);
-}, {passive: true});
-
-/* ===============
-   TubesCursor initialisation (guarded + efficient)
-   =============== */
-(async function initTubesCursor(){
-  try{
-    // limit pixel ratio for mobile to reduce GPU usage
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
-    const moduleUrl = "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
-    // dynamic import is already using type=module; use fetch+eval if CORS obstructs - but try import()
-    const { default: TubesCursor } = await import(moduleUrl);
-    // create tubes cursor with restrained settings for performance
-    const app = TubesCursor(document.getElementById('canvas'), {
-      tubes: {
-        colors: ["#5e85ff","#8c7aff","#b388ff"],
-        lights: { intensity: 140, colors: ["#6e9fff","#89ddff","#d48aff"] },
-        tubeWidth: 4, tubeFade: 0.94
-      },
-      pixelRatio,
-      autoResize: true
-    });
-
-    // On click, change colours but throttle frequency
-    document.addEventListener('click', throttle(() => {
-      const colors = ["#5e85ff","#8c7aff","#b388ff","#6e9fff","#89ddff"];
-      const rnd = () => colors[Math.floor(Math.random()*colors.length)];
-      try { app.tubes.setColors([rnd(), rnd(), rnd()]); } catch(e){}
-    }, 250), {passive:true});
-  }catch(e){
-    // fail silently - TubesCursor is optional
-    // console.warn('TubesCursor init failed', e);
-  }
-})();
-
-/* ===============
-   Resize handling (throttled)
-   =============== */
-const onResize = throttle(() => {
-  const c = document.getElementById('canvas');
-  if (!c) return;
-  c.width = window.innerWidth * (window.devicePixelRatio > 1 ? 1 : 1);
-  c.height = window.innerHeight * (window.devicePixelRatio > 1 ? 1 : 1);
-}, 200);
-window.addEventListener('resize', onResize, {passive:true});
-onResize();
+document.querySelectorAll('.snake-hover').forEach(el => {
+  el.addEventListener('mouseenter', playSound);
+  el.addEventListener('touchstart', playSound, {passive:true});
+});
 </script>
 
+<!-- Tubes Cursor -->
+<script type="module">
+import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+try {
+  const app = TubesCursor(document.getElementById('canvas'), {
+    tubes: { colors: ["#5e85ff","#8c7aff","#b388ff"],
+      lights: { intensity: 180, colors: ["#6e9fff","#89ddff","#d48aff","#5ce1e6"] },
+      tubeWidth: 5, tubeFade: 0.92
+    },
+    pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+    autoResize: true
+  });
+  document.body.addEventListener('click', () => {
+    const colors = ["#5e85ff","#8c7aff","#b388ff","#6e9fff","#89ddff"];
+    const rnd = () => colors[Math.floor(Math.random()*colors.length)];
+    app.tubes.setColors([rnd(),rnd(),rnd()]);
+  });
+} catch (e) {}
+</script>
 </body>
 </html>
