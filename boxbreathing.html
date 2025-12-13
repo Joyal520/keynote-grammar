@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Box Breathing Lab | Grammar With Joy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#e0f4ff;
+      --bg2:#ffe7f7;
+      --bg3:#e9ffe7;
+      --card-bg:rgba(255,255,255,0.96);
+      --border:#d4d4d4;
+      --accent:#16a34a;
+      --accent-soft:rgba(22,163,74,0.15);
+      --accent-2:#0ea5e9;
+      --text:#111827;
+      --muted:#6b7280;
+      --shadow:0 18px 40px rgba(15,23,42,0.16);
+      --nav-bg:rgba(255,255,255,0.85);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      min-height:100vh;
+      font-family:'Poppins',sans-serif;
+      color:var(--text);
+      padding:0 16px 24px;
+      position:relative;
+      overflow-x:hidden;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:200% 200%;
+      animation:auroraMove 16s ease-in-out infinite;
+    }
+
+    @keyframes auroraMove{
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(56,189,248,0.25), transparent 50%),
+        radial-gradient(circle at 80% 10%, rgba(52,211,153,0.22), transparent 55%),
+        radial-gradient(circle at 70% 80%, rgba(244,114,182,0.18), transparent 55%);
+      filter:blur(32px);
+      opacity:0.8;
+      z-index:-1;
+    }
+
+    /* NAVBAR */
+    .navbar{
+      max-width:1080px;
+      margin:10px auto 16px;
+      height:52px;
+      border-radius:999px;
+      background:var(--nav-bg);
+      border:1px solid rgba(148,163,184,0.5);
+      box-shadow:0 12px 24px rgba(15,23,42,0.18);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 16px;
+      backdrop-filter:blur(18px);
+    }
+
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:0.95rem;
+      font-weight:600;
+    }
+
+    .nav-logo{
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      background:linear-gradient(135deg,#22c55e,#0ea5e9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#f9fafb;
+      font-size:1rem;
+      font-weight:700;
+      box-shadow:0 6px 14px rgba(34,197,94,0.4);
+    }
+
+    .nav-right a{
+      font-size:0.85rem;
+      text-decoration:none;
+      color:var(--muted);
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      transition:background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      white-space:nowrap;
+    }
+
+    .nav-right a:hover{
+      background:rgba(219,234,254,0.85);
+      border-color:rgba(129,140,248,0.7);
+      color:#1d4ed8;
+    }
+
+    /* LAYOUT */
+    .page{
+      width:100%;
+      max-width:980px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:24px;
+    }
+
+    @media(max-width:900px){
+      .page{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:24px;
+      padding:20px 18px;
+      border:1px solid rgba(148,163,184,0.45);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+    }
+
+    @media(max-width:480px){
+      .card{
+        padding:16px 14px;
+        border-radius:18px;
+      }
+    }
+
+    h1{
+      font-size:1.9rem;
+      margin-bottom:8px;
+    }
+
+    @media(max-width:480px){
+      h1{font-size:1.6rem;}
+    }
+
+    h2{
+      font-size:1.15rem;
+      margin:16px 0 8px;
+    }
+
+    p{
+      font-size:0.95rem;
+      line-height:1.6;
+      color:var(--muted);
+    }
+
+    .tagline{
+      font-size:0.93rem;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    ul{
+      margin:8px 0 0 18px;
+      color:var(--muted);
+      font-size:0.88rem;
+    }
+    li{margin-bottom:4px;}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(59,130,246,0.12);
+      border:1px solid rgba(59,130,246,0.4);
+      font-size:0.78rem;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+      margin-bottom:8px;
+      color:#1d4ed8;
+    }
+
+    .pill span.icon{
+      font-size:0.9rem;
+    }
+
+    .highlight-text{
+      color:#0ea5e9;
+      font-weight:500;
+    }
+
+    /* TRAINER */
+    .trainer-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .trainer-title{
+      font-size:1.08rem;
+      font-weight:600;
+    }
+
+    .status-pill{
+      font-size:0.78rem;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      color:var(--muted);
+      background:rgba(249,250,251,0.95);
+      white-space:nowrap;
+    }
+
+    .status-pill.active{
+      border-color:var(--accent);
+      color:var(--accent);
+      background:rgba(187,247,208,0.35);
+    }
+
+    .tagline-small{
+      font-size:0.83rem;
+      color:var(--muted);
+    }
+
+    .controls{
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .difficulty-toggle{
+      display:flex;
+      gap:6px;
+      background:rgba(248,250,252,0.95);
+      border-radius:999px;
+      padding:4px;
+      border:1px solid rgba(203,213,225,0.9);
+      width:100%;
+    }
+
+    .diff-btn{
+      flex:1;
+      border:none;
+      background:transparent;
+      font-size:0.8rem;
+      padding:6px 8px;
+      border-radius:999px;
+      cursor:pointer;
+      color:var(--muted);
+      transition:background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      font-weight:500;
+      white-space:nowrap;
+    }
+
+    .diff-btn.active{
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:white;
+      box-shadow:0 10px 18px rgba(34,197,94,0.35);
+    }
+
+    .control-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:flex-end;
+    }
+
+    .control-group{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      min-width:120px;
+      flex:1;
+    }
+
+    label{
+      font-size:0.8rem;
+      color:var(--muted);
+    }
+
+    select{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.8);
+      background:white;
+      color:var(--text);
+      font-size:0.86rem;
+      outline:none;
+    }
+
+    select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(22,163,74,0.35);
+    }
+
+    .btn{
+      border:none;
+      padding:9px 18px;
+      border-radius:999px;
+      font-size:0.9rem;
+      font-weight:500;
+      cursor:pointer;
+      transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:#f9fafb;
+      box-shadow:0 10px 24px rgba(34,197,94,0.45);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 30px rgba(34,197,94,0.65);
+    }
+
+    .btn-primary:active{
+      transform:translateY(0);
+      box-shadow:0 9px 20px rgba(34,197,94,0.5);
+    }
+
+    .btn-stop{
+      background:linear-gradient(135deg,#f97373,#fb923c);
+      color:#111827;
+      box-shadow:0 10px 24px rgba(248,113,113,0.45);
+    }
+
+    .btn-stop:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 30px rgba(248,113,113,0.65);
+    }
+
+    .btn-stop:active{
+      transform:translateY(0);
+      box-shadow:0 9px 20px rgba(248,113,113,0.5);
+    }
+
+    .phase-display{
+      margin-top:6px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .phase-label{
+      font-size:0.84rem;
+      color:var(--muted);
+    }
+
+    .phase-name{
+      font-size:1.12rem;
+      font-weight:600;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+    }
+
+    .timer{
+      font-size:2.4rem;
+      font-weight:700;
+    }
+
+    @media(max-width:480px){
+      .timer{font-size:2.1rem;}
+    }
+
+    .session-remaining{
+      font-size:0.8rem;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .session-remaining span{
+      font-weight:600;
+      color:#0f766e;
+    }
+
+    /* Box + moving ball */
+    .visual-wrapper{
+      margin-top:8px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .breath-box{
+      width:210px;
+      height:210px;
+      border-radius:22px;
+      background:radial-gradient(circle at 20% 20%,rgba(59,130,246,0.12),transparent 55%),
+                 radial-gradient(circle at 80% 80%,rgba(52,211,153,0.12),transparent 55%);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    @media(max-width:480px){
+      .breath-box{
+        width:190px;
+        height:190px;
+      }
+    }
+
+    .breath-path{
+      position:absolute;
+      inset:18px;
+      border-radius:18px;
+      border:2px dashed rgba(148,163,184,0.9);
+      box-shadow:inset 0 0 12px rgba(148,163,184,0.3);
+    }
+
+    .breath-box.phase-inhale .breath-path{
+      border-color:rgba(34,197,94,0.95);
+      box-shadow:0 0 16px rgba(34,197,94,0.5), inset 0 0 12px rgba(34,197,94,0.4);
+    }
+
+    .breath-box.phase-exhale .breath-path{
+      border-color:rgba(14,165,233,0.95);
+      box-shadow:0 0 16px rgba(14,165,233,0.5), inset 0 0 12px rgba(14,165,233,0.45);
+    }
+
+    .breath-box.phase-hold .breath-path{
+      border-color:rgba(234,179,8,0.95);
+      box-shadow:0 0 16px rgba(234,179,8,0.5), inset 0 0 12px rgba(234,179,8,0.45);
+    }
+
+    .breath-ball{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      background:radial-gradient(circle,#22c55e,#16a34a);
+      box-shadow:0 0 14px rgba(34,197,94,0.9);
+      top:18px;
+      left:18px;
+      transform:translate(0,0);
+    }
+
+    .phase-dots{
+      margin-top:8px;
+      display:flex;
+      gap:6px;
+      justify-content:center;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:rgba(148,163,184,0.55);
+    }
+
+    .dot.active{
+      background:var(--accent);
+      box-shadow:0 0 10px rgba(22,163,74,0.9);
+    }
+
+    .helper-text{
+      margin-top:6px;
+      font-size:0.8rem;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .helper-text span{
+      color:var(--accent);
+      font-weight:500;
+    }
+
+    .note{
+      margin-top:10px;
+      font-size:0.78rem;
+      color:var(--muted);
+      border-top:1px dashed rgba(203,213,225,0.9);
+      padding-top:6px;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="nav-logo">GJ</div>
+      <div>
+        <div style="font-size:0.9rem;">Grammar With Joy</div>
+        <div style="font-size:0.7rem;color:var(--muted);">Box Breathing Lab</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <!-- change href if your homepage is a different file -->
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- LEFT: INTRO -->
+    <section class="card">
+      <div class="pill">
+        <span class="icon">☰</span>
+        Box Breathing Basics
+      </div>
+      <h1>Box Breathing for Calm Focus</h1>
+      <p class="tagline">
+        Use this simple four-step breathing pattern to calm your nervous system and sharpen focus:
+        <span class="highlight-text">Inhale → Hold → Exhale → Hold</span>.
+      </p>
+
+      <h2>What is box breathing?</h2>
+      <p>
+        Box breathing (four-square breathing) is a controlled breathing method used in high-pressure
+        fields such as the military, sports, and performance. Each side of the “box” is the same length:
+        you inhale, hold, exhale, and hold again for equal counts.
+      </p>
+
+      <h2>How to start</h2>
+      <p>
+        Begin with <span class="highlight-text">4–4–4–4</span>:
+        inhale for 4 seconds, hold for 4, exhale for 4, and hold for 4.
+        When this feels completely comfortable, you can move to 5 or 6 seconds per side. Never force
+        your breath or chase bigger numbers. Comfort and control come first.
+      </p>
+
+      <ul>
+        <li>Reduces stress and anxiety</li>
+        <li>Improves focus before study, teaching, or exams</li>
+        <li>Works in 2–5 minutes and can be repeated during the day</li>
+      </ul>
+
+      <h2>Safety note</h2>
+      <p>
+        Breathe gently through your nose if possible. Stop immediately if you feel dizzy, tight-chested,
+        or uncomfortable. This is not a competition. The goal is a smooth, steady rhythm that your body
+        can handle easily.
+      </p>
+    </section>
+
+    <!-- RIGHT: TRAINER -->
+    <section class="card">
+      <div class="trainer-header">
+        <div>
+          <div class="trainer-title">Guided Box Breathing Trainer</div>
+          <p class="tagline-small">
+            Choose a level and session length, then press <span class="highlight-text">Start</span>.
+            Follow the count, the moving ball, and the sound.
+          </p>
+        </div>
+        <div id="status-pill" class="status-pill">Ready</div>
+      </div>
+
+      <div class="controls">
+        <!-- Difficulty toggle -->
+        <div class="difficulty-toggle">
+          <button class="diff-btn active" data-seconds="4">Beginner (4–4–4–4)</button>
+          <button class="diff-btn" data-seconds="5">Intermediate (5–5–5–5)</button>
+          <button class="diff-btn" data-seconds="6">Advanced (6–6–6–6)</button>
+        </div>
+
+        <!-- Pattern + Duration + Start -->
+        <div class="control-row">
+          <div class="control-group">
+            <label for="pattern-select">Pattern (seconds per side)</label>
+            <select id="pattern-select">
+              <option value="4" selected>4–4–4–4 (recommended)</option>
+              <option value="5">5–5–5–5</option>
+              <option value="6">6–6–6–6</option>
+              <option value="8">8–8–8–8 (pro)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="duration-select">Session length (minutes)</label>
+            <select id="duration-select">
+              <!-- 1 to 15 minutes -->
+              <option value="1">1 minute</option>
+              <option value="2">2 minutes</option>
+              <option value="3">3 minutes</option>
+              <option value="4">4 minutes</option>
+              <option value="5" selected>5 minutes</option>
+              <option value="6">6 minutes</option>
+              <option value="7">7 minutes</option>
+              <option value="8">8 minutes</option>
+              <option value="9">9 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="11">11 minutes</option>
+              <option value="12">12 minutes</option>
+              <option value="13">13 minutes</option>
+              <option value="14">14 minutes</option>
+              <option value="15">15 minutes</option>
+            </select>
+          </div>
+
+          <div class="control-group" style="flex:0 0 auto;">
+            <label>&nbsp;</label>
+            <button id="start-btn" class="btn btn-primary">
+              ▶ Start session
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-display">
+        <div class="phase-label">Current phase</div>
+        <div id="phase-name" class="phase-name">—</div>
+        <div id="timer" class="timer">0</div>
+
+        <div id="session-remaining" class="session-remaining">
+          Session time left: <span>0:00</span>
+        </div>
+
+        <div class="visual-wrapper">
+          <div id="breath-box" class="breath-box">
+            <div id="breath-path" class="breath-path"></div>
+            <div id="breath-ball" class="breath-ball"></div>
+          </div>
+        </div>
+
+        <div class="phase-dots">
+          <div id="dot-0" class="dot"></div>
+          <div id="dot-1" class="dot"></div>
+          <div id="dot-2" class="dot"></div>
+          <div id="dot-3" class="dot"></div>
+        </div>
+
+        <div id="helper-text" class="helper-text">
+          Press <span>Start</span> and synchronise your breathing with the count, the box, and the sound.
+        </div>
+      </div>
+
+      <p class="note">
+        Suggested use: 2–5 minutes before lessons, study, or any focused task. You can ask students
+        to open this page and follow one full session together as a “calm start” ritual.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    // Phases and state
+    const phases = ["Inhale","Hold","Exhale","Hold"];
+    let currentPhaseIndex = 0;
+
+    let patternSeconds = 4;         // Seconds per phase
+    let phaseStartTime = 0;
+    let phaseDurationMs = 0;
+    let displayedRemaining = 0;     // For the phase countdown display
+
+    let running = false;
+    let animationFrameId = null;
+
+    // Session timing (Option A: total session time, auto-stop)
+    let sessionMinutes = 5;
+    let sessionTotalMs = 5 * 60 * 1000;
+    let sessionStartTime = 0;
+
+    // Audio
+    let audioCtx = null;
+
+    // DOM references
+    const patternSelect = document.getElementById("pattern-select");
+    const durationSelect = document.getElementById("duration-select");
+    const startBtn = document.getElementById("start-btn");
+    const phaseNameEl = document.getElementById("phase-name");
+    const timerEl = document.getElementById("timer");
+    const helperTextEl = document.getElementById("helper-text");
+    const statusPillEl = document.getElementById("status-pill");
+    const sessionRemainingEl = document.getElementById("session-remaining").querySelector("span");
+
+    const breathBoxEl = document.getElementById("breath-box");
+    const pathEl = document.getElementById("breath-path");
+    const ballEl = document.getElementById("breath-ball");
+    const dots = [
+      document.getElementById("dot-0"),
+      document.getElementById("dot-1"),
+      document.getElementById("dot-2"),
+      document.getElementById("dot-3")
+    ];
+    const diffButtons = Array.from(document.querySelectorAll(".diff-btn"));
+
+    // Path size for ball movement
+    let pathWidth = 0;
+    let pathHeight = 0;
+    let maxX = 0;
+    let maxY = 0;
+
+    function measurePath(){
+      const pathRect = pathEl.getBoundingClientRect();
+      const ballRect = ballEl.getBoundingClientRect();
+      pathWidth = pathRect.width;
+      pathHeight = pathRect.height;
+      maxX = pathWidth - ballRect.width;
+      maxY = pathHeight - ballRect.height;
+    }
+
+    window.addEventListener("resize", measurePath);
+
+    // Audio helpers
+    function ensureAudioContext(){
+      if(!audioCtx){
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if(AC){
+          audioCtx = new AC();
+        }
+      }
+      if(audioCtx && audioCtx.state === "suspended"){
+        audioCtx.resume();
+      }
+    }
+
+    function playBeep(frequency, durationMs, gainValue){
+      if(!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = frequency;
+      gain.gain.value = gainValue;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+      osc.start(now);
+      gain.gain.setValueAtTime(gainValue, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationMs/1000);
+      osc.stop(now + durationMs/1000 + 0.02);
+    }
+
+    function playTickBeep(){
+      // Short, light beep for each second
+      playBeep(880, 80, 0.12);
+    }
+
+    function playPhaseBeep(){
+      // Slightly longer, lower beep for phase change
+      playBeep(520, 140, 0.18);
+    }
+
+    // Session helpers
+    function setPatternSeconds(seconds){
+      patternSeconds = seconds;
+      patternSelect.value = String(seconds);
+    }
+
+    function setActiveDifficultyButton(seconds){
+      diffButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.seconds === String(seconds));
+      });
+    }
+
+    function updateSessionConfigFromUI(){
+      sessionMinutes = parseInt(durationSelect.value, 10);
+      sessionTotalMs = sessionMinutes * 60 * 1000;
+      // Initial text before start
+      sessionRemainingEl.textContent = `${sessionMinutes}:00`;
+    }
+
+    function formatTimeMs(ms){
+      if(ms < 0) ms = 0;
+      const totalSeconds = Math.floor(ms / 1000);
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      const sStr = s < 10 ? "0" + s : String(s);
+      return `${m}:${sStr}`;
+    }
+
+    // Phase control
+    function setPhase(index){
+      currentPhaseIndex = index;
+      phaseDurationMs = patternSeconds * 1000;
+      phaseStartTime = performance.now();
+      displayedRemaining = patternSeconds;
+      updatePhaseDisplay();
+      playPhaseBeep();
+    }
+
+    function updatePhaseDisplay(){
+      const phase = phases[currentPhaseIndex];
+      phaseNameEl.textContent = phase;
+      timerEl.textContent = displayedRemaining;
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === currentPhaseIndex);
+      });
+
+      breathBoxEl.classList.remove("phase-inhale","phase-exhale","phase-hold");
+      if(phase === "Inhale") breathBoxEl.classList.add("phase-inhale");
+      else if(phase === "Exhale") breathBoxEl.classList.add("phase-exhale");
+      else breathBoxEl.classList.add("phase-hold");
+
+      let helper = "";
+      if(phase === "Inhale") helper = "Breathe in slowly through your nose, filling from belly to chest.";
+      else if(phase === "Exhale") helper = "Breathe out smoothly and steadily. No rush, no force.";
+      else helper = "Hold gently. Relax your shoulders and jaw. No tension.";
+
+      helperTextEl.innerHTML = helper;
+
+      updateBallPosition();
+    }
+
+    function updateBallPosition(){
+      if(!phaseDurationMs) return;
+      const now = performance.now();
+      let elapsed = now - phaseStartTime;
+      let fraction = elapsed / phaseDurationMs;
+      if(fraction < 0) fraction = 0;
+      if(fraction > 1) fraction = 1;
+
+      let x = 0, y = 0;
+      // Path:
+      // 0: top-left → top-right
+      // 1: top-right → bottom-right
+      // 2: bottom-right → bottom-left
+      // 3: bottom-left → top-left
+      if(currentPhaseIndex === 0){
+        x = maxX * fraction;
+        y = 0;
+      } else if(currentPhaseIndex === 1){
+        x = maxX;
+        y = maxY * fraction;
+      } else if(currentPhaseIndex === 2){
+        x = maxX * (1 - fraction);
+        y = maxY;
+      } else if(currentPhaseIndex === 3){
+        x = 0;
+        y = maxY * (1 - fraction);
+      }
+
+      ballEl.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    function advancePhase(){
+      const nextIndex = (currentPhaseIndex + 1) % phases.length;
+      setPhase(nextIndex);
+    }
+
+    // Main animation loop: handles phase + session time
+    function animationLoop(now){
+      if(!running) return;
+
+      // --- Session time check ---
+      const sessionElapsed = now - sessionStartTime;
+      const sessionRemainingMs = sessionTotalMs - sessionElapsed;
+      sessionRemainingEl.textContent = formatTimeMs(sessionRemainingMs);
+
+      if(sessionRemainingMs <= 0){
+        // Session ended – auto-stop
+        stopSession(true);
+        return;
+      }
+
+      // --- Phase timing & beeps ---
+      const elapsedPhase = now - phaseStartTime;
+      let remainingPhaseMs = phaseDurationMs - elapsedPhase;
+
+      if(remainingPhaseMs <= 0){
+        advancePhase();
+      } else {
+        const newRemaining = Math.ceil(remainingPhaseMs / 1000);
+        if(newRemaining !== displayedRemaining){
+          displayedRemaining = newRemaining;
+          updatePhaseDisplay();
+          playTickBeep();
+        } else {
+          // Update only visuals smoothly
+          updateBallPosition();
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(animationLoop);
+    }
+
+    function startSession(){
+      if(running) return;
+      ensureAudioContext();
+      measurePath();
+      updateSessionConfigFromUI();
+
+      running = true;
+      patternSeconds = parseInt(patternSelect.value, 10);
+      patternSelect.disabled = true;
+      durationSelect.disabled = true;
+      diffButtons.forEach(btn => btn.disabled = true);
+
+      startBtn.textContent = "■ Stop session";
+      startBtn.classList.remove("btn-primary");
+      startBtn.classList.add("btn-stop");
+
+      statusPillEl.textContent = "Running";
+      statusPillEl.classList.add("active");
+
+      sessionStartTime = performance.now();
+      setPhase(0);
+
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(animationLoop);
+    }
+
+    function stopSession(auto=false){
+      running = false;
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+
+      patternSelect.disabled = false;
+      durationSelect.disabled = false;
+      diffButtons.forEach(btn => btn.disabled = false);
+
+      startBtn.textContent = "▶ Start session";
+      startBtn.classList.remove("btn-stop");
+      startBtn.classList.add("btn-primary");
+
+      if(auto){
+        statusPillEl.textContent = "Completed";
+        statusPillEl.classList.add("active");
+      } else {
+        statusPillEl.textContent = "Stopped";
+        statusPillEl.classList.add("active");
+      }
+
+      // Reset main visuals
+      phaseNameEl.textContent = "—";
+      timerEl.textContent = "0";
+      helperTextEl.innerHTML = 'Press <span>Start</span> and synchronise your breathing with the count, the box, and the sound.';
+      breathBoxEl.classList.remove("phase-inhale","phase-exhale","phase-hold");
+      dots.forEach(dot => dot.classList.remove("active"));
+      ballEl.style.transform = "translate(0px, 0px)";
+
+      // Session remaining text resets to full duration
+      updateSessionConfigFromUI();
+    }
+
+    // Event listeners
+    startBtn.addEventListener("click", () => {
+      if(!running) startSession();
+      else stopSession(false);
+    });
+
+    patternSelect.addEventListener("change", () => {
+      const seconds = parseInt(patternSelect.value, 10);
+      setPatternSeconds(seconds);
+      setActiveDifficultyButton(seconds);  // Highlights matching difficulty if any
+    });
+
+    durationSelect.addEventListener("change", () => {
+      if(!running){
+        updateSessionConfigFromUI();
+      }
+    });
+
+    diffButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if(running) return; // don't change pattern mid-session
+        const seconds = parseInt(btn.dataset.seconds, 10);
+        setPatternSeconds(seconds);
+        setActiveDifficultyButton(seconds);
+      });
+    });
+
+    // Initial setup
+    window.addEventListener("load", () => {
+      measurePath();
+      setPatternSeconds(4);
+      setActiveDifficultyButton(4);
+      updateSessionConfigFromUI();
+      statusPillEl.textContent = "Ready";
+      statusPillEl.classList.remove("active");
+    });
+  </script>
+</body>
+</html>
